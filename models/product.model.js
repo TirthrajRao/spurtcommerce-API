@@ -1,38 +1,88 @@
 var mongoose = require('mongoose');
 
 var product = new mongoose.Schema({
-
-    sku:String,
-    upc:String,
-    quantity:String,
-    stock_status_id:String,
-    image :String,
-    image_path :String,
-    manufacturer_id :String,
-    shipping :String,
-    price :String,
-    date_available :String,
-    sort_order :String,
-    name :String,
-    description :String,
-    amount :String,
-    meta_tag_title :String,
-    meta_tag_description :String,
-    meta_tag_keyword :String,
-    discount : String,
-    subtract_stock :String,
-    minimum_quantity :String,
-    location :String,
-    wishlist_status :String,
-    delete_flag :String,
+    product_id:{
+        type:String
+    },
+    sku:{
+        type:String
+    },
+    upc:{
+        type:String
+    },
+    quantity:{
+        type:String
+    },
+    stock_status_id:{
+        type:String
+    },
+    image :{
+        type:String
+    },
+    image_path :{
+        type:String
+    },
+    manufacturer_id :{
+        type:String
+    },
+    shipping :{
+        type:String
+    },
+    price :{
+        type:String
+    },
+    date_available :{
+        type:String
+    },
+    sort_order :{
+        type:String
+    },
+    name :{
+        type:String
+    },
+    description :{
+        type:String
+    },
+    amount :{
+        type:String
+    },
+    meta_tag_title :{
+        type:String
+    },
+    meta_tag_description :{
+        type:String
+    },
+    meta_tag_keyword :{
+        type:String
+    },
+    discount :{
+        type:String
+    },
+    subtract_stock :{
+        type:String
+    },
+    minimum_quantity :{
+        type:String
+    },
+    location :{
+        type:String
+    },
+    wishlist_status :{
+        type:String
+    },
+    delete_flag :{
+        type:String
+    },
     is_featured :String,
-    rating :String,
-    condition :String,
-    is_active : String,
-    created_by : String,
-    modified_by : String,
-    created_date :Date,
-    modified_date : Date,
+    rating :{
+        type:String
+    },
+    condition :{ 
+        type:String
+    },
+    is_active :{
+        type:Number
+    },
     Images : [
     { type: mongoose.Schema.Types.ObjectId, 
         ref: 'product_image'
@@ -41,18 +91,62 @@ var product = new mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, 
         ref: 'categoty'
     }],
-    createdDate : Date,
-    dateAvailable :Date,
-    deleteFlag: String,
-    isActive:String,
-    manufacturerId:String,
-    metaTagTitle:String,
-    minimumQuantity :String,
-    modifiedDate : Date,
-    sortOrder :String,
-    stockStatusId:String,
-    subtractStock:String,
-    wishListStatus :String
+    createdDate :{
+        type:Date,
+        default:Date.now()
+    },
+    dateAvailable :{
+        type:String
+    },
+    deleteFlag:{
+        type:Number
+    },
+    isActive:{
+        type:Number
+    },
+    manufacturerId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'manufacturer'
+    },
+    metaTagTitle:{
+        type:String
+    },
+    minimumQuantity :{
+        type:String
+    },
+    modifiedDate :{
+        type:Date,
+        default:Date.now()
+    },
+    sortOrder :{
+        type:String
+    },
+    stockStatusId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'stock_status'
+    },
+    subtractStock:{
+        type:Number
+    },
+    wishListStatus :{
+        type:Number
+    },
+    created_by :{
+        type:String,
+        default:null
+    },
+    modified_by :{
+        type:String,
+        default:null
+    },
+    created_date :{
+        type:Date,
+        default:Date.now()
+    },
+    modified_date :{
+        type:Date,
+        default:Date.now()
+    }
 });
 
 module.exports = mongoose.model('product', product,'product');

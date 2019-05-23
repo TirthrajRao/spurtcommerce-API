@@ -11,29 +11,46 @@ const ObjectId = require('mongodb').ObjectId;
 
 // Services
 
-module.exports.orderStatusList = ()=> {
+module.exports.orderStatusList = () => {
     return new Promise((resolve, reject) => {
-        orderStatus.find((useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        orderStatus.aggregate([
+            {
+                $project:{
+                    colorCode:'$color_code',
+                    name:'$name',
+                    isActive:'$is_active'
+                }
+            }
+        ]).exec(function (orderErr, orderStatus) {
+            if (orderErr) {
+                console.log('order error: ', orderErr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully got the complete list of products', data: userres });
+                console.log("orderStatus", orderStatus);
+                resolve({ status: 200, message: 'Successfully got the complete order status list.', data: orderStatus });
             }
-        });
+        })
+
     })
 }
 
-module.exports.orderStatusList = ()=> {
+module.exports.orderStatusById = (orderStatusId) => {
     return new Promise((resolve, reject) => {
-        orderStatus.find((useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+
+        orderStatus.aggregate([
+            {
+                $match: { _id: ObjectId(orderStatusId) }
+            }
+        ]).exec(function (orderErr, orderStatus) {
+            if (orderErr) {
+                console.log('order error: ', orderErr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully got the complete list of products', data: userres });
+                console.log("orderStatus", orderStatus);
+                resolve({ status: 200, message: 'Successfully got the complete list of products', data: orderStatus });
             }
-        });
+        })
+
     })
 }
 

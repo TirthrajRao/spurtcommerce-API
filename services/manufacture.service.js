@@ -11,17 +11,88 @@ const ObjectId = require('mongodb').ObjectId;
 
 // Services
 
-module.exports.manufactureList = ()=> {
+module.exports.manufactureList = (brandData) => {
     return new Promise((resolve, reject) => {
-        manufacture.find((useerr, userres) => {
+        if (brandData.count == 'true' || brandData.count == 1) {
+            manufacture.count((useerr, userres) => {
+                if (useerr) {
+                    console.log('usererror: ', useerr);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: userres });
+                }
+            });
+
+        }
+        else {
+            manufacture.aggregate([
+                {
+                    $limit:50
+                },
+                {
+                    $project: {
+                        manufacturerId: '$_id',
+                        isActive: '$is_active',
+                        image: '$image',
+                        imagePath: '$image_path',
+                        name: '$name'
+                    }
+                }
+            ]).exec(function (Error, Response) {
+                if (Error) {
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                }
+            })
+
+
+        }
+
+    })
+}
+
+module.exports.updateManufacturer = (brandData) => {
+    console.log("banner Data in service=====>", brandData);
+    return new Promise((resolve, reject) => {
+        manufacture.findByIdAndUpdate({ _id: brandData.manufacturer_id }, brandData, { upsert: true }, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully get manufacturer list', data: userres });
+                resolve({ status: 200, message: 'Successfully updated Manufacturer.', data: userres });
             }
         });
     })
 }
+
+module.exports.addManufacturer = (brandData) => {
+    console.log("banner Data in service=====>", brandData);
+    return new Promise((resolve, reject) => {
+        manufacture.create(brandData,(useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully created new Manufacturer.', data: userres });
+            }
+        });
+    })
+}
+
+module.exports.deleteManufacturer = (manufacturerId) => {
+
+    return new Promise((resolve, reject) => {
+        manufacture.findOneAndRemove({_id:manufacturerId},(useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully deleted Manufacturer.', data: userres });
+            }
+        });
+    })
+}
+
 
 

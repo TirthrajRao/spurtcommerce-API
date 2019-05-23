@@ -6,10 +6,12 @@ var order_product = new Schema({
 		type:String,
 	},
 	product_id:{
-		type:String,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'product'
 	},
 	order_id:{
-		type:String
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'order'
 	},
 	name:{
 		type:String

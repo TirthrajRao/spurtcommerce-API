@@ -13,23 +13,202 @@ const ObjectId = require('mongodb').ObjectId;
 
 // Services
 
-module.exports.categoryList = ()=> {
+module.exports.categoryList = (categoryData) => {
     return new Promise((resolve, reject) => {
-        category.find((useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
-                reject({ status: 500, message: 'Internal Server Error' });
-            } else {
-                resolve({ status: 200, message: 'Successfully got the complete list of categorys', data: userres });
-            }
-        });
+        if (categoryData.count == 'true' || categoryData.count == 1) {
+
+            category.count((useerr, userres) => {
+                if (useerr) {
+                    console.log('usererror: ', useerr);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully got the complete list of categorys', data: userres });
+                }
+            });
+        }
+        else {
+            category.aggregate([
+                {
+                    $match: { parent_int: "0" }
+                },
+                {
+                    $project: {
+                        categoryId: '$_id',
+                        name: '$name',
+                        image: '$image',
+                        imagePath: '$image_path',
+                        parentInt: '$parent_int',
+                        sortOrder: '$sort_order',
+                        metaTagTitle: '$meta_tag_title',
+                        metaTagDescription: '$meta_tag_description',
+                        metaTagKeyword: '$meta_tag_keyword',
+                        children: '$children'
+                    }
+
+                },
+                {
+                    $lookup: {
+                        from: 'category',
+                        localField: 'children',
+                        foreignField: '_id',
+                        as: 'children'
+                    }
+                },
+                // {    
+                //     $unwind: '$children' 
+                // },
+                // {
+                //     $project: {
+                //         children: {
+                //             categoryId: '$children._id',
+                //             name: '$children.name',
+                //             image: '$children.image',
+                //             imagePath: '$children.image_path',
+                //             parentInt: '$children.parent_int',
+                //             sortOrder: '$children.sort_order',
+                //             metaTagTitle: '$children.meta_tag_title',
+                //             metaTagDescription: '$children.meta_tag_description',
+                //             metaTagKeyword: '$children.meta_tag_keyword',
+                //             children: '$children',
+                //         },
+                //         categoryId: 1,
+                //         name: 1,
+                //         image: 1,
+                //         imagePath: 1,
+                //         parentInt: 1,
+                //         sortOrder: 1,
+                //         metaTagTitle: 1,
+                //         metaTagDescription: 1,
+                //         metaTagKeyword: 1,
+                //         children:1,
+                //     }
+                // },
+                // {
+                //     $group: {
+                //         _id: '$_id',
+                //         categoryId: {
+                //             $first: '$categoryId',
+                //         },
+                //         name: {
+                //             $first: '$name',
+                //         },
+                //         image: {
+                //             $first: '$image',
+                //         },
+                //         imagePath: {
+                //             $first: '$imagePath',
+                //         },
+                //         parentInt: {
+                //             $first: '$parentInt',
+                //         },
+                //         sortOrder: {
+                //             $first: '$sortOrder'
+                //         },
+                //         metaTagTitle: {
+                //             $first: '$metaTagTitle',
+                //         },
+                //         metaTagDescription: {
+                //             $first: '$metaTagDescription',
+                //         },
+                //         metaTagKeyword: {
+                //             $first: '$metaTagKeyword',
+                //         },
+                //         children: {
+                //             $push: '$children',
+                //         },
+
+                //     }
+                // },
+                // {
+                //     $lookup: {
+                //         from: 'category',
+                //         localField: 'children.children',
+                //         foreignField: '_id',
+                //         as: 'children'
+                //     }
+                // },
+                // {
+                //     $unwind: '$children'
+                // },
+                // {
+                //     $project: {
+                //         children: {
+                //             categoryId: '$children._id',
+                //             name: '$children.name',
+                //             image: '$children.image',
+                //             imagePath: '$children.image_path',
+                //             parentInt: '$children.parent_int',
+                //             sortOrder: '$children.sort_order',
+                //             metaTagTitle: '$children.meta_tag_title',
+                //             metaTagDescription: '$children.meta_tag_description',
+                //             metaTagKeyword: '$children.meta_tag_keyword',
+                //             children:'$children.children',
+
+                //         },
+                //         categoryId:1,
+                //         name:1,
+                //         image:1,
+                //         imagePath:1,
+                //         parentInt:1,
+                //         sortOrder:1,
+                //         metaTagTitle:1,
+                //         metaTagDescription:1,
+                //         metaTagKeyword:1,
+                //     }
+                // },
+                // {
+                //     $group: {
+                //         _id: '$_id',
+                //         categoryId: {
+                //             $first: '$categoryId',
+                //         },
+                //         name:{
+                //             $first:'$name',
+                //         },
+                //         image:{
+                //             $first:'$image',
+                //         },
+                //         imagePath:{
+                //             $first:'$imagePath',
+                //         },
+                //         parentInt:{
+                //             $first:'$parentInt',
+                //         },
+                //         sortOrder:{
+                //             $first:'$sortOrder'
+                //         },
+                //         metaTagTitle: {
+                //             $first:'$metaTagTitle',
+                //         },
+                //         metaTagDescription: {
+                //             $first:'$metaTagDescription',
+                //         },
+                //         metaTagKeyword:{
+                //             $first:'$metaTagKeyword',
+                //         },
+                //         children: {
+                //             $push: '$children',
+                //         },
+
+                //     }
+                // },
+
+            ]).exec(function (Error, Response) {
+                if (Error) {
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                }
+            })
+
+        }
     })
 }
 
-module.exports.deleteCategory = (categoryId)=> {
-    console.log("body in country===>",categoryId);
+module.exports.deleteCategory = (categoryId) => {
+    console.log("body in country===>", categoryId);
     return new Promise((resolve, reject) => {
-        category.findoneAndRemove({_id:categoryId},(useerr, userres) => {
+        category.findByIdAndRemove({ _id: categoryId }, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -40,8 +219,8 @@ module.exports.deleteCategory = (categoryId)=> {
     })
 }
 
-module.exports.addCategory = (categoryData)=> {
-    console.log("categoryData in country===>",categoryData);
+module.exports.addCategory = (categoryData) => {
+    console.log("categoryData in country===>", categoryData);
     return new Promise((resolve, reject) => {
         category.create(categoryData, (useerr, userres) => {
             if (useerr) {
@@ -54,11 +233,11 @@ module.exports.addCategory = (categoryData)=> {
     })
 }
 
-module.exports.updateCategory = (categoryId,categoryData)=> {
-    console.log("categoryData in service===>",categoryData);
-    console.log("categoryid in service====>",categoryId);
+module.exports.updateCategory = (categoryId, categoryData) => {
+    console.log("categoryData in service===>", categoryData);
+    console.log("categoryid in service====>", categoryId);
     return new Promise((resolve, reject) => {
-        category.findByIdAndUpdate({_id:categoryId},categoryData, (useerr, userres) => {
+        category.findByIdAndUpdate({ _id: categoryId }, categoryData, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -68,4 +247,24 @@ module.exports.updateCategory = (categoryId,categoryData)=> {
         });
     })
 }
+
+
+module.exports.updateChildren = (parent, childrenId) => {
+    console.log("parent in service===>", parent);
+    console.log("childrenId in service====>", childrenId);
+    return new Promise((resolve, reject) => {
+        category.findOne({ _id: parent }, (useerr, category) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                console.log("founded category=======>>",category);
+                category.children.push(childrenId);
+                category.save();
+                resolve({ status: 200, message: 'Successfully updated Category.', data: category });
+            }
+        });
+    })
+}
+
 

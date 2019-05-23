@@ -10,21 +10,59 @@ var zone = require('../models/zone.model');
 const ObjectId = require('mongodb').ObjectId;
 
 
-module.exports.zoneList = ()=> {
+module.exports.zoneList = () => {
     return new Promise((resolve, reject) => {
-        zone.find((zoneErr, zoneList) => {
-            if (zoneErr) {
-                console.log('zoneError: ', zoneErr);
-                reject({ status: 500, message: 'Internal Server Error' });
+        zone.aggregate([
+            {
+                $project: {
+                    zoneId: '$_id',
+                    code: '$code',
+                    isActive: 1,
+                    name: '$name',
+                    country: '$country_id',
+                }
+            },
+            //Lookup of Country
+            {
+                $lookup: {
+                    from: 'country',
+                    localField: 'country',
+                    foreignField: '_id',
+                    as: 'country'
+                }
+            },
+            {
+                $unwind: '$country'
+            },
+            {
+                $project: {
+                    country: {
+                        countryId: '$country._id',
+                        image: '$country.name',
+                        containerName: '$country.code',
+                    },
+                    zoneId: 1,
+                    code: 1,
+                    isActive: 1,
+                    name: 1,
+                    country: 1
+                }
+            },
+
+        ]).exec(function (error, languageList) {
+            if (error) {
+                return reject(error);
             } else {
-                resolve({ status: 200, message: 'Successfully get all zone List', data: zoneList });
+                return resolve({ status: 200, message: 'Successfully get settings', data: languageList });
             }
-        });
+        })
+
     })
 }
 
-module.exports.addZone = (zoneData)=> {
-  
+
+module.exports.addZone = (zoneData) => {
+
     return new Promise((resolve, reject) => {
         zone.create(zoneData, (zoneErr, zoneResponse) => {
             if (zoneErr) {
@@ -37,9 +75,9 @@ module.exports.addZone = (zoneData)=> {
     })
 }
 
-module.exports.deleteZone = (zoneId)=> {
+module.exports.deleteZone = (zoneId) => {
     return new Promise((resolve, reject) => {
-        zone.findOneAndRemove({_id:zoneId}, (zoneErr, deletedZone) => {
+        zone.findOneAndRemove({ _id: zoneId }, (zoneErr, deletedZone) => {
             if (zoneErr) {
                 console.log('zoneError: ', zoneErr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -50,10 +88,10 @@ module.exports.deleteZone = (zoneId)=> {
     })
 }
 
-module.exports.updateZone = (zoneId,zoneData)=> {
-        
+module.exports.updateZone = (zoneId, zoneData) => {
+
     return new Promise((resolve, reject) => {
-        zone.findOneAndUpdate({_id:zoneId},zoneData,{upsert:true},(zoneErr, updatedZone) => {
+        zone.findOneAndUpdate({ _id: zoneId }, zoneData, { upsert: true }, (zoneErr, updatedZone) => {
             if (zoneErr) {
                 console.log('zoneError: ', zoneErr);
                 reject({ status: 500, message: 'Internal Server Error' });

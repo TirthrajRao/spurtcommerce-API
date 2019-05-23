@@ -18,7 +18,8 @@ module.exports.orderStatusList = (req, res) => {
 
 module.exports.orderStatusById = (req, res) => {
 	const orderStatusId = req.params.id;
-	orderStatusService.orderStatusList().then((response) => {
+	
+	orderStatusService.orderStatusById(orderStatusId).then((response) => {
 		return res.status(200).json({status:1, message: response.message, data: response.data });
 	}).catch((error) => {
 		console.log('error: ', error);

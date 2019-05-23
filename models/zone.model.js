@@ -2,11 +2,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var zone = new Schema({
-	zone_id:{
-		type:String,
-	},
-	country_id:{
-		type:String,
+	country_id: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'country'
 	},
 	code:{
 		type:String,

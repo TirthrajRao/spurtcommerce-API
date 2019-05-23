@@ -224,7 +224,7 @@ export class ManufacturerController {
     public async updateManufacturer(@Body({validate: true}) manufacturerParam: UpdateManufacturer, @Res() response: any, @Req() request: any): Promise<any> {
 
         const manufacturer = await this.manufacturerService.findOne({
-            where: {
+            where: {    
                 manufacturerId: manufacturerParam.manufacturerId,
             },
         });

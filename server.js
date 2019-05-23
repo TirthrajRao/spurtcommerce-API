@@ -15,6 +15,10 @@ var settingController = require('./controller/settings.controller');
 var zoneController = require('./controller/zone.controller');
 var emailTempController = require('./controller/emailTemp.controller');
 var orderStatusController = require('./controller/orderStatus.controller');
+var orderController = require('./controller/order.controller');
+var authController = require('./controller/auth.controller');
+var storeController = require('./controller/store.controller');
+var languageController = require('./controller/language.controller');
 
 var cors = require('cors');
 
@@ -33,6 +37,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
+app.get('/api/list/productlist',storeController.getProductList);
+
 // //Routes for country Controller
 app.post('/api/country/add-country',countryController.addCountry);
 app.get('/api/country/countrylist',countryController.countryList);
@@ -43,9 +49,9 @@ app.delete('/api/country/delete-country/:id',countryController.deleteCountry);
 //Routes for Store API
 
 app.post('/api/customer/register',customerController.register);
-app.get('/api/manufacturers/manufacturerlist',manufactureController.getManufacture);
 app.get('/api/pages/pagelist',pageController.getPage);
 app.get('/api/list/productlist',productController.productList);
+
 
 //Routes for Banner API
 app.get('/api/list/banner-list',bannerController.bannerList);
@@ -76,25 +82,93 @@ app.put('/api/currency/update-currency/:id',currencyController.updateCurrency);
 
 app.get('/api/media/image-resize',mediaController.imageResize);
 app.get('/api/product-store/productdetail/:id',productController.productDetail);
+//app.post('/api/media/upload-file',mediaController.uploadFile);
 
 //Routes for Settings API
 
 app.get('/api/settings/get-settings',settingController.getSetting);
+//app.post('/api/settings/create-settings/',settingController.createSetting);
 
 
 //Routes for Zone API
 
-app.get('/api/list/zone-list',zoneController.zoneList);
 app.post('/api/zone/add-zone',zoneController.addZone);
 app.put('/api/zone/update-zone/:id',zoneController.updateZone);
 app.delete('/api/zone/delete-zone/:id',zoneController.deleteZone);
+app.get('/api/zone/zone-list',zoneController.zoneList);
+app.get('/api/list/zone-list',zoneController.zoneList);
 
 //Routes for EmailTemplate API
 
-
 app.get('/api/email-template/email-templatelist',emailTempController.emailTemplateList);
-
 app.get('/api/order/order-status',orderStatusController.orderStatusList);
+app.get('/api/order/order-status/:id',orderStatusController.orderStatusById);
+
+//Routes for Product API
+
+app.post('/api/product/add-product',productController.addProduct);
+app.get('/api/product/productlist',productController.productList);
+app.delete('/api/product/delete-product/:id',productController.deleteProduct);
+
+//Routes for Order API
+
+app.get('/api/order/orderlist',orderController.orderList);
+app.get('/api/order/order-detail',orderController.orderDetail);
+app.get('/api/order/total-order-amount',orderController.totalAmount);
+
+//Routes for AdminSide API
+app.post('/api/auth/login',authController.login);
+app.get('/api/categorylist',categoryController.categoryList);
+app.get('/api/manufacturer/manufacturerlist',manufactureController.getManufacture);
+app.get('/api/customer/customerlist',customerController.customerList);
+app.get('/api/product/product-detail/:id',productController.productDetail);
+app.get('/api/order-status/order-status-list',orderStatusController.orderStatusList);
+app.get('/api/product/top-selling-productlist',productController.topSellingProduct);
+app.get('/api/customer/get-profile',customerController.getProfile);
+app.post('/api/orders/customer-checkout',orderController.orderCheckout);
+app.get('/api/orders/order-list',orderController.myOrderList);
+app.get('/api/orders/order-detail',orderController.orderDetail);
+app.post('/api/product/update-product/:id',productController.updateProduct);
+
+//Routes for Manufacturer API
+app.get('/api/manufacturers/manufacturerlist',manufactureController.getManufacture);
+app.put('/api/manufacturer/update-manufacturer/:id',manufactureController.updateManufacturer);
+app.post('/api/manufacturer/create-manufacturer',manufactureController.addManufacturer);
+app.delete('/api/manufacturer/delete-manufacturer/:id',manufactureController.deleteManufacturer);
+app.get('/api/media/bucket-object-list',mediaController.getBucketList);
+app.put('/api/CustomerAddress/update-address/:id',customerController.updateAddress);
+app.put('/api/customer/update-customer/:id',customerController.updateCustomer);	
+app.put('/api/product-store/update-featureproduct/:id',productController.updateFeatureProduct);
+
+
+//Routes for Customer API
+
+app.delete('/api/customer/delete-customer/:id',customerController.deleteCustomer);
+
+app.post('/api/customer/add-customer',customerController.addCustomer);
+
+app.get('/api/auth/userlist',authController.userList);
+app.get('/api/role/rolelist',authController.roleList);
+app.get('/api/language/languagelist',languageController.languageList);
+app.get('/api/customer/customer-details/:id',customerController.customerDetails);
+//app.get('/api/customer/login-log-list',currencyController.loginLogList);
+app.post('/api/address/add-address',customerController.addAddress);
+app.get('/api/address/get-address-list/:id',customerController.addressList);
+app.put('/api/address/update-address/:id',customerController.updateAddressById);
+app.delete('/api/address/delete-address/:id',customerController.deleteAddress);
+app.post('/api/customer/edit-profile',customerController.editProfile);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
