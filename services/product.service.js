@@ -670,114 +670,33 @@ module.exports.topSellingProduct = (productData) => {
             },
             {
                 $project: {
-                    prodcutId: '$_id',
-                    Images: '$Images',
-
+                    'product._id': '$product_id' ,
+                    'product.name':'$name',
+                    'product.description':'$description',
+                    'product.price':'$price',
+                    'product.Images':'$Images',
                 }
-
-            },
-            {
-                $unwind: '$Images',
             },
             {
                 $lookup: {
                     from: 'product_image',
-                    localField: 'Images',
+                    localField: 'product.Images',
                     foreignField: '_id',
                     as: 'productImage'
                 }
             },
-            //Lookup of Product Image
-            {
-                $unwind: '$productImage'
-            },
             {
                 $project: {
-                    product_image: {
-                        productImageId: '$productImage._id',
+                    productImage: {
+                        _id: '$productImage._id',
                         image: '$productImage.image',
                         containerName: '$productImage.container_name',
                         defaultImage: '$productImage.default_image',
                     },
-                    sku: 1,
-                    quantity: 1,
-                    description: 1,
-                    minimumQuantity: 1,
-                    subtractStock: 1,
-                    stockStatusId: 1,
-                    manufacturerId: 1,
-                    shipping: 1,
-                    price: 1,
-                    dateAvailable: 1,
-                    sortOrder: 1,
-                    name: 1,
-                    metaTagTitle: 1,
-                    condition: 1,
-                    isActive: 1,
-                    location: 1
+                    product: 1,
                 }
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    product_id: {
-                        $first: '$product_id',
-                    },
-                    sku: {
-                        $first: '$sku',
-                    },
-                    productImage: {
-                        $push: '$product_image',
-                    },
-                    location: {
-                        $first: '$location'
-                    },
-                    quantity: {
-                        $first: '$quantity'
-                    },
-                    description: {
-                        $first: '$description'
-                    },
-                    minimumQuantity: {
-                        $first: '$minimumQuantity'
-                    },
-                    subtractStock: {
-                        $first: '$subtractStock'
-                    },
-                    stockStatusId: {
-                        $first: '$stockStatusId'
-                    },
-                    manufacturerId: {
-                        $first: '$manufacturerId'
-                    },
-                    shipping: {
-                        $first: '$shipping'
-                    },
-                    price: {
-                        $first: '$price'
-                    },
-                    dateAvailable: {
-                        $first: '$dateAvailable'
-                    },
-                    sortOrder: {
-                        $first: '$sortOrder'
-                    },
-                    name: {
-                        $first: '$name'
-                    },
-                    metaTagTitle: {
-                        $first: '$metaTagTitle'
-                    },
-                    condition: {
-                        $first: '$condition'
-                    },
-                    isActive: {
-                        $first: '$isActive'
-                    }
-                }
-            },
-            //Group To Generate Single Document Form Multiple Output Document
 
+            },
         ]).exec(function (error, topSelling) {
             if (error) {
                 return reject(error);
@@ -808,7 +727,7 @@ module.exports.updateProduct = (productId, productData) => {
 module.exports.deleteProduct = (productId) => {
     console.log("Product Data in service------->", productId);
     return new Promise((resolve, reject) => {
-        product.findByIdAndRemove({_id:productId}, (productError, deleteProduct) => {
+        product.findByIdAndRemove({ _id: productId }, (productError, deleteProduct) => {
             if (productError) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -820,7 +739,7 @@ module.exports.deleteProduct = (productId) => {
 }
 
 
-module.exports.updateFeatureProduct = (productId,productData) => {
+module.exports.updateFeatureProduct = (productId, productData) => {
     console.log("Product Data in service------->", productId);
     return new Promise((resolve, reject) => {
         product.findByIdAndUpdate({ _id: productId }, productData, { upsert: true }, (productError, updateProduct) => {

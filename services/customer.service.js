@@ -4,11 +4,13 @@ const path = require('path');
 const Url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+var _ = require('lodash');
 
 
 // Database models
 var customer = require('../models/customer.model');
 var address = require('../models/address.model');
+var loginLog = require('../models/loginlog.model');
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -160,8 +162,8 @@ module.exports.getProfile = (authorization) => {
                         zoneId: '$zone_id',
                         address: '$address',
                         countryId: '$country_id',
-                        avatar:'$avatar',
-                        avatarPath:'$avatar_path',
+                        avatar: '$avatar',
+                        avatarPath: '$avatar_path',
                     }
                 }
             ]).exec(function (error, productDetail) {
@@ -212,7 +214,7 @@ module.exports.customerDetails = (customerId) => {
             },
             {
                 $project: {
-                    id: '$_id',
+                    customerId: '$_id',
                     firstName: '$first_name',
                     password: '$code',
                     pincode: 1,
@@ -222,7 +224,8 @@ module.exports.customerDetails = (customerId) => {
                     ip: '$ip',
                     isActive: 1,
                     avatar: '$avatar',
-                    mobileNumber: '$mobile'
+                    mobileNumber: '$mobile',
+                    productList: []
                 }
             },
         ]).exec(function (error, customerList) {
@@ -312,8 +315,6 @@ module.exports.deleteAddress = (addressId) => {
 
 module.exports.editProfile = (userData) => {
 
-    console.log("userData===========>>>>>>", userData);
-
     return new Promise((resolve, reject) => {
         customer.findOneAndUpdate({ email: userData.email }, userData, { upsert: true }, (error, updatedCustomer) => {
             if (error) {
@@ -325,6 +326,44 @@ module.exports.editProfile = (userData) => {
         });
     })
 }
+
+
+module.exports.loginLogList = () => {
+    let arr = [];
+    return new Promise((resolve, reject) => {
+        loginLog.find((error, loginLogList) => {
+            if (error) {
+                console.log('error: ', error);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                console.log("Login log List", loginLogList);
+                _.forEach(loginLogList, (loginLog) => {
+                    console.log("login log", loginLog.created_date);
+                    arr.push(loginLog.created_date);
+                })
+                
+                // fill it with array with your data
+                  var  results = {}, rarr = [], i, date;
+
+                for (i = 0; i < arr.length; i++) {
+                    // get the date
+                    date = [arr[i].getFullYear(), arr[i].getMonth(), arr[i].getDate()].join("-");
+                    results[date] = results[date] || 0;
+                    results[date]++;
+                }
+                // you can always convert it into an array of objects, if you must
+                for (i in results) {
+                    if (results.hasOwnProperty(i)) {
+                        rarr.push({ createdDate: i, logcount: results[i] });
+                    }
+                }
+                resolve({ status: 200, message: 'Successfully get login Log list', data: rarr });
+            }
+        });
+    })
+}
+
+
 
 
 

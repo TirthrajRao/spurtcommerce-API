@@ -54,9 +54,126 @@ module.exports.categoryList = (categoryData) => {
                         as: 'children'
                     }
                 },
-                // {    
-                //     $unwind: '$children' 
+                {
+                    $unwind: {
+                        path: '$children',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        children: {
+                            categoryId: '$children._id',
+                            name: '$children.name',
+                            image: '$children.image',
+                            imagePath: '$children.image_path',
+                            parentInt: '$children.parent_int',
+                            sortOrder: '$children.sort_order',
+                            metaTagTitle: '$children.meta_tag_title',
+                            metaTagDescription: '$children.meta_tag_description',
+                            metaTagKeyword: '$children.meta_tag_keyword',
+                            children: '$children.children',
+                        },
+                        categoryId: 1,
+                        name: 1,
+                        image: 1,
+                        imagePath: 1,
+                        parentInt: 1,
+                        sortOrder: 1,
+                        metaTagTitle: 1,
+                        metaTagDescription: 1,
+                        metaTagKeyword: 1,
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$children.children',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'category',
+                        localField: 'children.children',
+                        foreignField: '_id',
+                        as: 'children.children'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$children.children',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        children: {
+                            categoryId: '$children._id',
+                            name: '$children.name',
+                            image: '$children.image',
+                            imagePath: '$children.image_path',
+                            parentInt: '$children.parent_int',
+                            sortOrder: '$children.sort_order',
+                            metaTagTitle: '$children.meta_tag_title',
+                            metaTagDescription: '$children.meta_tag_description',
+                            metaTagKeyword: '$children.meta_tag_keyword',
+                            children: {
+                                categoryId: '$children.children._id',
+                                name: '$children.children.name',
+                                image: '$children.children.image',
+                                imagePath: '$children.children.image_path',
+                                parentInt: '$children.children.parent_int',
+                                sortOrder: '$children.children.sort_order',
+                                metaTagTitle: '$children.children.meta_tag_title',
+                                metaTagDescription: '$children.children.meta_tag_description',
+                                metaTagKeyword: '$children.children.meta_tag_keyword',
+                            }
+                        },
+                        categoryId: 1,
+                        name: 1,
+                        image: 1,
+                        imagePath: 1,
+                        parentInt: 1,
+                        sortOrder: 1,
+                        metaTagTitle: 1,
+                        metaTagDescription: 1,
+                        metaTagKeyword: 1,
+                    }
+                },
+                // {
+                //     $project: {
+                //         children: {
+                //             categoryId: '$children.children._id',
+                //             name: '$children.children.name',
+                //             image: '$children.children.image',
+                //             imagePath: '$children.children.image_path',
+                //             parentInt: '$children.children.parent_int',
+                //             sortOrder: '$children.children.sort_order',
+                //             metaTagTitle: '$children.children.meta_tag_title',
+                //             metaTagDescription: '$children.children.meta_tag_description',
+                //             metaTagKeyword: '$children.children.meta_tag_keyword',
+                //             children:'$chidren.children.children'
+                //         },
+                //         categoryId: 1,
+                //         name: 1,
+                //         image: 1,
+                //         imagePath: 1,
+                //         parentInt: 1,
+                //         sortOrder: 1,
+                //         metaTagTitle: 1,
+                //         metaTagDescription: 1,
+                //         metaTagKeyword: 1,
+                //         //children:1,
+                //     }
                 // },
+                // {
+                //     $group: {
+                //         _id: '$children',
+                //         children: {
+                //             $push: '$children.children'
+                //         }
+                //     }
+                // }
                 // {
                 //     $project: {
                 //         children: {
@@ -258,7 +375,7 @@ module.exports.updateChildren = (parent, childrenId) => {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                console.log("founded category=======>>",category);
+                console.log("founded category=======>>", category);
                 category.children.push(childrenId);
                 category.save();
                 resolve({ status: 200, message: 'Successfully updated Category.', data: category });

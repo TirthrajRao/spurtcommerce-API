@@ -19,6 +19,7 @@ var orderController = require('./controller/order.controller');
 var authController = require('./controller/auth.controller');
 var storeController = require('./controller/store.controller');
 var languageController = require('./controller/language.controller');
+var wishListController = require('./controller/customerwishlist.controller');
 
 var cors = require('cors');
 
@@ -151,12 +152,21 @@ app.get('/api/auth/userlist',authController.userList);
 app.get('/api/role/rolelist',authController.roleList);
 app.get('/api/language/languagelist',languageController.languageList);
 app.get('/api/customer/customer-details/:id',customerController.customerDetails);
-//app.get('/api/customer/login-log-list',currencyController.loginLogList);
+app.get('/api/customer/login-log-list',customerController.loginLogList);
 app.post('/api/address/add-address',customerController.addAddress);
 app.get('/api/address/get-address-list/:id',customerController.addressList);
 app.put('/api/address/update-address/:id',customerController.updateAddressById);
 app.delete('/api/address/delete-address/:id',customerController.deleteAddress);
 app.post('/api/customer/edit-profile',customerController.editProfile);
+
+
+//Routes for WishList API
+
+app.post('/api/customer/add-product-to-wishlist',wishListController.addProductToWishList);
+app.get('/api/customer/wishlist-product-list',wishListController.getWishList);
+app.delete('/api/customer/wishlist-product-delete/:id',wishListController.removeProductFromWishList);   
+
+app.get('/api/customer/recent-customerlist',customerController.customerList);
 
 
 

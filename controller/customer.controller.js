@@ -1,4 +1,5 @@
 var customer = require('../models/customer.model');
+var login = require('../models/loginlog.model');
 var customerService = require('../services/customer.service');
 // npm import
 const path = require('path');
@@ -160,13 +161,13 @@ module.exports.customerDetails = (req, res) => {
 module.exports.addAddress = (req, res) => {
 
 	const addressData = {
-		address_1:req.body.address1,
-		address_2:req.body.address2,
-		address_type:req.body.addressType,
-		city:req.body.city,
-		customer_id:req.body.customerId,
-		postcode:req.body.postcode,
-		state:req.body.state
+		address_1: req.body.address1,
+		address_2: req.body.address2,
+		address_type: req.body.addressType,
+		city: req.body.city,
+		customer_id: req.body.customerId,
+		postcode: req.body.postcode,
+		state: req.body.state
 	}
 
 	console.log("customer Data", addressData);
@@ -183,7 +184,7 @@ module.exports.addressList = (req, res) => {
 	const customerId = req.params.id;
 
 	customerService.addressList(customerId).then((response) => {
-		return res.status(200).json({ message: response.message, data:response.data , status: 1 });
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -193,19 +194,19 @@ module.exports.addressList = (req, res) => {
 module.exports.updateAddressById = (req, res) => {
 
 	const addressData = {
-		address_1:req.body.address1,
-		address_2:req.body.address2,
-		address_type:req.body.addressType,
-		city:req.body.city,
-		customer_id:req.body.customerId,
-		postcode:req.body.postcode,
-		state:req.body.state
+		address_1: req.body.address1,
+		address_2: req.body.address2,
+		address_type: req.body.addressType,
+		city: req.body.city,
+		customer_id: req.body.customerId,
+		postcode: req.body.postcode,
+		state: req.body.state
 	}
 
 	const addressId = req.body.addressId;
 
 	console.log("customer Data", addressData);
-	customerService.updateAddressById(addressId,addressData).then((response) => {
+	customerService.updateAddressById(addressId, addressData).then((response) => {
 		return res.status(200).json({ message: response.message, status: "1" });
 	}).catch((error) => {
 		console.log('error: ', error);
@@ -218,7 +219,7 @@ module.exports.deleteAddress = (req, res) => {
 	const addressId = req.params.id;
 
 	customerService.deleteAddress(addressId).then((response) => {
-		return res.status(200).json({ message: response.message, data:response.data , status: 1 });
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -244,6 +245,19 @@ module.exports.editProfile = (req, res) => {
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
 }
+
+
+module.exports.loginLogList = (req, res) => {
+	customerService.loginLogList().then((response) => {
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
+
 
 
 
