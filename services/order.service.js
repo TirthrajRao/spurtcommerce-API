@@ -5,6 +5,7 @@ const Url = require('url');
 
 // Database models
 var order = require('../models/order.model');
+var order_product = require('../models/order_product.model');
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -43,7 +44,7 @@ module.exports.orderList = (orderData) => {
                         shippingFirstname: '$shipping_firstname',
                         shippingLastname: '$shipping_lastname',
                         paymentFirstname: '$payment_firstname',
-                        orderPrefixId:'$orderPrefixId',
+                        orderPrefixId: '$orderPrefixId',
 
                     }
 
@@ -84,7 +85,7 @@ module.exports.orderList = (orderData) => {
                         shippingFirstname: 1,
                         shippingLastname: 1,
                         paymentFirstname: 1,
-                        orderPrefixId:1,
+                        orderPrefixId: 1,
                     }
                 },
             ]).exec(function (error, productDetail) {
@@ -130,7 +131,7 @@ module.exports.orderListById = (orderId) => {
                     paymentFirstname: '$payment_firstname',
                     shippingAddress1: '$shipping_address_1',
                     shippingAddress2: '$shipping_address_2',
-                    orderPrefixId:'$orderPrefixId',
+                    orderPrefixId: '$orderPrefixId',
                 }
             },
             {
@@ -256,8 +257,8 @@ module.exports.orderListById = (orderId) => {
                     productList: {
                         $push: '$productList',
                     },
-                    orderPrefixId:{
-                        $first:'$orderPrefixId',
+                    orderPrefixId: {
+                        $first: '$orderPrefixId',
                     }
                 }
             }
@@ -355,12 +356,160 @@ module.exports.myOrderList = (orderData) => {
     })
 }
 
+module.exports.recentSellingProduct = () => {
+    return new Promise((resolve, reject) => {
+
+        order_product.aggregate([
+            {
+                $project: {
+                    orderId: '$order_id',
+                    Total: '$total',
+                    product_id: '$product_id',
+                }
+            },
+            {
+                $lookup: {
+                    from: 'product',
+                    localField: 'product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind: '$product'
+            },
+            {
+                $project: {
+                    orderId: 1,
+                    Total: 1,
+                    productId: '$product._id',
+                    Images: '$product.Images',
+                    ProductName: '$product.name',
+                }
+
+            },
+            {
+                $lookup: {
+                    from: 'product_image',
+                    localField: 'Images',
+                    foreignField: '_id',
+                    as: 'productImage'
+                }
+            },
+            {
+                $unwind: '$productImage'
+            },
+            {
+                $project: {
+                    orderId: 1,
+                    Total: 1,
+                    productId: 1,
+                    ProductName: 1,
+                    productImage: {
+                        _id: '$productImage._id',
+                        image: '$productImage.image',
+                        containerName: '$productImage.container_name',
+                        defaultImage: '$productImage.default_image',
+                    },
+                }
+            },
+            {
+                $group: {
+                    _id: '$productId',
+                    productImage: { $push: '$productImage' },
+                    Total: { $first: '$Total' },
+                    productId: { $first: '$product_id' },
+                    orderId: { $first: '$orderId' },
+                    ProductName: { $first: '$ProductName' },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'order',
+                    localField: 'orderId',
+                    foreignField: '_id',
+                    as: 'order'
+                }
+            },
+            {
+                $unwind: '$order'
+            },
+            {
+                $project: {
+                    orderId: 1,
+                    Total: 1,
+                    productId: 1,
+                    ProductName: 1,
+                    productImage: 1,
+                    order: {
+                        invoicePrefix: '$order.invoice_prefix',
+                        orderId: '$order._id',
+                        orderPrefixId: '$order.orderPrefixId'
+                    }
+                }
+            }
+        ]).exec(function (error, orderDetail) {
+            console.log('orderdetail', orderDetail);
+            if (error) {
+                return reject(error);
+            } else {
+                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
+            }
+        })
+    })
+}
 
 
+module.exports.todayOrderCount = () => {
+
+    return new Promise((resolve, reject) => {
+
+        var datetime = new Date();
+        const todayDate = datetime.toISOString().slice(0, 10);
+        console.log(datetime.toISOString().slice(0, 10));
+        order.find({ created_date: todayDate }).count().exec((error, response) => {
+            if (error) {
+                return reject(error);
+            } else {
+                console.log("order count object", response);
+                const order = {
+                    orderCount: response,
+                }
+
+                return resolve({ status: 200, message: 'Successfully get Today order count', data: order });
+            }
+        });
+    })
+}
 
 
+module.exports.todayOrderAmount = () => {
 
+    return new Promise((resolve, reject) => {
 
+        var datetime = new Date();
+        const todayDate = datetime.toISOString().slice(0, 10);
+        console.log(datetime.toISOString().slice(0, 10));
+        order.aggregate([
+            {
+                $match: { 'created_date': todayDate }
 
+            },
+            {
+                $group: {
+                    _id: null,
+                    count: { $sum: 1 }
+                }
+            }
 
-
+        ]).exec(function (error, orderDetail) {
+            console.log('orderdetail', orderDetail);
+            if (error) {
+                return reject(error);
+            } else {
+                console.log("order count object", orderDetail);
+                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
+            }
+        })
+    })
+}

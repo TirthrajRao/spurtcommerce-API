@@ -62,6 +62,15 @@ module.exports.categoryList = (categoryData) => {
                 },
                 {
                     $project: {
+                        categoryId: 1,
+                        name: 1,
+                        image: 1,
+                        imagePath: 1,
+                        parentInt: 1,
+                        sortOrder: 1,
+                        metaTagTitle: 1,
+                        metaTagDescription: 1,
+                        metaTagKeyword: 1,
                         children: {
                             categoryId: '$children._id',
                             name: '$children.name',
@@ -74,15 +83,6 @@ module.exports.categoryList = (categoryData) => {
                             metaTagKeyword: '$children.meta_tag_keyword',
                             children: '$children.children',
                         },
-                        categoryId: 1,
-                        name: 1,
-                        image: 1,
-                        imagePath: 1,
-                        parentInt: 1,
-                        sortOrder: 1,
-                        metaTagTitle: 1,
-                        metaTagDescription: 1,
-                        metaTagKeyword: 1,
                     }
                 },
                 {
@@ -107,16 +107,25 @@ module.exports.categoryList = (categoryData) => {
                 },
                 {
                     $project: {
+                        categoryId: 1,
+                        name: 1,
+                        image: 1,
+                        imagePath: 1,
+                        parentInt: 1,
+                        sortOrder: 1,
+                        metaTagTitle: 1,
+                        metaTagDescription: 1,
+                        metaTagKeyword: 1,
                         children: {
-                            categoryId: '$children._id',
+                            categoryId: '$children.categoryId',
                             name: '$children.name',
                             image: '$children.image',
-                            imagePath: '$children.image_path',
-                            parentInt: '$children.parent_int',
-                            sortOrder: '$children.sort_order',
-                            metaTagTitle: '$children.meta_tag_title',
-                            metaTagDescription: '$children.meta_tag_description',
-                            metaTagKeyword: '$children.meta_tag_keyword',
+                            imagePath: '$children.imagePath',
+                            parentInt: '$children.parentInt',
+                            sortOrder: '$children.sortOrder',
+                            metaTagTitle: '$children.metaTagTitle',
+                            metaTagDescription: '$children.metaTagDescription',
+                            metaTagKeyword: '$children.metaTagKeyword',
                             children: {
                                 categoryId: '$children.children._id',
                                 name: '$children.children.name',
@@ -129,6 +138,40 @@ module.exports.categoryList = (categoryData) => {
                                 metaTagKeyword: '$children.children.meta_tag_keyword',
                             }
                         },
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$children.categoryId',
+                        categoryId: { $first: '$categoryId' },
+                        name: { $first: '$name' },
+                        image: { $first: '$image', },
+                        imagePath: { $first: '$imagePath', },
+                        parentInt: { $first: '$parentInt' },
+                        sortOrder: { $first: '$sortOrder', },
+                        metaTagTitle: { $first: '$metaTagTitle', },
+                        metaTagDescription: { $first: '$metaTagDescription' },
+                        metaTagKeyword: { $first: '$metaTagKeyword', },
+                        grandchilds: { $push: '$children.children' },
+                        children: {
+                            $first: {
+                                categoryId: '$children.categoryId',
+                                name: '$children.name',
+                                image: '$children.image',
+                                imagePath: '$children.imagePath',
+                                parentInt: '$children.parentInt',
+                                sortOrder: '$children.sortOrder',
+                                metaTagTitle: '$children.metaTagTitle',
+                                metaTagDescription: '$children.metaTagDescription',
+                                metaTagKeyword: '$children.metaTagKeyword',
+                            }
+
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
                         categoryId: 1,
                         name: 1,
                         image: 1,
@@ -138,180 +181,38 @@ module.exports.categoryList = (categoryData) => {
                         metaTagTitle: 1,
                         metaTagDescription: 1,
                         metaTagKeyword: 1,
+                        children: {
+                            categoryId: '$children.categoryId',
+                            name: '$children.name',
+                            image: '$children.image',
+                            imagePath: '$children.imagePath',
+                            parentInt: '$children.parentInt',
+                            sortOrder: '$children.sortOrder',
+                            metaTagTitle: '$children.metaTagTitle',
+                            metaTagDescription: '$children.metaTagDescription',
+                            metaTagKeyword: '$children.metaTagKeyword',
+                            children: '$grandchilds'
+                        }
                     }
                 },
-                // {
-                //     $project: {
-                //         children: {
-                //             categoryId: '$children.children._id',
-                //             name: '$children.children.name',
-                //             image: '$children.children.image',
-                //             imagePath: '$children.children.image_path',
-                //             parentInt: '$children.children.parent_int',
-                //             sortOrder: '$children.children.sort_order',
-                //             metaTagTitle: '$children.children.meta_tag_title',
-                //             metaTagDescription: '$children.children.meta_tag_description',
-                //             metaTagKeyword: '$children.children.meta_tag_keyword',
-                //             children:'$chidren.children.children'
-                //         },
-                //         categoryId: 1,
-                //         name: 1,
-                //         image: 1,
-                //         imagePath: 1,
-                //         parentInt: 1,
-                //         sortOrder: 1,
-                //         metaTagTitle: 1,
-                //         metaTagDescription: 1,
-                //         metaTagKeyword: 1,
-                //         //children:1,
-                //     }
-                // },
-                // {
-                //     $group: {
-                //         _id: '$children',
-                //         children: {
-                //             $push: '$children.children'
-                //         }
-                //     }
-                // }
-                // {
-                //     $project: {
-                //         children: {
-                //             categoryId: '$children._id',
-                //             name: '$children.name',
-                //             image: '$children.image',
-                //             imagePath: '$children.image_path',
-                //             parentInt: '$children.parent_int',
-                //             sortOrder: '$children.sort_order',
-                //             metaTagTitle: '$children.meta_tag_title',
-                //             metaTagDescription: '$children.meta_tag_description',
-                //             metaTagKeyword: '$children.meta_tag_keyword',
-                //             children: '$children',
-                //         },
-                //         categoryId: 1,
-                //         name: 1,
-                //         image: 1,
-                //         imagePath: 1,
-                //         parentInt: 1,
-                //         sortOrder: 1,
-                //         metaTagTitle: 1,
-                //         metaTagDescription: 1,
-                //         metaTagKeyword: 1,
-                //         children:1,
-                //     }
-                // },
-                // {
-                //     $group: {
-                //         _id: '$_id',
-                //         categoryId: {
-                //             $first: '$categoryId',
-                //         },
-                //         name: {
-                //             $first: '$name',
-                //         },
-                //         image: {
-                //             $first: '$image',
-                //         },
-                //         imagePath: {
-                //             $first: '$imagePath',
-                //         },
-                //         parentInt: {
-                //             $first: '$parentInt',
-                //         },
-                //         sortOrder: {
-                //             $first: '$sortOrder'
-                //         },
-                //         metaTagTitle: {
-                //             $first: '$metaTagTitle',
-                //         },
-                //         metaTagDescription: {
-                //             $first: '$metaTagDescription',
-                //         },
-                //         metaTagKeyword: {
-                //             $first: '$metaTagKeyword',
-                //         },
-                //         children: {
-                //             $push: '$children',
-                //         },
-
-                //     }
-                // },
-                // {
-                //     $lookup: {
-                //         from: 'category',
-                //         localField: 'children.children',
-                //         foreignField: '_id',
-                //         as: 'children'
-                //     }
-                // },
-                // {
-                //     $unwind: '$children'
-                // },
-                // {
-                //     $project: {
-                //         children: {
-                //             categoryId: '$children._id',
-                //             name: '$children.name',
-                //             image: '$children.image',
-                //             imagePath: '$children.image_path',
-                //             parentInt: '$children.parent_int',
-                //             sortOrder: '$children.sort_order',
-                //             metaTagTitle: '$children.meta_tag_title',
-                //             metaTagDescription: '$children.meta_tag_description',
-                //             metaTagKeyword: '$children.meta_tag_keyword',
-                //             children:'$children.children',
-
-                //         },
-                //         categoryId:1,
-                //         name:1,
-                //         image:1,
-                //         imagePath:1,
-                //         parentInt:1,
-                //         sortOrder:1,
-                //         metaTagTitle:1,
-                //         metaTagDescription:1,
-                //         metaTagKeyword:1,
-                //     }
-                // },
-                // {
-                //     $group: {
-                //         _id: '$_id',
-                //         categoryId: {
-                //             $first: '$categoryId',
-                //         },
-                //         name:{
-                //             $first:'$name',
-                //         },
-                //         image:{
-                //             $first:'$image',
-                //         },
-                //         imagePath:{
-                //             $first:'$imagePath',
-                //         },
-                //         parentInt:{
-                //             $first:'$parentInt',
-                //         },
-                //         sortOrder:{
-                //             $first:'$sortOrder'
-                //         },
-                //         metaTagTitle: {
-                //             $first:'$metaTagTitle',
-                //         },
-                //         metaTagDescription: {
-                //             $first:'$metaTagDescription',
-                //         },
-                //         metaTagKeyword:{
-                //             $first:'$metaTagKeyword',
-                //         },
-                //         children: {
-                //             $push: '$children',
-                //         },
-
-                //     }
-                // },
+                {
+                    $group: {
+                        _id: '$categoryId',
+                        children: { $push: '$children' },
+                        name: { $first: '$name' },
+                        image: { $first: '$image', },
+                        imagePath: { $first: '$imagePath', },
+                        parentInt: { $first: '$parentInt' },
+                        sortOrder: { $first: '$sortOrder', },
+                        metaTagTitle: { $first: '$metaTagTitle', },
+                        metaTagDescription: { $first: '$metaTagDescription' },
+                        metaTagKeyword: { $first: '$metaTagKeyword', },
+                    }
+                }
 
             ]).exec(function (Error, Response) {
                 if (Error) {
+                    console.log('error: ', Error);
                     reject({ status: 500, message: 'Internal Server Error' });
                 } else {
                     resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });

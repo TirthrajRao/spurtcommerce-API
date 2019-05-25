@@ -51,7 +51,6 @@
      // update product
      public update(id: any, product: Product): Promise<Product> {
          this.log.info('Update a product');
-         product.productId = id;
          return this.productRepository.save(product);
      }
 

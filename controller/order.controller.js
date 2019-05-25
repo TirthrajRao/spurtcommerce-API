@@ -126,4 +126,36 @@ module.exports.myOrderList = (req, res) => {
 }
 
 
+module.exports.recentSellingProduct = (req, res) => {
+	
+	orderService.recentSellingProduct().then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+module.exports.todayOrderCount = (req, res) => {
+	
+	orderService.todayOrderCount().then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+module.exports.todayOrderAmount = (req, res) => {
+	
+	orderService.todayOrderAmount().then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
+
 

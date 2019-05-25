@@ -63,7 +63,7 @@ app.get('/api/product-store/featureproduct-list',productController.getfeaturepro
 
 //Routes for Category API
 
-app.get('/api/list/category-list',categoryController.categoryList);
+
 app.delete('/api/delete-category/:id',categoryController.deleteCategory);
 app.post('/api/add-category',categoryController.addCategory);
 app.put('/api/update-category/:id',categoryController.updateCategory);
@@ -165,8 +165,16 @@ app.post('/api/customer/edit-profile',customerController.editProfile);
 app.post('/api/customer/add-product-to-wishlist',wishListController.addProductToWishList);
 app.get('/api/customer/wishlist-product-list',wishListController.getWishList);
 app.delete('/api/customer/wishlist-product-delete/:id',wishListController.removeProductFromWishList);   
-
 app.get('/api/customer/recent-customerlist',customerController.customerList);
+
+
+
+app.get('/api/list/category-list',categoryController.categoryList);
+
+
+app.get('/api/product/recent-selling-product',orderController.recentSellingProduct);
+app.get('/api/order/today-order-count',orderController.todayOrderCount);
+app.get('/api/order/today-order-amount',orderController.todayOrderAmount);
 
 
 

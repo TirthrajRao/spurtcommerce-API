@@ -50,6 +50,18 @@ module.exports.login = (body) => {
                             const tokendata = {
                                 token: token,
                             }
+                            const loginData={
+                                customer_id:customer._id,
+                                email_id:customer.email,
+                                first_name:customer.first_name,
+                            }
+                            loginLog.create(loginData, (useerr, userres) => {
+                                if (useerr) {
+                                    console.log('usererror: ', useerr);
+                                } else {
+                                 console.log("login log Created------->>>>..",userres);
+                                }
+                            });
                             resolve({ status: 200, message: 'Successfully login', data: tokendata })
                         } else {
                             reject({ status: 403, message: 'Incorrect Password' });
