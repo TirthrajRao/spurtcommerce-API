@@ -419,7 +419,27 @@ module.exports.productList = (productData) => {
         }
         else {
 
+            var searchText = productData.keyword;
+            var sku = productData.sku;
+
+            shopFilters = { $and: [] };
+
+
+            var query = {
+                $and: [
+                    { 'name': { $regex: new RegExp(searchText, 'i') }, },
+                ]
+            }
+
+            if(productData.sku){
+                query['$and'].push({'sku':{ $regex: new RegExp(sku, 'i') }});
+            }
+
+
             product.aggregate([
+                {
+                    $match: query
+                },
                 {
                     $unwind: '$Images',
                 },
@@ -545,10 +565,6 @@ module.exports.productList = (productData) => {
                 },
                 {
                     $project: {
-                        Category: {
-                            categoryId: '$Category._id',
-                            categoryName: '$Category.name',
-                        },
                         productImage: 1,
                         sku: 1,
                         quantity: 1,
@@ -566,6 +582,10 @@ module.exports.productList = (productData) => {
                         condition: 1,
                         isActive: 1,
                         location: 1,
+                        Category: {
+                            categoryId: '$Category._id',
+                            categoryName: '$Category.name',
+                        },
 
                     }
                 },
@@ -670,11 +690,11 @@ module.exports.topSellingProduct = (productData) => {
             },
             {
                 $project: {
-                    'product._id': '$product_id' ,
-                    'product.name':'$name',
-                    'product.description':'$description',
-                    'product.price':'$price',
-                    'product.Images':'$Images',
+                    'product._id': '$product_id',
+                    'product.name': '$name',
+                    'product.description': '$description',
+                    'product.price': '$price',
+                    'product.Images': '$Images',
                 }
             },
             {

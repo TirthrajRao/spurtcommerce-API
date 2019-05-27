@@ -27,79 +27,91 @@ module.exports.addProductToWishList = (productData) => {
 
 
 
-module.exports.getWishList = (customer_id) => {
+module.exports.getWishList = (wishList) => {
 
 
     return new Promise((resolve, reject) => {
-        console.log("Customer Id==========>>>>>>>", customer_id);
-        wishlist.aggregate([
-            {
-                $match: { 'customer_id': ObjectId(customer_id) }
 
-            },
-            {
-                $project: {
-                    wishlistProductId: '$_id',
-                    productId: '$product_id'
+        if (wishList.count == 'true' || wishList.count == 1) {
+            wishlist.count({ 'customer_id': wishList.customer_id }, (productError, newProduct) => {
+                if (productError) {
+                    console.log('usererror: ', productError);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully created new product.', data: newProduct });
                 }
-            },
-            {
-                $lookup: {
-                    from: 'product',
-                    localField: 'productId',
-                    foreignField: '_id',
-                    as: 'product'
-                }
-            },
-            {
-                $unwind: '$product'
-            },
-            {
-                $lookup: {
-                    from: 'product_image',
-                    localField: 'product.Images',
-                    foreignField: '_id',
-                    as: 'productImage'
-                }
-            },
-            {
-                $unwind: '$productImage'
+            });
 
-            },
-            {
-                $project: {
-                    productImage: {
-                        _id: '$productImage._id',
-                        image: '$productImage.image',
-                        containerName: '$productImage.container_name',
-                        defaultImage: '$productImage.default_image',
-                    },
-                    product: 1,
-                    wishlistProductId: 1
-                }
+        }
+        else {
 
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    product: {
-                        $first: '$product',
-                    },
-                    productId: {
-                        $first: '$productId',
-                    },
-                    productImage: {
-                        $first: '$productImage',
-                    },
-                    wishlistProductId: {
-                        $first: '$wishlistProductId',
+            wishlist.aggregate([
+                {
+                    $match: { 'customer_id': ObjectId(wishList.customer_id) }
+
+                },
+                {
+                    $project: {
+                        wishlistProductId: '$_id',
+                        productId: '$product_id'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'product',
+                        localField: 'productId',
+                        foreignField: '_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $unwind: '$product'
+                },
+                {
+                    $lookup: {
+                        from: 'product_image',
+                        localField: 'product.Images',
+                        foreignField: '_id',
+                        as: 'productImage'
+                    }
+                },
+                {
+                    $unwind: '$productImage'
+
+                },
+                {
+                    $project: {
+                        productImage: {
+                            _id: '$productImage._id',
+                            image: '$productImage.image',
+                            containerName: '$productImage.container_name',
+                            defaultImage: '$productImage.default_image',
+                        },
+                        product: 1,
+                        wishlistProductId: 1
+                    }
+
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        product: {
+                            $first: '$product',
+                        },
+                        productId: {
+                            $first: '$productId',
+                        },
+                        productImage: {
+                            $first: '$productImage',
+                        },
+                        wishlistProductId: {
+                            $first: '$wishlistProductId',
+                        }
                     }
                 }
-            }
 
 
-        ])
-            .exec(function (error, productDetail) {
+            ]).exec(function (error, productDetail) {
                 if (error) {
                     return reject(error);
                 } else {
@@ -107,9 +119,8 @@ module.exports.getWishList = (customer_id) => {
                     return resolve({ status: 200, message: 'Successfully get product list', data: productDetail });
                 }
             })
-
+        }
     })
-
 }
 
 module.exports.removeProductFromWishList = (wishListId) => {

@@ -50,16 +50,16 @@ module.exports.login = (body) => {
                             const tokendata = {
                                 token: token,
                             }
-                            const loginData={
-                                customer_id:customer._id,
-                                email_id:customer.email,
-                                first_name:customer.first_name,
+                            const loginData = {
+                                customer_id: customer._id,
+                                email_id: customer.email,
+                                first_name: customer.first_name,
                             }
                             loginLog.create(loginData, (useerr, userres) => {
                                 if (useerr) {
                                     console.log('usererror: ', useerr);
                                 } else {
-                                 console.log("login log Created------->>>>..",userres);
+                                    console.log("login log Created------->>>>..", userres);
                                 }
                             });
                             resolve({ status: 200, message: 'Successfully login', data: tokendata })
@@ -348,14 +348,13 @@ module.exports.loginLogList = () => {
                 console.log('error: ', error);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                console.log("Login log List", loginLogList);
                 _.forEach(loginLogList, (loginLog) => {
-                    console.log("login log", loginLog.created_date);
+
                     arr.push(loginLog.created_date);
                 })
-                
+
                 // fill it with array with your data
-                  var  results = {}, rarr = [], i, date;
+                var results = {}, rarr = [], i, date;
 
                 for (i = 0; i < arr.length; i++) {
                     // get the date

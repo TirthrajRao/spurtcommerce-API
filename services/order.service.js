@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const Url = require('url');
+const moment = require('moment');
 
 // Database models
 var order = require('../models/order.model');
@@ -511,5 +512,26 @@ module.exports.todayOrderAmount = () => {
                 return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
             }
         })
+    })
+}
+
+
+module.exports.todayOrderAmount = (orderId) => {
+    return new Promise((resolve, reject) => {
+
+        var datetime = moment().format(); 
+        console.log("Today Date======>>>>>",datetime);
+
+        order.find({ created_date: datetime }).exec((error, response) => {
+            if (error) {
+                return reject(error);
+            } else {
+                console.log("Today's Order==========>>>>>>>>>>>>", response);
+                const order = {
+                    orderCount: response,
+                }
+                return resolve({ status: 200, message: 'Successfully get Today order count', data: order });
+            }
+        });
     })
 }

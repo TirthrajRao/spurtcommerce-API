@@ -32,12 +32,18 @@ module.exports.addProductToWishList = (req, res) => {
 
 module.exports.getWishList = (req, res) => {
 
+
+
     const authorization = req.header('authorization');
     customerService.getProfile(authorization).then((response) => {
+        const wishList = {
+            count: req.query.count,
+            customer_id: response.data._id
+        }
 
-        const customer_id = response.data._id;
-        console.log("product Data in controller", customer_id);
-        customerWishList.getWishList(customer_id).then((response) => {
+        console.log("Wishlist Data=======>>>>>>>",wishList);
+
+        customerWishList.getWishList(wishList).then((response) => {
             return res.status(200).json({ status: 1, message: response.message, data: response.data });
         }).catch((error) => {
             console.log('error: ', error);

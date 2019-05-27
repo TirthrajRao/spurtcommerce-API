@@ -9,13 +9,25 @@ var _ = require('lodash');
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports.productList = (req, res) => {
+
+
+	console.log("Req.keyword===========>>>>>>>>>>",req.query.keyword);
 	const productData = {
 		limit: 10,
 		offset: req.query.offset,
 		keyword: req.query.keyword,
 		sku: req.query.sku,
-		count: req.query.count
+		count: req.query.count,
+		manufacturerId: req.query.manufacturerId,
+		categoryId: req.query.categoryId,
+		price: req.query.price,
+		priceFrom: req.query.priceFrom,
+		priceTo: req.query.priceTo,
+		condition:req.query.condition,
+		sku:req.query.sku,
 	}
+
+	console.log("product Data--------------->>>>>>>",productData);
 
 	productService.productList(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });

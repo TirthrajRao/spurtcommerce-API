@@ -24,7 +24,45 @@ module.exports.getProductList = (productData) => {
             });
         }
         else {
+
+            var shopFilters = {};
+            var searchText = productData.keyword;
+
+            shopFilters = { $and: [] };
+
+
+            var query = {
+                $and: [
+                    { 'name': { $regex: new RegExp(searchText, 'i') }, },
+                ]
+            }
+
+            if (productData.condition == '1') {
+                query['$and'].push({ 'condition': '1' });
+            }
+
+            if (productData.condition == '2') {
+                query['$and'].push({ 'condition': '2' });
+
+            }
+
+            if (productData.manufacturerId) {
+                query['$and'].push({'manufacturer_id':ObjectId(productData.manufacturerId)});
+
+            }
+
+            if (productData.categoryId) {
+                query['$and'].push({'Category':ObjectId(productData.categoryId)});
+
+            }
+
+            console.log("shopFilters", JSON.stringify(query, 2, null));
+
+
             product.aggregate([
+                {
+                    $match: query
+                },
                 {
                     $unwind: '$Images',
                 },
@@ -42,7 +80,7 @@ module.exports.getProductList = (productData) => {
                 },
                 {
                     $project: {
-                        productId:'$_id',
+                        productId: '$_id',
                         Images: {
                             productImageId: '$Images._id',
                             image: '$Images.image',

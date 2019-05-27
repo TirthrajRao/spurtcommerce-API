@@ -51,7 +51,7 @@ app.delete('/api/country/delete-country/:id',countryController.deleteCountry);
 
 app.post('/api/customer/register',customerController.register);
 app.get('/api/pages/pagelist',pageController.getPage);
-app.get('/api/list/productlist',productController.productList);
+// app.get('/api/list/productlist',productController.productList);
 
 
 //Routes for Banner API
@@ -145,9 +145,7 @@ app.put('/api/product-store/update-featureproduct/:id',productController.updateF
 //Routes for Customer API
 
 app.delete('/api/customer/delete-customer/:id',customerController.deleteCustomer);
-
 app.post('/api/customer/add-customer',customerController.addCustomer);
-
 app.get('/api/auth/userlist',authController.userList);
 app.get('/api/role/rolelist',authController.roleList);
 app.get('/api/language/languagelist',languageController.languageList);
@@ -166,12 +164,7 @@ app.post('/api/customer/add-product-to-wishlist',wishListController.addProductTo
 app.get('/api/customer/wishlist-product-list',wishListController.getWishList);
 app.delete('/api/customer/wishlist-product-delete/:id',wishListController.removeProductFromWishList);   
 app.get('/api/customer/recent-customerlist',customerController.customerList);
-
-
-
 app.get('/api/list/category-list',categoryController.categoryList);
-
-
 app.get('/api/product/recent-selling-product',orderController.recentSellingProduct);
 app.get('/api/order/today-order-count',orderController.todayOrderCount);
 app.get('/api/order/today-order-amount',orderController.todayOrderAmount);
