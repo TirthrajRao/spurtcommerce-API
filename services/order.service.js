@@ -25,9 +25,29 @@ module.exports.orderList = (orderData) => {
             });
         }
         else {
+
+            var query = {
+                $and: [{ 'is_active': '1' }]
+            }
+
+            if (orderData.orderId) {
+                query['$and'].push({ '_id': ObjectId(orderData.orderId) });
+            }
+
+            if (orderData.totalAmount) {
+                query['$and'].push({ 'total': parseInt(orderData.totalAmount) });
+            }
+
+            console.log("shopFilters", JSON.stringify(query));
+
+
             order.aggregate([
                 {
+                    $match: query
+                },
+                {
                     $project: {
+                        orderId: '$_id',
                         paymentAddress1: '$payment_address_1',
                         createdDate: '$created_date',
                         currencyCode: '$currency_code',
@@ -60,43 +80,41 @@ module.exports.orderList = (orderData) => {
                 },
                 {
                     $unwind: '$orderStatus'
-
                 },
                 {
                     $project: {
-                        orderStatus: {
-                            orderStatusId: '$orderStatus._id',
-                            name: '$orderStatus.name',
-                            colorCode: '$orderStatus.color_code',
-                        },
                         paymentAddress1: 1,
+                        orderPrefixId: 1,
                         createdDate: 1,
                         currencyCode: 1,
                         currencyId: 1,
                         email: 1,
                         firstname: 1,
-                        invoiceNo: 1,
-                        invoicePrefix: 1,
                         isActive: 1,
-                        orderStatus: 1,
                         shippingLastname: 1,
-                        invoicePrefix: 1,
-                        invoiceNo: 1,
                         total: 1,
                         shippingFirstname: 1,
                         shippingLastname: 1,
                         paymentFirstname: 1,
-                        orderPrefixId: 1,
+                        orderId: 1,
+                        orderStatus: {
+                            orderStatusId: '$orderStatus._id',
+                            name: '$orderStatus.name',
+                            colorCode: '$orderStatus.color_code',
+                        },
+
                     }
                 },
-            ]).exec(function (error, productDetail) {
-                if (error) {
-                    return reject(error);
-                } else {
-                    console.log('productDetail: ', productDetail);
-                    return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
-                }
-            })
+            ])
+                .limit(orderData.limit)
+                .exec(function (error, productDetail) {
+                    if (error) {
+                        return reject(error);
+                    } else {
+                        console.log('productDetail: ', productDetail);
+                        return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
+                    }
+                })
         }
     })
 }
@@ -124,7 +142,6 @@ module.exports.orderListById = (orderId) => {
                     isActive: '$is_active',
                     orderStatus: '$order_status_id',
                     shippingLastname: '$shipping_lastname',
-                    invoicePrefix: '$invoice_prefix',
                     invoiceNo: '$invoiceNo',
                     total: '$total',
                     shippingFirstname: '$shipping_firstname',
@@ -133,6 +150,7 @@ module.exports.orderListById = (orderId) => {
                     shippingAddress1: '$shipping_address_1',
                     shippingAddress2: '$shipping_address_2',
                     orderPrefixId: '$orderPrefixId',
+                    orderStatusId: '$order_status_id',
                 }
             },
             {
@@ -159,15 +177,6 @@ module.exports.orderListById = (orderId) => {
             },
             {
                 $project: {
-                    productList: {
-                        orderProductId: '$productList._id',
-                        orderId: '$productList.order_id',
-                        productId: '$productList.product_id',
-                        model: '$productList.model',
-                        quantity: '$productList.quantity',
-                        name: '$productList.name',
-                        total: '$productList.total'
-                    },
                     paymentAddress1: 1,
                     createdDate: 1,
                     customerDetail: 1,
@@ -181,7 +190,6 @@ module.exports.orderListById = (orderId) => {
                     isActive: 1,
                     orderStatus: 1,
                     shippingLastname: 1,
-                    invoicePrefix: 1,
                     invoiceNo: 1,
                     total: 1,
                     shippingFirstname: 1,
@@ -190,6 +198,18 @@ module.exports.orderListById = (orderId) => {
                     shippingAddress1: 1,
                     shippingAddress2: 1,
                     orderPrefixId: 1,
+                    orderStatusId: 1,
+                    orderId: 1,
+                    productList: {
+                        orderProductId: '$productList._id',
+                        orderId: '$productList.order_id',
+                        productId: '$productList.product_id',
+                        model: '$productList.model',
+                        quantity: '$productList.quantity',
+                        name: '$productList.name',
+                        total: '$productList.total'
+                    },
+
                 },
 
             },
@@ -260,6 +280,18 @@ module.exports.orderListById = (orderId) => {
                     },
                     orderPrefixId: {
                         $first: '$orderPrefixId',
+                    },
+                    orderStatusId: {
+                        $first: '$orderStatusId',
+                    },
+                    createdDate: {
+                        $first: '$createdDate'
+                    },
+                    orderId: {
+                        $first: '$orderId'
+                    },
+                    invoicePrefix: {
+                        $first: '$invoicePrefix'
                     }
                 }
             }
@@ -519,8 +551,8 @@ module.exports.todayOrderAmount = () => {
 module.exports.todayOrderAmount = (orderId) => {
     return new Promise((resolve, reject) => {
 
-        var datetime = moment().format(); 
-        console.log("Today Date======>>>>>",datetime);
+        var datetime = moment().format();
+        console.log("Today Date======>>>>>", datetime);
 
         order.find({ created_date: datetime }).exec((error, response) => {
             if (error) {
@@ -531,6 +563,42 @@ module.exports.todayOrderAmount = (orderId) => {
                     orderCount: response,
                 }
                 return resolve({ status: 200, message: 'Successfully get Today order count', data: order });
+            }
+        });
+    })
+}
+
+
+module.exports.changeOrderStatus = (orderData) => {
+
+    return new Promise((resolve, reject) => {
+        order.findByIdAndUpdate({ _id: orderData.orderId }, { order_status_id: orderData.orderStatusId }, { upsert: true }, (orderError, orderResponse) => {
+            if (orderError) {
+                console.log('orderError: ', orderError);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully updated Order Status', data: orderResponse });
+            }
+        });
+    })
+}
+
+module.exports.salesList = () => {
+
+    return new Promise((resolve, reject) => {
+        order.find((orderError, orderResponse) => {
+            if (orderError) {
+                console.log('orderError: ', orderError);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                sales = {
+                    month: 5,
+                    monthYear: "May-2019",
+                    ordercount: "34",
+                    year: 2019,
+                }
+               const salesArray = [sales]
+                resolve({ status: 200, message: 'Successfully updated Order Status', data: salesArray });
             }
         });
     })

@@ -85,11 +85,14 @@ module.exports.updateCustomer = (req, res) => {
 
 module.exports.customerList = (req, res) => {
 	const customerData = {
-		limit: 10,
-		offset: req.query.offset,
-		keyword: req.query.keyword,
-		sku: req.query.sku,
-		count: req.query.count
+		customerGroup: req.query.customerGroup,
+		date: req.query.date,
+		email: req.query.email,
+		name: req.query.name,
+		limit:parseInt(req.query.limit),
+		offset:parseInt( req.query.offset),
+		count: req.query.count,
+		status: req.query.status,
 	}
 	console.log("customer Data", customerData);
 	customerService.customerList(customerData).then((response) => {

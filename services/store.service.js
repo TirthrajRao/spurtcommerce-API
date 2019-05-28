@@ -25,16 +25,14 @@ module.exports.getProductList = (productData) => {
         }
         else {
 
-            var shopFilters = {};
             var searchText = productData.keyword;
-
-            shopFilters = { $and: [] };
-
-
+            
             var query = {
-                $and: [
-                    { 'name': { $regex: new RegExp(searchText, 'i') }, },
-                ]
+                $and: [{ 'is_active':'1' } ]
+            }
+
+            if (productData.keyword) {
+                query['$and'].push({ 'name': { $regex: new RegExp(searchText, 'i') } });
             }
 
             if (productData.condition == '1') {
@@ -47,16 +45,23 @@ module.exports.getProductList = (productData) => {
             }
 
             if (productData.manufacturerId) {
-                query['$and'].push({'manufacturer_id':ObjectId(productData.manufacturerId)});
+                query['$and'].push({ 'manufacturer_id': ObjectId(productData.manufacturerId) });
 
             }
 
             if (productData.categoryId) {
-                query['$and'].push({'Category':ObjectId(productData.categoryId)});
-
+                query['$and'].push({ 'Category': ObjectId(productData.categoryId) });
             }
 
-            console.log("shopFilters", JSON.stringify(query, 2, null));
+            if (productData.priceTo) {
+                query['$and'].push({ 'price': { '$lte': parseInt(productData.priceTo) } });
+            }
+
+            if (productData.priceFrom) {
+                query['$and'].push({ 'price': { '$gte': parseInt(productData.priceFrom) } });
+            }
+
+            console.log("shopFilters", JSON.stringify(query));
 
 
             product.aggregate([
@@ -166,8 +171,11 @@ module.exports.getProductList = (productData) => {
                         }
                     }
                 },
-            ]).exec(function (error, productList) {
+            ])
+            .limit(productData.limit)
+            .exec(function (error, productList) {
                 if (error) {
+                    console.log("Error:", error);
                     return reject(error);
                 } else {
                     const productData = {

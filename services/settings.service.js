@@ -22,7 +22,6 @@ module.exports.settingsList = () => {
                     twitter: '$twitter',
                     instagram: '$instagram',
                     storeEmail: '$store_email',
-                    itemsPerPage: 30,
                     isActive: 1,
                     storeAddress: '$store_address',
                     orderStatus: '$order_status',
@@ -34,6 +33,7 @@ module.exports.settingsList = () => {
                     storeTelephone: '$store_telephone',
                     categoryProductCount: 1,
                     storeLanguageName:'$store_language_name',
+                    itemsPerPage:'$items_per_page'
                 }
             },
         ]).exec(function (error, settingsList) {

@@ -8,9 +8,10 @@ const mongoose = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports.getProductList = (req, res) => {
+	
 	const productData = {
-		limit: 10,
-		offset: req.query.offset,
+		limit:parseInt(req.query.limit),
+		offset:parseInt( req.query.offset),
 		keyword: req.query.keyword,
 		sku: req.query.sku,
 		count: req.query.count,

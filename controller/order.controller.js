@@ -13,11 +13,14 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.orderList = (req, res) => {
 	const orderData = {
-		limit: 10,
-		offset: req.query.offset,
+		limit:parseInt(req.query.limit),
+		offset:parseInt( req.query.offset),
+		orderId: req.query.orderId,
+		totalAmount: req.query.totalAmount,
+		dateAdded: req.query.dateAdded,
 		keyword: req.query.keyword,
-		sku: req.query.sku,
-		count: req.query.count
+		customerName: req.query.customerName,
+		count: req.query.count,
 	}
 	orderService.orderList(orderData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
@@ -127,7 +130,7 @@ module.exports.myOrderList = (req, res) => {
 
 
 module.exports.recentSellingProduct = (req, res) => {
-	
+
 	orderService.recentSellingProduct().then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -137,7 +140,7 @@ module.exports.recentSellingProduct = (req, res) => {
 }
 
 module.exports.todayOrderCount = (req, res) => {
-	
+
 	orderService.todayOrderCount().then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -147,7 +150,7 @@ module.exports.todayOrderCount = (req, res) => {
 }
 
 module.exports.todayOrderAmount = (req, res) => {
-	
+
 	orderService.todayOrderAmount().then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -155,6 +158,36 @@ module.exports.todayOrderAmount = (req, res) => {
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
 }
+
+
+module.exports.changeOrderStatus = (req, res) => {
+
+	const orderData = {
+		orderId:req.body.orderId,
+		orderStatusId:req.body.orderStatusId
+	}
+
+
+	orderService.changeOrderStatus(orderData).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
+module.exports.salesList = (req, res) => {
+
+
+	orderService.salesList().then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
 
 
 

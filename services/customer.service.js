@@ -118,7 +118,35 @@ module.exports.customerList = (customerData) => {
             });
         }
         else {
+
+
+            var email = customerData.email;
+            var name = customerData.name;
+            var date = customerData.date;
+            
+            var query = {
+                $and: [{ 'isActive':1 } ]
+            }
+
+            if (customerData.email) {
+                query['$and'].push({ 'email': { $regex: new RegExp(email, 'i') } });
+            }
+
+            if (customerData.name) {
+                query['$and'].push({ 'first_name': { $regex: new RegExp(name, 'i') } });
+            }
+
+            if (customerData.date) {
+                query['$and'].push({ 'created_date':date });
+            }
+
+    
+            console.log("shopFilters", JSON.stringify(query));
+
             customer.aggregate([
+                {
+                    $match:query
+                },
                 {
                     $project: {
                         id: '$_id',
@@ -139,7 +167,7 @@ module.exports.customerList = (customerData) => {
                 if (error) {
                     return reject(error);
                 } else {
-                    return resolve({ status: 200, message: 'Successfully get settings', data: customerList });
+                    return resolve({ status: 200, message: 'Successfully got Customer list.', data: customerList });
                 }
             })
         }

@@ -16,6 +16,7 @@ module.exports.orderStatusList = () => {
         orderStatus.aggregate([
             {
                 $project:{
+                    orderStatusId:'$_id',
                     colorCode:'$color_code',
                     name:'$name',
                     isActive:'$is_active'
