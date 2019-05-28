@@ -27,7 +27,6 @@ module.exports.orderStatusList = () => {
                 console.log('order error: ', orderErr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                console.log("orderStatus", orderStatus);
                 resolve({ status: 200, message: 'Successfully got the complete order status list.', data: orderStatus });
             }
         })
@@ -47,7 +46,6 @@ module.exports.orderStatusById = (orderStatusId) => {
                 console.log('order error: ', orderErr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                console.log("orderStatus", orderStatus);
                 resolve({ status: 200, message: 'Successfully got the complete list of products', data: orderStatus });
             }
         })

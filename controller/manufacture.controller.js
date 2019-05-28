@@ -12,8 +12,8 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports.getManufacture = (req, res) => {
 
 	const brandData = {
-		limit: 10,
-		offset: req.query.offset,
+		limit: parseInt(req.query.limit),
+		offset: parseInt(req.query.offset),
 		keyword: req.query.keyword,
 		sku: req.query.sku,
 		count: req.query.count

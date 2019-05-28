@@ -431,8 +431,8 @@ module.exports.productList = (productData) => {
                 ]
             }
 
-            if(productData.sku){
-                query['$and'].push({'sku':{ $regex: new RegExp(sku, 'i') }});
+            if (productData.sku) {
+                query['$and'].push({ 'sku': { $regex: new RegExp(sku, 'i') } });
             }
 
 
@@ -652,15 +652,13 @@ module.exports.productList = (productData) => {
                 }
                 //Group To Generate Single Document Form Multiple Output Document
 
-            ])
-                .exec(function (error, productDetail) {
-                    if (error) {
-                        return reject(error);
-                    } else {
-                        console.log('productDetail: ', productDetail);
-                        return resolve({ status: 200, message: 'Successfully get product list', data: productDetail });
-                    }
-                })
+            ]).exec(function (error, productDetail) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully get product list', data: productDetail });
+                }
+            })
         }
     })
 

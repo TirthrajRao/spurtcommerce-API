@@ -172,6 +172,7 @@ module.exports.getProductList = (productData) => {
                     }
                 },
             ])
+            .skip(productData.offset)
             .limit(productData.limit)
             .exec(function (error, productList) {
                 if (error) {

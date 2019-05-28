@@ -27,9 +27,6 @@ module.exports.manufactureList = (brandData) => {
         else {
             manufacture.aggregate([
                 {
-                    $limit:50
-                },
-                {
                     $project: {
                         manufacturerId: '$_id',
                         isActive: '$is_active',
@@ -38,15 +35,16 @@ module.exports.manufactureList = (brandData) => {
                         name: '$name'
                     }
                 }
-            ]).exec(function (Error, Response) {
-                if (Error) {
-                    reject({ status: 500, message: 'Internal Server Error' });
-                } else {
-                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
-                }
-            })
-
-
+            ])
+                .skip(brandData.offset)
+                .limit(brandData.limit)
+                .exec(function (Error, Response) {
+                    if (Error) {
+                        reject({ status: 500, message: 'Internal Server Error' });
+                    } else {
+                        resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                    }
+                })
         }
 
     })
@@ -69,7 +67,7 @@ module.exports.updateManufacturer = (brandData) => {
 module.exports.addManufacturer = (brandData) => {
     console.log("banner Data in service=====>", brandData);
     return new Promise((resolve, reject) => {
-        manufacture.create(brandData,(useerr, userres) => {
+        manufacture.create(brandData, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -83,7 +81,7 @@ module.exports.addManufacturer = (brandData) => {
 module.exports.deleteManufacturer = (manufacturerId) => {
 
     return new Promise((resolve, reject) => {
-        manufacture.findOneAndRemove({_id:manufacturerId},(useerr, userres) => {
+        manufacture.findOneAndRemove({ _id: manufacturerId }, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });

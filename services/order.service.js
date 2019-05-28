@@ -66,6 +66,7 @@ module.exports.orderList = (orderData) => {
                         shippingLastname: '$shipping_lastname',
                         paymentFirstname: '$payment_firstname',
                         orderPrefixId: '$orderPrefixId',
+                        modifiedDate :'$modified_date',
 
                     }
 
@@ -97,6 +98,7 @@ module.exports.orderList = (orderData) => {
                         shippingLastname: 1,
                         paymentFirstname: 1,
                         orderId: 1,
+                        modifiedDate:1,
                         orderStatus: {
                             orderStatusId: '$orderStatus._id',
                             name: '$orderStatus.name',
@@ -111,7 +113,6 @@ module.exports.orderList = (orderData) => {
                     if (error) {
                         return reject(error);
                     } else {
-                        console.log('productDetail: ', productDetail);
                         return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
                     }
                 })
@@ -132,6 +133,7 @@ module.exports.orderListById = (orderId) => {
                     orderId: '$_id',
                     paymentAddress1: '$payment_address_1',
                     createdDate: '$created_date',
+                    modifiedDate :'$modified_date',
                     customerId: '$customer_id',
                     currencyCode: '$currency_code',
                     currencyId: '$currency_id',
@@ -200,6 +202,7 @@ module.exports.orderListById = (orderId) => {
                     orderPrefixId: 1,
                     orderStatusId: 1,
                     orderId: 1,
+                    modifiedDate:1,
                     productList: {
                         orderProductId: '$productList._id',
                         orderId: '$productList.order_id',
@@ -292,6 +295,9 @@ module.exports.orderListById = (orderId) => {
                     },
                     invoicePrefix: {
                         $first: '$invoicePrefix'
+                    },
+                    modifiedDate:{
+                        $first:'$modifiedDate'
                     }
                 }
             }
@@ -299,7 +305,6 @@ module.exports.orderListById = (orderId) => {
             if (error) {
                 return reject(error);
             } else {
-                console.log('productDetail: ', productDetail);
                 return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
             }
         })
@@ -379,7 +384,6 @@ module.exports.myOrderList = (orderData) => {
                 }
             },
         ]).exec(function (error, orderDetail) {
-            console.log('orderdetail', orderDetail);
             if (error) {
                 return reject(error);
             } else {
@@ -482,7 +486,7 @@ module.exports.recentSellingProduct = () => {
                 }
             }
         ]).exec(function (error, orderDetail) {
-            console.log('orderdetail', orderDetail);
+
             if (error) {
                 return reject(error);
             } else {
@@ -551,17 +555,13 @@ module.exports.todayOrderAmount = () => {
 module.exports.todayOrderAmount = (orderId) => {
     return new Promise((resolve, reject) => {
 
-        var datetime = moment().format();
-        console.log("Today Date======>>>>>", datetime);
+       var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
-        order.find({ created_date: datetime }).exec((error, response) => {
+        order.find({ created_date: currentDate }).exec((error, response) => {
             if (error) {
                 return reject(error);
             } else {
                 console.log("Today's Order==========>>>>>>>>>>>>", response);
-                const order = {
-                    orderCount: response,
-                }
                 return resolve({ status: 200, message: 'Successfully get Today order count', data: order });
             }
         });
@@ -571,8 +571,17 @@ module.exports.todayOrderAmount = (orderId) => {
 
 module.exports.changeOrderStatus = (orderData) => {
 
+    var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+
+    const orderDetail = {
+        modified_date:currentDate,
+        order_status_id:orderData.orderStatusId
+    }
+
+
+
     return new Promise((resolve, reject) => {
-        order.findByIdAndUpdate({ _id: orderData.orderId }, { order_status_id: orderData.orderStatusId }, { upsert: true }, (orderError, orderResponse) => {
+        order.findByIdAndUpdate({ _id: orderData.orderId }, orderDetail, { upsert: true }, (orderError, orderResponse) => {
             if (orderError) {
                 console.log('orderError: ', orderError);
                 reject({ status: 500, message: 'Internal Server Error' });
