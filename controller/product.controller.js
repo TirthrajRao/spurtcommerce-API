@@ -10,8 +10,6 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.productList = (req, res) => {
 
-
-	console.log("Req.keyword===========>>>>>>>>>>",req.query.keyword);
 	const productData = {
 		limit:parseInt(req.query.limit),
 		offset:parseInt( req.query.offset),
@@ -26,8 +24,6 @@ module.exports.productList = (req, res) => {
 		condition:req.query.condition,
 		sku:req.query.sku,
 	}
-
-	console.log("product Data--------------->>>>>>>",productData);
 
 	productService.productList(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
@@ -46,9 +42,7 @@ module.exports.getfeatureproduct = (req, res) => {
 		sku: req.query.sku,
 		count: req.query.count
 	}
-
-	console.log("productData", productData);
-
+	
 	productService.getfeatureproduct(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -95,8 +89,6 @@ module.exports.addProduct = (req, res) => {
 		sortOrder: req.body.sortOrder,
 	}
 
-	console.log("product data------>>>", productData);
-
 	productService.addProduct(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -120,15 +112,14 @@ module.exports.updateProduct = (req, res) => {
 
 	productId = req.params.id;
 
-	console.log("productID------------>>>>>>>>>>", productId);
 
 	_.forEach(req.body.categoryId, (category) => {
-		console.log("category-------->", category);
+		
 		categoryArr.push(category.categoryId);
 
 	})
 
-	console.log("Category array----------->", categoryArr);
+	
 
 	productData = {
 		name: req.body.productName,
@@ -157,8 +148,6 @@ module.exports.updateProduct = (req, res) => {
 
 	}
 
-	console.log("productData----------->>>>>>>>", productData);
-
 	productService.updateProduct(productId, productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -171,8 +160,6 @@ module.exports.updateProduct = (req, res) => {
 module.exports.deleteProduct = (req, res) => {
 
 	productId = req.params.id;
-
-	console.log("productID------------>>>>>>>>>>", productId);
 
 	productService.deleteProduct(productId)
 		.then((response) => {

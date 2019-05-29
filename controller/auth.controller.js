@@ -56,6 +56,37 @@ module.exports.roleList = (req, res) => {
 }
 
 
+module.exports.changePassword = (req, res) => {
+
+	const authorization = req.header('authorization');
+	authService.getProfile(authorization).then((response) => {
+
+	
+
+		const userData = {
+			newPassword: req.body.newPassword,
+			oldPassword: req.body.oldPassword,
+		}
+
+		let userId = response.data._id;
+
+		authService.changePassword(userId,userData).then((response) => {
+			return res.status(200).json({ message: response.message, status: 1 });
+		}).catch((error) => {
+			console.log('error: ', error);
+			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		});
+
+
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+	
+}
+
+
+
 
 
 

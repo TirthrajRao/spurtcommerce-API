@@ -231,18 +231,29 @@ module.exports.deleteAddress = (req, res) => {
 
 module.exports.editProfile = (req, res) => {
 
-	const userData = {
-		address: req.body.address,
-		country_id: req.body.countryId,
-		email: req.body.emailId,
-		first_name: req.body.firstName,
-		last_name: req.body.lastName,
-		mobile: req.body.phoneNumber,
-		pincode: req.body.pincode,
-		zone_id: req.body.zoneId
-	}
-	customerService.editProfile(userData).then((response) => {
-		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+	const authorization = req.header('authorization');
+	customerService.getProfile(authorization).then((response) => {
+
+		let customerId = response.data._id;
+	
+		const userData = {
+			address: req.body.address,
+			country_id: req.body.countryId,
+			email: req.body.emailId,
+			first_name: req.body.firstName,
+			last_name: req.body.lastName,
+			mobile: req.body.phoneNumber,
+			pincode: req.body.pincode,
+			zone_id: req.body.zoneId,
+		}
+		customerService.editProfile(customerId,userData).then((response) => {
+			return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+		}).catch((error) => {
+			console.log('error: ', error);
+			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		});
+
+
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -267,11 +278,12 @@ module.exports.changePassword = (req, res) => {
 		const userData = {
 			newPassword: req.body.newPassword,
 			oldPassword: req.body.oldPassword,
-			customerId : response.data._id,
 		}
 
-		customerService.changePassword(userData).then((response) => {
-			return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+		let customerId = response.data._id;
+
+		customerService.changePassword(customerId,userData).then((response) => {
+			return res.status(200).json({ message: response.message, status: 1 });
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -282,8 +294,7 @@ module.exports.changePassword = (req, res) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
-
-
+	
 }
 
 

@@ -172,6 +172,75 @@ module.exports.roleList = (userData) => {
     })
 }
 
+module.exports.getProfile = (authorization) => {
+
+    return new Promise((resolve, reject) => {
+
+        jwt.verify(authorization.split(' ')[1], 'pmt', function (err, decoded) {
+            if (err) throw err;
+            const customerId = decoded.customer._id;
+            user.aggregate([
+                {
+                    $match: { '_id': ObjectId(customerId) }
+                },
+                {
+                    $project: {
+                        id: '$_id',
+                        email: '$email',
+                        firstName: '$first_name',
+                        lastName: '$last_name',
+                        mobileNumber: '$mobile',
+                        modifiedDate: '$modified_date',
+                        password: '$password',
+                        pincode: '$pincode',
+                        safe: '$safe',
+                        username: '$username',
+                        zoneId: '$zone_id',
+                        address: '$address',
+                        countryId: '$country_id',
+                        avatar: '$avatar',
+                        avatarPath: '$avatar_path',
+                    }
+                }
+            ]).exec(function (error, userDetail) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully Get the Profile..!', data: userDetail[0] });
+                }
+            })
+        });
+    })
+}
+
+module.exports.changePassword = (userId, userData) => {
+    return new Promise((resolve, reject) => {
+
+        user.findOne({ _id: userId }).exec((err, user) => {
+            if (err) {
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else if (user) {
+                user.comparePassword(userData.oldPassword, user.password, (error, isMatch) => {
+                    if (error) {
+                        reject({ status: 500, message: 'Internal Server Error' });
+                    } else if (isMatch) {
+                        user.password = userData.newPassword;
+                        user.save();
+                        resolve({ status: 200, message: 'Your password changed successfully', data: user })
+                    }
+                    else {
+                        reject({ status: 500, message: 'password does not match' });
+                    }
+                });
+            } else {
+                return res.status(400).send({ errMsg: 'Bad request' });
+            }
+        });
+    });
+}
+
+
+
 
 
 

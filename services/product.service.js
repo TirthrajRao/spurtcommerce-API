@@ -550,7 +550,6 @@ module.exports.productList = (productData) => {
                     }
                 },
                 //Group To Generate Single Document to Multiple
-
                 {
                     $unwind: '$Category',
                 },

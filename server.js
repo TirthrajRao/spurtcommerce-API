@@ -88,7 +88,7 @@ app.get('/api/product-store/productdetail/:id',productController.productDetail);
 //Routes for Settings API
 
 app.get('/api/settings/get-settings',settingController.getSetting);
-//app.post('/api/settings/create-settings/',settingController.createSetting);
+
 
 
 //Routes for Zone API
@@ -172,8 +172,10 @@ app.get('/api/order/today-order-amount',orderController.todayOrderAmount);
 
 app.post('/api/order/order-change-status',orderController.changeOrderStatus);
 app.get('/api/order/saleslist',orderController.salesList);
-
 app.post('/api/customer/change-password',customerController.changePassword);
+app.post('/api/auth/change-password',authController.changePassword);
+
+// app.post('/api/settings/create-settings/',settingController.createSetting);
 
 
 

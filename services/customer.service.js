@@ -76,6 +76,39 @@ module.exports.login = (body) => {
 }
 
 
+
+module.exports.changePassword = (customerId, userData) => {
+    return new Promise((resolve, reject) => {
+
+        console.log("CHANGE PASSWORD calling------>>>");
+
+        console.log("Userdata--------->>>>", userData);
+        console.log("customer ID----------->>", customerId);
+
+        customer.findOne({ _id: customerId }).exec((err, customer) => {
+            if (err) {
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else if (customer) {
+                customer.comparePassword(userData.oldPassword, customer.password, (error, isMatch) => {
+                    if (error) {
+                        reject({ status: 500, message: 'Internal Server Error' });
+                    } else if (isMatch) {
+                        customer.password = userData.newPassword;
+                        customer.save();
+                        resolve({ status: 200, message: 'Your password changed successfully', data: customer })
+                    }
+                    else {
+                        reject({ status: 500, message: 'password does not match' });
+                    }
+                });
+            } else {
+                return res.status(400).send({ errMsg: 'Bad request' });
+            }
+        });
+    });
+}
+
+
 module.exports.updateAddress = (customerId, addressData) => {
     console.log('addEmployeeToTheCompany addressData: ', addressData);
     return new Promise((resolve, reject) => {
@@ -123,9 +156,9 @@ module.exports.customerList = (customerData) => {
             var email = customerData.email;
             var name = customerData.name;
             var date = customerData.date;
-            
+
             var query = {
-                $and: [{ 'isActive':1 } ]
+                $and: [{ 'isActive': 1 }]
             }
 
             if (customerData.email) {
@@ -137,15 +170,15 @@ module.exports.customerList = (customerData) => {
             }
 
             if (customerData.date) {
-                query['$and'].push({ 'created_date':date });
+                query['$and'].push({ 'created_date': date });
             }
 
-    
+
             console.log("shopFilters", JSON.stringify(query));
 
             customer.aggregate([
                 {
-                    $match:query
+                    $match: query
                 },
                 {
                     $project: {
@@ -353,10 +386,10 @@ module.exports.deleteAddress = (addressId) => {
 }
 
 
-module.exports.editProfile = (userData) => {
+module.exports.editProfile = (customerId, userData) => {
 
     return new Promise((resolve, reject) => {
-        customer.findOneAndUpdate({ email: userData.email }, userData, { upsert: true }, (error, updatedCustomer) => {
+        customer.findOneAndUpdate({ _id: customerId }, userData, { upsert: true }, (error, updatedCustomer) => {
             if (error) {
                 console.log('error: ', error);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -401,22 +434,6 @@ module.exports.loginLogList = () => {
         });
     })
 }
-
-
-module.exports.changePassword = (userData) => {
-
-    return new Promise((resolve, reject) => {
-        customer.findOneAndUpdate({ _id: userData.customerId }, userData, { upsert: true }, (error, updatedCustomer) => {
-            if (error) {
-                console.log('error: ', error);
-                reject({ status: 500, message: 'Internal Server Error' });
-            } else {
-                resolve({ status: 200, message: 'Successfully updated your profile.', data: updatedCustomer });
-            }
-        });
-    })
-}
-
 
 
 
