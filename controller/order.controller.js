@@ -78,8 +78,11 @@ module.exports.orderCheckout = (req, res) => {
 			customer_id: response.data._id,
 			invoice_prefix: 'SPU',
 			order_status_id: '5cbd891240b5afcf7d459821',
-			total: totalAmount
+			total: totalAmount,
+			is_active: "1",
 		}
+
+		console.log("orderDAta--------->>",orderData);
 		orderService.orderCheckout(orderData).then((response) => {
 			_.forEach(req.body.productDetails, (product) => {
 				const productData = {
@@ -98,6 +101,10 @@ module.exports.orderCheckout = (req, res) => {
 					}
 				});
 			})
+
+			
+			console.log("response----------->>>>>>>>>>",response.data);
+
 			return res.status(200).json({ status: 1, message: 'Check Out the product successfully And Send order detail in your mail ..!!', data: response.data });
 		}).catch((error) => {
 			console.log('error: ', error);
@@ -116,6 +123,7 @@ module.exports.myOrderList = (req, res) => {
 		const orderData = {
 			customer_id: response.data._id,
 		}
+		console.log("orderData----->>>>>>>>",orderData);
 		orderService.myOrderList(orderData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message, data: response.data });
 		}).catch((error) => {

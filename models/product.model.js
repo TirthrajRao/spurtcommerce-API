@@ -73,7 +73,12 @@ var product = new mongoose.Schema({
     delete_flag :{
         type:String
     },
-    is_featured :String,
+    is_featured:{
+        type:Number
+    },
+    isFeatured:{
+        type:Number
+    },
     rating :{
         type:String
     },

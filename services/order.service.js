@@ -38,8 +38,11 @@ module.exports.orderList = (orderData) => {
                 query['$and'].push({ 'total': parseInt(orderData.totalAmount) });
             }
 
+            if (orderData.customerName) {
+                query['$and'].push({ 'shipping_firstname': { $regex: new RegExp(orderData.customerName, 'i') } });
+            }
+            
             console.log("shopFilters", JSON.stringify(query));
-
 
             order.aggregate([
                 {
@@ -67,7 +70,6 @@ module.exports.orderList = (orderData) => {
                         paymentFirstname: '$payment_firstname',
                         orderPrefixId: '$orderPrefixId',
                         modifiedDate :'$modified_date',
-
                     }
 
                 },
@@ -153,6 +155,7 @@ module.exports.orderListById = (orderId) => {
                     shippingAddress2: '$shipping_address_2',
                     orderPrefixId: '$orderPrefixId',
                     orderStatusId: '$order_status_id',
+                    telephone:'$telephone',
                 }
             },
             {
@@ -203,6 +206,7 @@ module.exports.orderListById = (orderId) => {
                     orderStatusId: 1,
                     orderId: 1,
                     modifiedDate:1,
+                    telephone:1,
                     productList: {
                         orderProductId: '$productList._id',
                         orderId: '$productList.order_id',
@@ -298,6 +302,9 @@ module.exports.orderListById = (orderId) => {
                     },
                     modifiedDate:{
                         $first:'$modifiedDate'
+                    },
+                    telephone:{
+                        $first:'$telephone'
                     }
                 }
             }
@@ -349,7 +356,7 @@ module.exports.orderCheckout = (orderData) => {
 }
 
 
-module.exports.myOrderList = (orderData) => {
+module.exports.myOrderList = (orderData) => {   
 
     const customer_id = orderData.customer_id;
 
@@ -362,27 +369,40 @@ module.exports.myOrderList = (orderData) => {
             {
                 $project: {
                     orderId: '$_id',
-                    paymentAddress1: '$payment_address_1',
-                    createdDate: '$created_date',
-                    currencyCode: '$currency_code',
-                    currencyId: '$currency_id',
-                    email: '$email',
-                    firstname: '$firstname',
-                    invoiceNo: '$invoice_no',
-                    invoicePrefix: '$invoice_prefix',
-                    isActive: '$is_active',
-                    orderStatus: '$order_status_id',
-                    shippingLastname: '$shipping_lastname',
-                    invoicePrefix: '$invoice_prefix',
-                    invoiceNo: '$invoiceNo',
                     total: '$total',
-                    shippingFirstname: '$shipping_firstname',
-                    shippingLastname: '$shipping_lastname',
-                    paymentFirstname: '$payment_firstname',
-                    shippingAddress1: '$shipping_address_1',
-                    shippingAddress2: '$shipping_address_2',
+                    createdDate:'$created_date',
+                    customerId:'$customer_id',
+                    orderStatusId:'$order_status_id'
                 }
             },
+            {
+                $lookup: {
+                    from: 'order_status',
+                    localField: 'orderStatusId',
+                    foreignField: '_id',
+                    as: 'orderStatus'
+                }
+            },
+            {
+                $unwind: '$orderStatus'
+            },
+            {
+                $project: {
+                    orderId:1,
+                    total:1,
+                    createdDate:1,
+                    customerId:1,
+                    orderStatusId:1,
+                    orderStatus: {
+                        orderStatusId: '$orderStatus._id',
+                        name: '$orderStatus.name',
+                        colorCode: '$orderStatus.color_code',
+                        isActive: 1,
+                    },
+
+                }
+            },
+           
         ]).exec(function (error, orderDetail) {
             if (error) {
                 return reject(error);

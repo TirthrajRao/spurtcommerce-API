@@ -89,8 +89,8 @@ module.exports.customerList = (req, res) => {
 		date: req.query.date,
 		email: req.query.email,
 		name: req.query.name,
-		limit:parseInt(req.query.limit),
-		offset:parseInt( req.query.offset),
+		limit: parseInt(req.query.limit),
+		offset: parseInt(req.query.offset),
 		count: req.query.count,
 		status: req.query.status,
 	}
@@ -257,6 +257,33 @@ module.exports.loginLogList = (req, res) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
+}
+
+module.exports.changePassword = (req, res) => {
+
+	const authorization = req.header('authorization');
+	customerService.getProfile(authorization).then((response) => {
+
+		const userData = {
+			newPassword: req.body.newPassword,
+			oldPassword: req.body.oldPassword,
+			customerId : response.data._id,
+		}
+
+		customerService.changePassword(userData).then((response) => {
+			return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+		}).catch((error) => {
+			console.log('error: ', error);
+			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		});
+
+
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+
+
 }
 
 

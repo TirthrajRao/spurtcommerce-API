@@ -37,9 +37,10 @@ module.exports.manufactureList = (brandData) => {
                 }
             ])
                 .skip(brandData.offset)
-                .limit(brandData.limit)
+                .limit(20)
                 .exec(function (Error, Response) {
                     if (Error) {
+                        console.log("Error---------->>>>>",Error);
                         reject({ status: 500, message: 'Internal Server Error' });
                     } else {
                         resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });

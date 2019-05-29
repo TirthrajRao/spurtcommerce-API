@@ -480,6 +480,7 @@ module.exports.productList = (productData) => {
                         condition: 1,
                         isActive: 1,
                         location: 1,
+                        isFeatured:1,
                     }
                 },
                 //Reduce To Limited Data Using Project
@@ -543,6 +544,9 @@ module.exports.productList = (productData) => {
                         isActive: {
                             $first: '$isActive'
                         },
+                        isFeatured:{
+                            $first:'$isFeatured'
+                        }
                     }
                 },
                 //Group To Generate Single Document to Multiple
@@ -582,6 +586,7 @@ module.exports.productList = (productData) => {
                         condition: 1,
                         isActive: 1,
                         location: 1,
+                        isFeatured:1,
                         Category: {
                             categoryId: '$Category._id',
                             categoryName: '$Category.name',
@@ -648,6 +653,9 @@ module.exports.productList = (productData) => {
                         Category: {
                             $push: '$Category'
                         },
+                        isFeatured:{
+                            $first:'$isFeatured',
+                        }
                     }
                 }
                 //Group To Generate Single Document Form Multiple Output Document

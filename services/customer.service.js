@@ -403,6 +403,21 @@ module.exports.loginLogList = () => {
 }
 
 
+module.exports.changePassword = (userData) => {
+
+    return new Promise((resolve, reject) => {
+        customer.findOneAndUpdate({ _id: userData.customerId }, userData, { upsert: true }, (error, updatedCustomer) => {
+            if (error) {
+                console.log('error: ', error);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully updated your profile.', data: updatedCustomer });
+            }
+        });
+    })
+}
+
+
 
 
 

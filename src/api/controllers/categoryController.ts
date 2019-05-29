@@ -246,20 +246,18 @@
          console.log(keyword);
         
 
-         // const select = ['categoryId', 'name', 'image', 'imagePath', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword'];
+         const select = ['categoryId', 'name', 'image', 'imagePath', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword'];
 
-         // const search = [
-         // {
-         //     name: 'name',
-         //     op: 'like',
-         //     value: keyword,
-         // },
-         // ];
-         // const WhereConditions = [];
-         // const category: any = await this.categoryService.list(limit, offset, select, search, WhereConditions, sortOrder, count);
-          const manager = getManager(); // or connection.manager
-         const category: any = await manager.findOne(Category, {name:"Mobiles123"});
-       
+         const search = [
+         {
+             name: 'name',
+             op: 'like',
+             value: keyword,
+         },
+         ];
+         const WhereConditions = [];
+         const category: any = await this.categoryService.list(limit, offset, select, search, WhereConditions, sortOrder, count);
+
          if (category) {
              const successResponse: any = {
                  status: 1,

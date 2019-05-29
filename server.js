@@ -173,6 +173,8 @@ app.get('/api/order/today-order-amount',orderController.todayOrderAmount);
 app.post('/api/order/order-change-status',orderController.changeOrderStatus);
 app.get('/api/order/saleslist',orderController.salesList);
 
+app.post('/api/customer/change-password',customerController.changePassword);
+
 
 
 

@@ -192,8 +192,8 @@ module.exports.updateFeatureProduct = (req, res) => {
 	console.log("productID------------>>>>>>>>>>", productId);
 
 	const productData={
-		is_featured:1,
-		isFeatured:1
+		is_featured:parseInt(req.body.isFeature),
+		isFeatured:parseInt(req.body.isFeature)
 	}
 
 	productService.updateFeatureProduct(productId,productData).then((response) => {
