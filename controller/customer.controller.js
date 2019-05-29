@@ -1,6 +1,7 @@
 var customer = require('../models/customer.model');
 var login = require('../models/loginlog.model');
 var customerService = require('../services/customer.service');
+var imageService = require('../services/image.service');
 // npm import
 const path = require('path');
 const mongoose = require('mongoose');
@@ -16,7 +17,7 @@ module.exports.register = (req, res) => {
 		first_name: req.body.name,
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
-		mobile: req.body.phoneNumber
+		mobile: req.body.phoneNumber,
 	}
 	customerService.registerCustomer(customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });
@@ -24,8 +25,8 @@ module.exports.register = (req, res) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
-}
 
+}
 
 module.exports.login = (req, res) => {
 	const customerData = {
@@ -231,35 +232,79 @@ module.exports.deleteAddress = (req, res) => {
 
 module.exports.editProfile = (req, res) => {
 
-	const authorization = req.header('authorization');
-	customerService.getProfile(authorization).then((response) => {
+	const path = 'customer/';
 
-		let customerId = response.data._id;
-	
-		const userData = {
-			address: req.body.address,
-			country_id: req.body.countryId,
-			email: req.body.emailId,
-			first_name: req.body.firstName,
-			last_name: req.body.lastName,
-			mobile: req.body.phoneNumber,
-			pincode: req.body.pincode,
-			zone_id: req.body.zoneId,
-		}
-		customerService.editProfile(customerId,userData).then((response) => {
-			return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+	const image = req.body.image;
+	if (image) {
+		const path = 'customer/';
+		const base64Data = new Buffer(image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+		const type = image.split(';')[0].split('/')[1];
+		const name = 'Img_' + Date.now() + '.' + type;
+		imageService.imageUpload((path === '' ? name : path + name), base64Data).then((response) => {
+
+			const authorization = req.header('authorization');
+			customerService.getProfile(authorization).then((response) => {
+
+				let customerId = response.data._id;
+
+				const userData = {
+					address: req.body.address,
+					country_id: req.body.countryId,
+					email: req.body.emailId,
+					first_name: req.body.firstName,
+					last_name: req.body.lastName,
+					mobile: req.body.phoneNumber,
+					pincode: req.body.pincode,
+					zone_id: req.body.zoneId,
+					avatar_path: path,
+					avatar: name,
+				}
+				customerService.editProfile(customerId, userData).then((response) => {
+					return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+				}).catch((error) => {
+					console.log('error: ', error);
+					return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+				});
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
+
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		});
 
+	}
+	else {
+		const authorization = req.header('authorization');
+		customerService.getProfile(authorization).then((response) => {
 
-	}).catch((error) => {
-		console.log('error: ', error);
-		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-	});
+			let customerId = response.data._id;
+
+			const userData = {
+				address: req.body.address,
+				country_id: req.body.countryId,
+				email: req.body.emailId,
+				first_name: req.body.firstName,
+				last_name: req.body.lastName,
+				mobile: req.body.phoneNumber,
+				pincode: req.body.pincode,
+				zone_id: req.body.zoneId,
+			}
+			customerService.editProfile(customerId, userData).then((response) => {
+				return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
+		}).catch((error) => {
+			console.log('error: ', error);
+			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		});
+
+	}
 }
-
 
 module.exports.loginLogList = (req, res) => {
 	customerService.loginLogList().then((response) => {
@@ -282,7 +327,7 @@ module.exports.changePassword = (req, res) => {
 
 		let customerId = response.data._id;
 
-		customerService.changePassword(customerId,userData).then((response) => {
+		customerService.changePassword(customerId, userData).then((response) => {
 			return res.status(200).json({ message: response.message, status: 1 });
 		}).catch((error) => {
 			console.log('error: ', error);
@@ -294,7 +339,7 @@ module.exports.changePassword = (req, res) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
-	
+
 }
 
 

@@ -42,7 +42,7 @@ module.exports.getfeatureproduct = (req, res) => {
 		sku: req.query.sku,
 		count: req.query.count
 	}
-	
+
 	productService.getfeatureproduct(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -112,14 +112,11 @@ module.exports.updateProduct = (req, res) => {
 
 	productId = req.params.id;
 
-
 	_.forEach(req.body.categoryId, (category) => {
 		
 		categoryArr.push(category.categoryId);
 
 	})
-
-	
 
 	productData = {
 		name: req.body.productName,
@@ -145,7 +142,6 @@ module.exports.updateProduct = (req, res) => {
 		productSpecial: req.body.productSpecial,
 		productDiscount: req.body.productDiscount,
 		productOptions: req.body.productOptions
-
 	}
 
 	productService.updateProduct(productId, productData).then((response) => {
