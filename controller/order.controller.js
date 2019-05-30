@@ -102,7 +102,7 @@ module.exports.orderCheckout = (req, res) => {
 			shipping_zone: req.body.shippingZone,
 			customer_id: response.data._id,
 			invoice_prefix: 'SPU',
-			order_status_id: '5cbd891240b5afcf7d459821',
+			order_status_id: '5cbd891240b5afcf7d459820',
 			total: totalAmount,
 			is_active: "1",
 		}
