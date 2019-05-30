@@ -7,6 +7,9 @@ var order = new Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'customer'
 	},
+	orderId:{
+		type:String
+	},
 	currency_id: {
 		type: String
 	},

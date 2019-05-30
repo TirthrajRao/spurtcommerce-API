@@ -30,7 +30,7 @@ const port = 9000;
 var server = app.listen(port);
 
 mongoose.connect('mongodb://localhost:27017/spurtcommerce', {useNewUrlParser: true})
-.then(() => console.log("Connected"))
+.then(() => console.log("CONNECTED"))
 .catch(err => console.log(err));
 
 app.use(cors());
@@ -83,13 +83,10 @@ app.put('/api/currency/update-currency/:id',currencyController.updateCurrency);
 
 app.get('/api/media/image-resize',mediaController.imageResize);
 app.get('/api/product-store/productdetail/:id',productController.productDetail);
-//app.post('/api/media/upload-file',mediaController.uploadFile);
 
 //Routes for Settings API
 
 app.get('/api/settings/get-settings',settingController.getSetting);
-
-
 
 //Routes for Zone API
 

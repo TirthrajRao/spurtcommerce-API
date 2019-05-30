@@ -1,9 +1,11 @@
 var order = require('../models/order.model');
 var orderService = require('../services/order.service');
 var customerService = require('../services/customer.service');
+var emailService = require('../services/email.service');
+var productService = require('../services/product.service');
 var _ = require('lodash');
 var orderProduct = require('../models/order_product.model');
-
+var moment = require('moment');
 
 // npm import
 const path = require('path');
@@ -13,8 +15,8 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.orderList = (req, res) => {
 	const orderData = {
-		limit:parseInt(req.query.limit),
-		offset:parseInt( req.query.offset),
+		limit: parseInt(req.query.limit),
+		offset: parseInt(req.query.offset),
 		orderId: req.query.orderId,
 		totalAmount: req.query.totalAmount,
 		dateAdded: req.query.dateAdded,
@@ -53,8 +55,27 @@ module.exports.totalAmount = (req, res) => {
 }
 
 module.exports.orderCheckout = (req, res) => {
+
+	let productDetailData = [];
+
+
+	_.forEach(req.body.productDetails, (product) => {
+		let productInformatiomData = {
+			productInformatiomData: {
+				name: product.name,
+				model: product.model,
+				quantity: product.quantity,
+				total: product.price * product.quantity
+			}
+		}
+
+		productDetailData.push(productInformatiomData);
+	})
+
 	let totalAmount = 0;
 	let total = 0;
+
+	const today = moment().format('YYYY-MM-DD');
 
 	const authorization = req.header('authorization');
 	customerService.getProfile(authorization).then((response) => {
@@ -62,7 +83,11 @@ module.exports.orderCheckout = (req, res) => {
 			total = product.price * product.quantity;
 			totalAmount = totalAmount + total;
 		})
+
+		let randomNumber = Math.floor(100000000 + Math.random() * 900000000);
+		const orderId = 'SPU-' + randomNumber;
 		const orderData = {
+			orderId: orderId,
 			email: req.body.emailId,
 			telephone: req.body.phoneNumber,
 			shipping_address_format: req.body.shippingAddressFormat,
@@ -82,34 +107,39 @@ module.exports.orderCheckout = (req, res) => {
 			is_active: "1",
 		}
 
-		console.log("orderDAta--------->>",orderData);
-		orderService.orderCheckout(orderData).then((response) => {
-			_.forEach(req.body.productDetails, (product) => {
-				const productData = {
-					order_id: response.data._id,
-					product_id: product.productId,
-					name: product.name,
-					model: product.model,
-					quantity: product.quantity,
-					total: product.price * product.quantity
-				}
-				orderProduct.create(productData, (useerr, userres) => {
-					if (useerr) {
-						console.log("usererr");
-					} else {
-						console.log("user response");
+		let message = "Dear " + req.body.shippingFirstName +" "+req.body.shippingLastName+ ",        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#078e05;font-weight:400;text-align:left;font-size:16px;line-height:1.5rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> Order successfully placed.        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#000;font-weight:300;text-align:left;font-size:12px;line-height:1.2rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> You have successfully placed an order for customization services. Kindly find the following details on the placed order.    </tr></tbody></table></td></tr>\r\n";
+
+		emailService.customerOrderMail(message, orderData, 'Congratulations on your recent order', productDetailData, today).then((response) => {
+
+			orderService.orderCheckout(orderData).then((response) => {
+				_.forEach(req.body.productDetails, (product) => {
+					const productData = {
+						order_id: response.data._id,
+						product_id: product.productId,
+						name: product.name,
+						model: product.model,
+						quantity: product.quantity,
+						total: product.price * product.quantity
 					}
-				});
-			})
+					orderProduct.create(productData, (useerr, userres) => {
+						if (useerr) {
+							console.log("usererr");
+						} else {
+							console.log("user response");
+						}
+					});
+				})
 
-			
-			console.log("response----------->>>>>>>>>>",response.data);
-
-			return res.status(200).json({ status: 1, message: 'Check Out the product successfully And Send order detail in your mail ..!!', data: response.data });
+				return res.status(200).json({ status: 1, message: 'Check Out the product successfully And Send order detail in your mail ..!!', data: response.data });
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		});
+
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -123,7 +153,7 @@ module.exports.myOrderList = (req, res) => {
 		const orderData = {
 			customer_id: response.data._id,
 		}
-		console.log("orderData----->>>>>>>>",orderData);
+		console.log("orderData----->>>>>>>>", orderData);
 		orderService.myOrderList(orderData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message, data: response.data });
 		}).catch((error) => {
@@ -171,8 +201,8 @@ module.exports.todayOrderAmount = (req, res) => {
 module.exports.changeOrderStatus = (req, res) => {
 
 	const orderData = {
-		orderId:req.body.orderId,
-		orderStatusId:req.body.orderStatusId
+		orderId: req.body.orderId,
+		orderStatusId: req.body.orderStatusId
 	}
 
 

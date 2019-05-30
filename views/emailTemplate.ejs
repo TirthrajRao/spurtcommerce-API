@@ -80,7 +80,7 @@
 													</td>
 													<td dir="ltr" style="padding: 0px 0px 0 0px;color:#000;text-align:left;font-weight:300; font-size:12px;line-height:1.5rem;font-family: 'Roboto', sans-serif;" valign="top"> 
 														<h3 style="padding:10px 0px 0	;color:#000;font-weight:400;text-align:left;font-size:14px;line-height:1.5rem;font-family: 'Roboto', sans-serif;">Billing Address</h3> 
-														<p style="font-size: 13px;margin: 0;color: #000;padding-bottom: 5px;font-weight: 400"> <%= orderData.shippingAddress1 %>, <%= orderData.shippingCity %>, <%= orderData.shippingCountry %>,<%= orderData.shippingPostcode %>. </p>
+														<p style="font-size: 13px;margin: 0;color: #000;padding-bottom: 5px;font-weight: 400"> <%= orderData.shipping_address_1 %>, <%= orderData.shipping_city %>, <%= orderData.shippingCountry %>,<%= orderData.shippingPostcode %>. </p>
 													</td>
 												</tr>								
 												</tbody>
@@ -99,7 +99,6 @@
 												<% for(var n=0; n < productDetailData.length ; n++) { %>
 												<tr>
 													<td dir="ltr" valign="top" style="font-size:15px;color:#000;border-bottom:solid thin #ddd;padding:15px 10px;"> 
-														<span  style="display: inline-block;width: 50px;padding:10px;border: solid thin rgb(172, 66, 66);text-align: center;"><img src="https://s3.amazonaws.com/spurtcommercetest/<%=productDetailData[n].productImage.containerName%><%= productDetailData[n].productImage.image%>" style="width: auto; max-width:100%;"></span> 
 														<span style="display: inline-block;vertical-align: top;font-size: 14px;padding:5px 5px;"> <%= productDetailData[n].productInformatiomData.name %> </span>
 													</td>
 													<td dipir="ltr" valign="top" style="font-size:15px;color:#000;border-bottom:solid thin #ddd;padding:15px 10px;text-align: center;"> <%= productDetailData[n].productInformatiomData.quantity %> </td>
