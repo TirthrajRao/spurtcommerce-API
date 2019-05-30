@@ -19,6 +19,8 @@ module.exports.register = (req, res) => {
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		mobile: req.body.phoneNumber,
+		newsletter:1,
+		mail_status:1,
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -171,17 +173,51 @@ module.exports.addCustomer = (req, res) => {
 		confirmPassword: req.body.confirmPassword,
 		avatar: req.body.avatar,
 		newsletter: req.body.newsletter,
-		mailStatus: req.body.mailStatus,
+		mail_status: req.body.mailStatus,
 		status: req.body.status,
 	}
 
-	console.log("customer Data", customerData);
-	customerService.addCustomer(customerData).then((response) => {
-		return res.status(200).json({ message: response.message, status: "1" });
-	}).catch((error) => {
-		console.log('error: ', error);
-		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-	});
+	if (req.body.password === req.body.confirmPassword) {
+
+		customer.findOne({ email: req.body.email }, (error, customer) => {
+
+			if (customer == null) {
+
+				customerService.addCustomer(customerData).then((response) => {
+					return res.status(200).json({ message: response.message, data: response.data });
+				}).catch((error) => {
+					console.log('error: ', error);
+					return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+				});
+
+			}
+			else if (error) {
+				const successResponse = {
+					status: 1,
+					message: 'Internal server Error',
+				};
+				return res.status(500).send(successResponse);
+			}
+			else {
+				const successResponse = {
+					status: 1,
+					message: 'You already registered please login.',
+				};
+				return res.status(400).send(successResponse);
+
+			}
+
+		})
+	}
+	else {
+		const errorPasswordResponse = {
+			status: 0,
+			message: 'A mismatch between password and confirm password. ',
+		};
+		return res.status(400).send(errorPasswordResponse);
+
+	}
+
 }
 
 
