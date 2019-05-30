@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 var _ = require('lodash');
 
+var emailService = require('../services/email.service');
+
 
 // Database models
 var customer = require('../models/customer.model');
@@ -18,13 +20,27 @@ const ObjectId = require('mongodb').ObjectId;
 // Services
 
 module.exports.registerCustomer = (customerData) => {
-    console.log('addEmployeeToTheCompany customerData: ', customerData);
+    
     return new Promise((resolve, reject) => {
         customer.create(customerData, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
+
+                const message = "<p>Dear "+customerData.first_name+",<br />\n&nbsp;</p>\n\n<p>Thank you for Registration With us..!</p>\n";
+                const subject = "Registration Successfully";
+
+                emailService.registerMail(message,customerData.email,subject).then((response) => {
+
+                    resolve({ status: 200, message: 'Thank you for registering with us and please check your email', data: userres });
+
+                }).catch((error) => {
+                    console.log('error: ', error);
+                    return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+                });
+
+
                 resolve({ status: 200, message: 'Thank you for registering with us and please check your email', data: userres });
             }
         });

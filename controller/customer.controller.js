@@ -2,6 +2,7 @@ var customer = require('../models/customer.model');
 var login = require('../models/loginlog.model');
 var customerService = require('../services/customer.service');
 var imageService = require('../services/image.service');
+var emailService = require('../services/email.service');
 // npm import
 const path = require('path');
 const mongoose = require('mongoose');
@@ -19,13 +20,13 @@ module.exports.register = (req, res) => {
 		confirmPassword: req.body.confirmPassword,
 		mobile: req.body.phoneNumber,
 	}
+	
 	customerService.registerCustomer(customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
-
 }
 
 module.exports.login = (req, res) => {

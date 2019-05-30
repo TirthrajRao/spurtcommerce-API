@@ -107,7 +107,7 @@ module.exports.orderCheckout = (req, res) => {
 			is_active: "1",
 		}
 
-		let message = "Dear " + req.body.shippingFirstName +" "+req.body.shippingLastName+ ",        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#078e05;font-weight:400;text-align:left;font-size:16px;line-height:1.5rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> Order successfully placed.        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#000;font-weight:300;text-align:left;font-size:12px;line-height:1.2rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> You have successfully placed an order for customization services. Kindly find the following details on the placed order.    </tr></tbody></table></td></tr>\r\n";
+		let message = "Dear " + req.body.shippingFirstName + " " + req.body.shippingLastName + ",        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#078e05;font-weight:400;text-align:left;font-size:16px;line-height:1.5rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> Order successfully placed.        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#000;font-weight:300;text-align:left;font-size:12px;line-height:1.2rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> You have successfully placed an order for customization services. Kindly find the following details on the placed order.    </tr></tbody></table></td></tr>\r\n";
 
 		emailService.customerOrderMail(message, orderData, 'Congratulations on your recent order', productDetailData, today).then((response) => {
 
@@ -153,7 +153,6 @@ module.exports.myOrderList = (req, res) => {
 		const orderData = {
 			customer_id: response.data._id,
 		}
-		console.log("orderData----->>>>>>>>", orderData);
 		orderService.myOrderList(orderData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message, data: response.data });
 		}).catch((error) => {
