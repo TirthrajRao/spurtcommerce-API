@@ -517,6 +517,9 @@ module.exports.topSellingProduct = (productData) => {
                 }
             },
             {
+                $unwind:'$productImage'
+            },
+            {
                 $project: {
                     productImage: {
                         _id: '$productImage._id',
@@ -528,7 +531,9 @@ module.exports.topSellingProduct = (productData) => {
                 }
 
             },
-        ]).exec(function (error, topSelling) {
+        ])
+        .limit(4)
+        .exec(function (error, topSelling) {
             if (error) {
                 return reject(error);
             } else {
@@ -640,7 +645,6 @@ module.exports.AddImage = (productImage) => {
                     container_name: singleImageItem.containerName,
                     default_image: 1,
                 }
-                console.log("image data---->>>>>", imageData);
 
                 product_Image.create(imageData, (productError, savedImage) => {
                     if (productError) {
@@ -662,8 +666,6 @@ module.exports.AddImage = (productImage) => {
         })
     })
 }
-
-
 
 module.exports.productList = (productData) => {
     return new Promise((resolve, reject) => {

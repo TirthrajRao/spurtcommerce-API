@@ -25,27 +25,28 @@ module.exports.manufactureList = (brandData) => {
 
         }
         else {
-            manufacture.aggregate([
-                {
-                    $project: {
-                        manufacturerId: '$_id',
-                        isActive: '$is_active',
-                        image: '$image',
-                        imagePath: '$image_path',
-                        name: '$name'
-                    }
+            const aggregate = [{
+                $project: {
+                    manufacturerId: '$_id',
+                    isActive: '$is_active',
+                    image: '$image',
+                    imagePath: '$image_path',
+                    name: '$name'
                 }
-            ])
-                .skip(brandData.offset)
-                .limit(brandData.limit)
-                .exec(function (Error, Response) {
-                    if (Error) {
-                        console.log("Error---------->>>>>",Error);
-                        reject({ status: 500, message: 'Internal Server Error' });
-                    } else {
-                        resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
-                    }
-                })
+            }]
+            if (brandData.limit) {
+                aggregate.push({ $limit: brandData.offset + brandData.limit });
+                aggregate.push({ $skip: brandData.offset });
+            }
+            console.log('agreaget: ', aggregate);
+            manufacture.aggregate(aggregate).exec(function (Error, Response) {
+                if (Error) {
+                    console.log("Error---------->>>>>", Error);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                }
+            })
         }
 
     })

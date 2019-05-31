@@ -50,7 +50,6 @@ app.delete('/api/country/delete-country/:id',countryController.deleteCountry);
 //Routes for Store API
 
 app.post('/api/customer/register',customerController.register);
-app.get('/api/pages/pagelist',pageController.getPage);
 // app.get('/api/list/productlist',productController.productList);
 
 
@@ -182,6 +181,10 @@ app.get('/api/list/category-list',categoryController.categoryList);
 app.get('/api/list/related-product-list',productController.getRelatedProduct);
 
 app.post('/api/media/upload-file',mediaController.FileUpload);
+
+app.get('/api/page/pagelist',pageController.pageList);
+
+app.put('/api/page/update-page/:id',pageController.updatePageDetail);
 
 
 

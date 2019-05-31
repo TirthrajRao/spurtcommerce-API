@@ -300,27 +300,30 @@ module.exports.categoryByList = (categoryData) => {
             });
         }
         else {
-            category.aggregate([
-                {
-                    $project: {
-                        categoryId: '$_id',
-                        name: '$name',
-                        image: '$image',
-                        imagePath: '$image_path',
-                        parentInt: '$parent_int',
-                        sortOrder: '$sort_order',
-                        metaTagTitle: '$meta_tag_title',
-                        metaTagDescription: '$meta_tag_description',
-                        metaTagKeyword: '$meta_tag_keyword',
-                        children: '$children'
-                    }
 
-                },
-               
-            ])
-            .skip(categoryData.offset)
-            .limit(categoryData.limit)
-            .exec(function (Error, Response) {
+
+            const aggregate = [{
+                $project: {
+                    categoryId: '$_id',
+                    name: '$name',
+                    image: '$image',
+                    imagePath: '$image_path',
+                    parentInt: '$parent_int',
+                    sortOrder: '$sort_order',
+                    metaTagTitle: '$meta_tag_title',
+                    metaTagDescription: '$meta_tag_description',
+                    metaTagKeyword: '$meta_tag_keyword',
+                    children: '$children'
+                }
+            }]
+
+            if (categoryData.limit) {
+                aggregate.push({ $limit: categoryData.offset + categoryData.limit });
+                aggregate.push({ $skip: categoryData.offset });
+            }
+
+
+            category.aggregate(aggregate).exec(function (Error, Response) {
                 if (Error) {
                     console.log('error: ', Error);
                     reject({ status: 500, message: 'Internal Server Error' });
