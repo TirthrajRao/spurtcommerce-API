@@ -21,12 +21,11 @@ module.exports.pageList = (productData) => {
                     'metaTagKeyword': '$meta_tag_keywords',
                     'metaTagTitle': '$meta_tag_title',
                     'title': '$title',
-                    'isActive':'1',
+                    'isActive':'$is_active',
                     'content':'$full_text',
                 }
             },
         ])
-        .limit(4)
         .exec(function (error, topSelling) {
             if (error) {
                 return reject(error);
@@ -51,5 +50,34 @@ module.exports.updatePageDetail = (pageId, pageData) => {
         });
     })
 }
+
+module.exports.addNewPage = (pageData) => {
+
+    return new Promise((resolve, reject) => {
+        page.create(pageData,(zoneErr, updatePageDetail) => {
+            if (zoneErr) {
+                console.log('zoneError: ', zoneErr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully Added page.', data: updatePageDetail });
+            }
+        });
+    })
+}
+
+module.exports.deletePage = (pageId) => {
+
+    return new Promise((resolve, reject) => {
+        page.findByIdAndRemove({_id:pageId},(zoneErr, updatePageDetail) => {
+            if (zoneErr) {
+                console.log('zoneError: ', zoneErr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully Deleted page.', data: updatePageDetail });
+            }
+        });
+    })
+}
+
 
 

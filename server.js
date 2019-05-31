@@ -186,6 +186,10 @@ app.get('/api/page/pagelist',pageController.pageList);
 
 app.put('/api/page/update-page/:id',pageController.updatePageDetail);
 
+app.post('/api/page/add-page',pageController.addNewPage);
+
+app.delete('/api/page/delete-page/:id',pageController.deletePage);
+
 
 
 
