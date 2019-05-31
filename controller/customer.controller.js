@@ -19,8 +19,8 @@ module.exports.register = (req, res) => {
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		mobile: req.body.phoneNumber,
-		newsletter:1,
-		mail_status:1,
+		newsletter: 1,
+		mail_status: 1,
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -111,6 +111,7 @@ module.exports.updateCustomer = (req, res) => {
 		mailStatus: req.body.mailStatus,
 		status: req.body.state
 	}
+	
 	console.log("customer Data", customerData);
 	customerService.updateCustomer(customerId, customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });

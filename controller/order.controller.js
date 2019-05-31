@@ -57,8 +57,7 @@ module.exports.totalAmount = (req, res) => {
 module.exports.orderCheckout = (req, res) => {
 
 	let productDetailData = [];
-
-
+	
 	_.forEach(req.body.productDetails, (product) => {
 		let productInformatiomData = {
 			productInformatiomData: {

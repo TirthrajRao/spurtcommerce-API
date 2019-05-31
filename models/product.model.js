@@ -127,8 +127,7 @@ var product = new mongoose.Schema({
         type:String
     },
     stockStatusId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'stock_status'
+        type:String
     },
     subtractStock:{
         type:Number

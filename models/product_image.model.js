@@ -2,10 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var product_image = new Schema({
-	product_id:{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'product'
-	},
+
 	image:{
 		type:String,
 	},
@@ -31,11 +28,11 @@ var product_image = new Schema({
 	},
 	created_date : {
 		type: Date,
-		default: Date.now()
+		default: new Date()
 	},
 	modified_date:{
 		type:Date,
-		Default:Date.now()
+		Default: new Date()
 	},
 });
 module.exports = mongoose.model('product_image', product_image,'product_image');

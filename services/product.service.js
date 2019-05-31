@@ -7,6 +7,7 @@ var _ = require('lodash');
 
 // Database models
 var product = require('../models/product.model');
+var product_Image = require('../models/product_image.model');
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -392,12 +393,12 @@ module.exports.productDetail = (productId) => {
 module.exports.addProduct = (productData) => {
     console.log("Product Data in service------->", productData);
     return new Promise((resolve, reject) => {
-        product.create(productData, (useerr, userres) => {
+        product.create(productData, (productError, productRes) => {
             if (productError) {
-                console.log('usererror: ', useerr);
+                console.log('usererror: ', productError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully created new product.', data: userres });
+                resolve({ status: 200, message: 'Successfully created new product.', data: productRes });
             }
         });
     })
@@ -480,7 +481,7 @@ module.exports.productList = (productData) => {
                         condition: 1,
                         isActive: 1,
                         location: 1,
-                        isFeatured:1,
+                        isFeatured: 1,
                     }
                 },
                 //Reduce To Limited Data Using Project
@@ -544,8 +545,8 @@ module.exports.productList = (productData) => {
                         isActive: {
                             $first: '$isActive'
                         },
-                        isFeatured:{
-                            $first:'$isFeatured'
+                        isFeatured: {
+                            $first: '$isFeatured'
                         }
                     }
                 },
@@ -585,7 +586,7 @@ module.exports.productList = (productData) => {
                         condition: 1,
                         isActive: 1,
                         location: 1,
-                        isFeatured:1,
+                        isFeatured: 1,
                         Category: {
                             categoryId: '$Category._id',
                             categoryName: '$Category.name',
@@ -652,8 +653,8 @@ module.exports.productList = (productData) => {
                         Category: {
                             $push: '$Category'
                         },
-                        isFeatured:{
-                            $first:'$isFeatured',
+                        isFeatured: {
+                            $first: '$isFeatured',
                         }
                     }
                 }
@@ -669,21 +670,6 @@ module.exports.productList = (productData) => {
         }
     })
 
-}
-
-
-module.exports.addProduct = (productData) => {
-    console.log("Product Data in service------->", productData);
-    return new Promise((resolve, reject) => {
-        product.create((productError, newProduct) => {
-            if (productError) {
-                console.log('usererror: ', productError);
-                reject({ status: 500, message: 'Internal Server Error' });
-            } else {
-                resolve({ status: 200, message: 'Successfully created new product.', data: newProduct });
-            }
-        });
-    })
 }
 
 
@@ -750,7 +736,7 @@ module.exports.updateProduct = (productId, productData) => {
 
 
 module.exports.deleteProduct = (productId) => {
-    console.log("Product Data in service------->", productId);
+
     return new Promise((resolve, reject) => {
         product.findByIdAndRemove({ _id: productId }, (productError, deleteProduct) => {
             if (productError) {
@@ -765,7 +751,7 @@ module.exports.deleteProduct = (productId) => {
 
 
 module.exports.updateFeatureProduct = (productId, productData) => {
-    console.log("Product Data in service------->", productId);
+
     return new Promise((resolve, reject) => {
         product.findByIdAndUpdate({ _id: productId }, productData, { upsert: true }, (productError, updateProduct) => {
             if (productError) {
@@ -777,5 +763,86 @@ module.exports.updateFeatureProduct = (productId, productData) => {
         });
     })
 }
+
+
+module.exports.addImageToArray = (productId, productImage) => {
+    let imageData;
+    return new Promise((resolve, reject) => {
+
+        _.forEach(productImage, (singleImageItem) => {
+
+            if (!singleImageItem.productImageId) {
+
+                imageData = {
+                    image: singleImageItem.image,
+                    container_name: singleImageItem.containerName,
+                    default_image: 1,
+                }
+
+                product_Image.create(imageData, (productError, savedImage) => {
+                    if (productError) {
+                        console.log('usererror: ', productError);
+                    } else {
+                        product.find({ _id: productId }, (productError, foundproduct) => {
+                            if (productError) {
+                                reject({ status: 500, message: 'Internal Server Error' });
+                            } else {
+                                foundproduct[0].Images.push(savedImage._id);
+                                foundproduct = foundproduct[0];
+                                product.findOneAndUpdate({ _id: productId }, { $set: foundproduct }, { upsert: true, new: true }, (err, updatedProduct) => {
+                                    if (err) {
+                                        console.log('usererror: ', err);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            }
+        })
+
+        resolve({ status: 200, message: 'Successfully updated product.' });
+    })
+}
+
+
+
+module.exports.AddImage = (productImage) => {
+    let imageData;
+    let savedImageArray = [];
+    return new Promise((resolve, reject) => {
+
+        _.forEach(productImage, (singleImageItem, index) => {
+            if (!singleImageItem.productImageId) {
+                imageData = {
+                    image: singleImageItem.image,
+                    container_name: singleImageItem.containerName,
+                    default_image: 1,
+                }
+                console.log("image data---->>>>>", imageData);
+
+                product_Image.create(imageData, (productError, savedImage) => {
+                    if (productError) {
+                        console.log('usererror: ', productError);
+                    } else {
+                        console.log("SAved Images------>>>", savedImage);
+                        savedImageArray.push(savedImage._id);
+                        console.log("SAved Images------>>>", savedImageArray);
+                        if (index + 1  === productImage.length) {
+                            resolve({ status: 200, message: 'Successfully updated product.', data: savedImageArray });
+                        }
+                    }
+                });
+            } else {
+                if (index + 1  === productImage.length) {
+                    resolve({ status: 200, message: 'Successfully updated product.', data: savedImageArray });
+                }
+            }
+        })
+    })
+}
+
+
 
 
