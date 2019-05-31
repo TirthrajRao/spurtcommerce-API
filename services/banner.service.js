@@ -39,9 +39,9 @@ module.exports.bannerList = () => {
 }
 
 
-module.exports.addBanner = (body) => {
+module.exports.addBanner = (bannerData) => {
     return new Promise((resolve, reject) => {
-        banner.create(body, (useerr, userres) => {
+        banner.create(bannerData, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -67,7 +67,7 @@ module.exports.deleteBanner = (bannerid) => {
 }
 
 module.exports.updateBanner = (bannerid, bannerData) => {
-    console.log("body in banner===>", bannerid);
+
     console.log("banner Data in service=====>", bannerData);
     return new Promise((resolve, reject) => {
         banner.findOneAndUpdate({ _id: bannerid }, bannerData, { upsert: true }, (useerr, userres) => {

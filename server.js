@@ -190,6 +190,8 @@ app.post('/api/page/add-page',pageController.addNewPage);
 
 app.delete('/api/page/delete-page/:id',pageController.deletePage);
 
+app.get('/api/banner/bannerList',bannerController.bannerList);
+
 
 
 
