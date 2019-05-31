@@ -27,8 +27,8 @@ module.exports.categoryList = (req, res) => {
 
 module.exports.categoryByList = (req, res) => {
 	const categoryData = {
-		limit: 10,
-		offset: req.query.offset,
+		limit: parseInt(req.query.limit),
+		offset: req.query.offset ? parseInt(req.query.offset) : 0,
 		keyword: req.query.keyword,
 		sku: req.query.sku,
 		count: req.query.count

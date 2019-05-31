@@ -41,7 +41,7 @@ module.exports.orderList = (orderData) => {
             if (orderData.customerName) {
                 query['$and'].push({ 'shipping_firstname': { $regex: new RegExp(orderData.customerName, 'i') } });
             }
-            
+
             console.log("shopFilters", JSON.stringify(query));
 
             order.aggregate([
@@ -69,7 +69,7 @@ module.exports.orderList = (orderData) => {
                         shippingLastname: '$shipping_lastname',
                         paymentFirstname: '$payment_firstname',
                         orderPrefixId: '$orderPrefixId',
-                        modifiedDate :'$modified_date',
+                        modifiedDate: '$modified_date',
                     }
 
                 },
@@ -100,7 +100,7 @@ module.exports.orderList = (orderData) => {
                         shippingLastname: 1,
                         paymentFirstname: 1,
                         orderId: 1,
-                        modifiedDate:1,
+                        modifiedDate: 1,
                         orderStatus: {
                             orderStatusId: '$orderStatus._id',
                             name: '$orderStatus.name',
@@ -110,6 +110,7 @@ module.exports.orderList = (orderData) => {
                     }
                 },
             ])
+                .skip(orderData.offset)
                 .limit(orderData.limit)
                 .exec(function (error, productDetail) {
                     if (error) {
@@ -135,7 +136,7 @@ module.exports.orderListById = (orderId) => {
                     orderId: '$_id',
                     paymentAddress1: '$payment_address_1',
                     createdDate: '$created_date',
-                    modifiedDate :'$modified_date',
+                    modifiedDate: '$modified_date',
                     customerId: '$customer_id',
                     currencyCode: '$currency_code',
                     currencyId: '$currency_id',
@@ -155,7 +156,7 @@ module.exports.orderListById = (orderId) => {
                     shippingAddress2: '$shipping_address_2',
                     orderPrefixId: '$orderPrefixId',
                     orderStatusId: '$order_status_id',
-                    telephone:'$telephone',
+                    telephone: '$telephone',
                 }
             },
             {
@@ -205,8 +206,8 @@ module.exports.orderListById = (orderId) => {
                     orderPrefixId: 1,
                     orderStatusId: 1,
                     orderId: 1,
-                    modifiedDate:1,
-                    telephone:1,
+                    modifiedDate: 1,
+                    telephone: 1,
                     productList: {
                         orderProductId: '$productList._id',
                         orderId: '$productList.order_id',
@@ -300,21 +301,22 @@ module.exports.orderListById = (orderId) => {
                     invoicePrefix: {
                         $first: '$invoicePrefix'
                     },
-                    modifiedDate:{
-                        $first:'$modifiedDate'
+                    modifiedDate: {
+                        $first: '$modifiedDate'
                     },
-                    telephone:{
-                        $first:'$telephone'
+                    telephone: {
+                        $first: '$telephone'
                     }
                 }
             }
-        ]).exec(function (error, productDetail) {
-            if (error) {
-                return reject(error);
-            } else {
-                return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
-            }
-        })
+        ])
+            .exec(function (error, productDetail) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
+                }
+            })
     })
 }
 
@@ -356,7 +358,7 @@ module.exports.orderCheckout = (orderData) => {
 }
 
 
-module.exports.myOrderList = (orderData) => {   
+module.exports.myOrderList = (orderData) => {
 
     const customer_id = orderData.customer_id;
 
@@ -370,9 +372,9 @@ module.exports.myOrderList = (orderData) => {
                 $project: {
                     orderId: '$_id',
                     total: '$total',
-                    createdDate:'$created_date',
-                    customerId:'$customer_id',
-                    orderStatusId:'$order_status_id'
+                    createdDate: '$created_date',
+                    customerId: '$customer_id',
+                    orderStatusId: '$order_status_id'
                 }
             },
             {
@@ -388,11 +390,11 @@ module.exports.myOrderList = (orderData) => {
             },
             {
                 $project: {
-                    orderId:1,
-                    total:1,
-                    createdDate:1,
-                    customerId:1,
-                    orderStatusId:1,
+                    orderId: 1,
+                    total: 1,
+                    createdDate: 1,
+                    customerId: 1,
+                    orderStatusId: 1,
                     orderStatus: {
                         orderStatusId: '$orderStatus._id',
                         name: '$orderStatus.name',
@@ -402,7 +404,7 @@ module.exports.myOrderList = (orderData) => {
 
                 }
             },
-           
+
         ]).exec(function (error, orderDetail) {
             if (error) {
                 return reject(error);
@@ -575,7 +577,7 @@ module.exports.todayOrderAmount = () => {
 module.exports.todayOrderAmount = (orderId) => {
     return new Promise((resolve, reject) => {
 
-       var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
         order.find({ created_date: currentDate }).exec((error, response) => {
             if (error) {
@@ -594,8 +596,8 @@ module.exports.changeOrderStatus = (orderData) => {
     var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
     const orderDetail = {
-        modified_date:currentDate,
-        order_status_id:orderData.orderStatusId
+        modified_date: currentDate,
+        order_status_id: orderData.orderStatusId
     }
 
 
@@ -626,7 +628,7 @@ module.exports.salesList = () => {
                     ordercount: "34",
                     year: 2019,
                 }
-               const salesArray = [sales]
+                const salesArray = [sales]
                 resolve({ status: 200, message: 'Successfully updated Order Status', data: salesArray });
             }
         });

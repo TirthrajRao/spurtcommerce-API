@@ -16,7 +16,7 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports.orderList = (req, res) => {
 	const orderData = {
 		limit: parseInt(req.query.limit),
-		offset: parseInt(req.query.offset),
+		offset: req.query.offset ? parseInt(req.query.offset) : 0,
 		orderId: req.query.orderId,
 		totalAmount: req.query.totalAmount,
 		dateAdded: req.query.dateAdded,

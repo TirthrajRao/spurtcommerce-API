@@ -32,35 +32,26 @@ module.exports.imageResize = (req, res) => {
 	}
 }
 
-// module.exports.uploadFile = (req,res)=>{
+module.exports.FileUpload = (req, res) => {
+	const image = req.body.image;
+	const path = req.body.path;
+	const base64Data = new Buffer(image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+	const type = image.split(';')[0].split('/')[1];
+	const name = 'Img_' + Date.now() + '.' + type;
+	imageService.imageUpload((path === '' ? name : path + name), base64Data).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
 
-// 	let storage = multer.diskStorage({
-//         destination: function(req, file, cb) {
-// 			console.log("files--------->>>>>>",file);
-//             cb(null, './uploads/')
-// 		},
-//         filename: function(req, file, cb) {
-// 			let ext = '';
-// 			if (file.originalname.split(".").length>1) // checking if there is an extension or not.
-//             ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
-
-//             cb(null, file.fieldname + '_' + Date.now()+ext)
-//         }
-//     })
-//     let upload = multer({ storage: storage }).single('img');
-
-//     upload(req, res, (err) => {
-// 		if (err) return res.send({ err: err });
-// 		console.log("req.file",req.file);
-//         res.send({ name: req.body.name, file: req.file });
-//     })
-// }
 
 
 module.exports.getBucketList = (req, res) => {
 
 	const limit = req.body.limit;
-	console.log("123==============================>>>",req.query.folderName);
+	
 	if (req.query.folderName) {
 		console.log("In if condtion");
 		const folderName = req.query.folderName;
@@ -75,13 +66,13 @@ module.exports.getBucketList = (req, res) => {
 	else {
 		const folderName = "";
 		imageService.listFolders(limit, folderName)
-		.then((response) => {
-			return res.status(200).json({ status: 1, message: response.message, data: response.data });
-		})
-		.catch((error) => {
-			console.log('error: ', error);
-			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-		});
+			.then((response) => {
+				return res.status(200).json({ status: 1, message: response.message, data: response.data });
+			})
+			.catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
 	}
 }
 

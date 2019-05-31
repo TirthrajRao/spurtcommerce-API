@@ -12,8 +12,8 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports.getManufacture = (req, res) => {
 
 	const brandData = {
-		limit: parseInt(req.query.limit),
-		offset: parseInt(req.query.offset),
+		limit: req.query.limit ? parseInt(req.query.limit) : 0,
+		offset: req.query.offset ? parseInt(req.query.offset) : 0,
 		keyword: req.query.keyword,
 		sku: req.query.sku,
 		count: req.query.count
@@ -57,7 +57,6 @@ module.exports.updateManufacturer = (req, res) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		});
-
 	}
 	else {
 		const brandData = {

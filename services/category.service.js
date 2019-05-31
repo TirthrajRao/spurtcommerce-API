@@ -317,7 +317,10 @@ module.exports.categoryByList = (categoryData) => {
 
                 },
                
-            ]).exec(function (Error, Response) {
+            ])
+            .skip(categoryData.offset)
+            .limit(categoryData.limit)
+            .exec(function (Error, Response) {
                 if (Error) {
                     console.log('error: ', Error);
                     reject({ status: 500, message: 'Internal Server Error' });

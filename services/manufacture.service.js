@@ -37,7 +37,7 @@ module.exports.manufactureList = (brandData) => {
                 }
             ])
                 .skip(brandData.offset)
-                .limit(20)
+                .limit(brandData.limit)
                 .exec(function (Error, Response) {
                     if (Error) {
                         console.log("Error---------->>>>>",Error);

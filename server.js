@@ -181,7 +181,7 @@ app.get('/api/list/category-list',categoryController.categoryList);
 
 app.get('/api/list/related-product-list',productController.getRelatedProduct);
 
-
+app.post('/api/media/upload-file',mediaController.FileUpload);
 
 
 
