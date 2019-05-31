@@ -29,7 +29,7 @@ var product = new mongoose.Schema({
         type:String
     },
     price :{
-        type:String
+        type:Number
     },
     date_available :{
         type:String
@@ -79,14 +79,14 @@ var product = new mongoose.Schema({
     isFeatured:{
         type:Number
     },
-    rating :{
+    rating :{   
         type:String
     },
     condition :{ 
         type:String
     },
     is_active :{
-        type:Number
+        type:String
     },
     Images : [
     { type: mongoose.Schema.Types.ObjectId, 
@@ -107,7 +107,7 @@ var product = new mongoose.Schema({
         type:Number
     },
     isActive:{
-        type:Number
+        type:String
     },
     manufacturerId:{
         type:mongoose.Schema.Types.ObjectId,

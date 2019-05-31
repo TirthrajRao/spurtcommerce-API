@@ -24,6 +24,26 @@ module.exports.categoryList = (req, res) => {
 	});
 }
 
+
+module.exports.categoryByList = (req, res) => {
+	const categoryData = {
+		limit: 10,
+		offset: req.query.offset,
+		keyword: req.query.keyword,
+		sku: req.query.sku,
+		count: req.query.count
+	}
+
+	categoryService.categoryByList(categoryData).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
+
 module.exports.deleteCategory = (req, res) => {
 	const categoryId = req.params.id;
 	categoryService.deleteCategory(categoryId).then((response) => {

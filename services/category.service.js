@@ -286,3 +286,48 @@ module.exports.updateChildren = (parent, childrenId) => {
 }
 
 
+module.exports.categoryByList = (categoryData) => {
+    return new Promise((resolve, reject) => {
+        if (categoryData.count == 'true' || categoryData.count == 1) {
+
+            category.count((useerr, userres) => {
+                if (useerr) {
+                    console.log('usererror: ', useerr);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully got the complete list of categorys', data: userres });
+                }
+            });
+        }
+        else {
+            category.aggregate([
+                {
+                    $project: {
+                        categoryId: '$_id',
+                        name: '$name',
+                        image: '$image',
+                        imagePath: '$image_path',
+                        parentInt: '$parent_int',
+                        sortOrder: '$sort_order',
+                        metaTagTitle: '$meta_tag_title',
+                        metaTagDescription: '$meta_tag_description',
+                        metaTagKeyword: '$meta_tag_keyword',
+                        children: '$children'
+                    }
+
+                },
+               
+            ]).exec(function (Error, Response) {
+                if (Error) {
+                    console.log('error: ', Error);
+                    reject({ status: 500, message: 'Internal Server Error' });
+                } else {
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                }
+            })
+
+        }
+    })
+}
+
+

@@ -116,7 +116,7 @@ app.get('/api/order/total-order-amount',orderController.totalAmount);
 
 //Routes for AdminSide API
 app.post('/api/auth/login',authController.login);
-app.get('/api/categorylist',categoryController.categoryList);
+
 app.get('/api/manufacturer/manufacturerlist',manufactureController.getManufacture);
 app.get('/api/customer/customerlist',customerController.customerList);
 app.get('/api/product/product-detail/:id',productController.productDetail);
@@ -161,7 +161,7 @@ app.post('/api/customer/add-product-to-wishlist',wishListController.addProductTo
 app.get('/api/customer/wishlist-product-list',wishListController.getWishList);
 app.delete('/api/customer/wishlist-product-delete/:id',wishListController.removeProductFromWishList);   
 app.get('/api/customer/recent-customerlist',customerController.customerList);
-app.get('/api/list/category-list',categoryController.categoryList);
+
 app.get('/api/product/recent-selling-product',orderController.recentSellingProduct);
 app.get('/api/order/today-order-count',orderController.todayOrderCount);
 app.get('/api/order/today-order-amount',orderController.todayOrderAmount);
@@ -173,6 +173,13 @@ app.post('/api/customer/change-password',customerController.changePassword);
 app.post('/api/auth/change-password',authController.changePassword);
 
 // app.post('/api/settings/create-settings/',settingController.createSetting);
+
+
+app.get('/api/categorylist',categoryController.categoryByList);
+
+app.get('/api/list/category-list',categoryController.categoryList);
+
+app.get('/api/list/related-product-list',productController.getRelatedProduct);
 
 
 
