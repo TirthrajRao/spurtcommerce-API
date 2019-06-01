@@ -698,6 +698,18 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'sku': { $regex: new RegExp(sku, 'i') } });
             }
 
+            console.log("product status======>>>>",productData.status);
+
+            if (productData.status == 1) {
+                query['$and'].push({ 'isActive':1 });
+            }
+
+            if (productData.status == 0) {
+                query['$and'].push({ 'isActive':0 });
+            }
+
+            console.log("Query------>>>>",query);
+
 
             product.aggregate([
                 {

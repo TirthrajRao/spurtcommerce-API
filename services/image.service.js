@@ -45,7 +45,7 @@ module.exports.imageUpload = (folderName, base64Image) => {
 module.exports.createFolder = (folderName)=>{
     // Create the parameters for calling createBucket
 
-    console.log("folderName------->>>>",folderName);
+    
     const directoryPath = path.join(process.cwd(), 'uploads' + '/' + folderName);
     return new Promise((resolve, reject) => {
         if (fs.existsSync(directoryPath)) {
@@ -60,7 +60,6 @@ module.exports.createFolder = (folderName)=>{
     });
 }
 
-
 module.exports.listFolders = (limit, folderName) => {
 
     return new Promise((resolve, reject) => {
@@ -68,7 +67,6 @@ module.exports.listFolders = (limit, folderName) => {
         const directoryPath = path.join(process.cwd(), 'uploads' + '/' + folderName);
         readDir(directoryPath).then((files) => {
 
-            console.log("FIles--->>>>>>>>>>>>>>>>>", files);
             const contents = [];
             const commonPrefix = [];
             for (const file of files) {

@@ -24,8 +24,9 @@ module.exports.productList = (req, res) => {
 		priceTo: req.query.priceTo,
 		condition: req.query.condition,
 		sku: req.query.sku,
+		status:parseInt(req.query.status),
 	}
-
+	
 	productService.productList(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
