@@ -191,14 +191,16 @@ module.exports.categoryList = (categoryData) => {
                             metaTagTitle: '$children.metaTagTitle',
                             metaTagDescription: '$children.metaTagDescription',
                             metaTagKeyword: '$children.metaTagKeyword',
-                            children: '$grandchilds'
+                            children: '$grandchilds',
                         }
                     }
                 },
                 {
                     $group: {
                         _id: '$categoryId',
-                        children: { $push: '$children' },
+                        children: {
+                            $push: '$children'
+                        },
                         name: { $first: '$name' },
                         image: { $first: '$image', },
                         imagePath: { $first: '$imagePath', },
@@ -309,11 +311,11 @@ module.exports.categoryByList = (categoryData) => {
                     { 'name': { $regex: new RegExp(searchText, 'i') }, },
                 ]
             }
-            
+
             const aggregate =
                 [
                     {
-                        $match:query
+                        $match: query
                     },
                     {
                         $project: {
