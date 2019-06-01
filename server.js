@@ -58,7 +58,7 @@ app.get('/api/list/banner-list',bannerController.bannerList);
 app.post('/api/banner/add-banner',bannerController.addBanner);
 app.delete('/api/banner/delete-banner/:id',bannerController.deleteBanner);
 app.put('/api/banner/update-banner/:id',bannerController.updateBanner);
-app.get('/api/product-store/featureproduct-list',productController.getfeatureproduct);
+app.get('/api/banner/bannerList',bannerController.bannerList);
 
 //Routes for Category API
 
@@ -78,10 +78,6 @@ app.get('/api/currency/currencylist',currencyController.currencyList);
 app.post('/api/currency/add-currency',currencyController.addCurrency);
 app.put('/api/currency/update-currency/:id',currencyController.updateCurrency);
 
-//Routes for Media API
-
-app.get('/api/media/image-resize',mediaController.imageResize);
-app.get('/api/product-store/productdetail/:id',productController.productDetail);
 
 //Routes for Settings API
 
@@ -126,6 +122,7 @@ app.post('/api/orders/customer-checkout',orderController.orderCheckout);
 app.get('/api/orders/order-list',orderController.myOrderList);
 app.get('/api/orders/order-detail',orderController.orderDetail);
 app.post('/api/product/update-product/:id',productController.updateProduct);
+app.get('/api/product-store/featureproduct-list',productController.getfeatureproduct);
 
 //Routes for Manufacturer API
 app.get('/api/manufacturers/manufacturerlist',manufactureController.getManufacture);
@@ -175,27 +172,21 @@ app.post('/api/auth/change-password',authController.changePassword);
 
 
 app.get('/api/categorylist',categoryController.categoryByList);
-
 app.get('/api/list/category-list',categoryController.categoryList);
-
 app.get('/api/list/related-product-list',productController.getRelatedProduct);
 
-app.post('/api/media/upload-file',mediaController.FileUpload);
+//Routes for Pages API
 
 app.get('/api/page/pagelist',pageController.pageList);
-
 app.put('/api/page/update-page/:id',pageController.updatePageDetail);
-
 app.post('/api/page/add-page',pageController.addNewPage);
-
 app.delete('/api/page/delete-page/:id',pageController.deletePage);
 
-app.get('/api/banner/bannerList',bannerController.bannerList);
+//Routes for Media API
 
-
-
-
-
+app.get('/api/media/image-resize',mediaController.imageResize);
+app.get('/api/product-store/productdetail/:id',productController.productDetail);
+app.post('/api/media/upload-file',mediaController.FileUpload);
 
 
 

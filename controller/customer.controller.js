@@ -6,11 +6,14 @@ var emailService = require('../services/email.service');
 // npm import
 const path = require('path');
 const mongoose = require('mongoose');
+const requestIp = require('request-ip');
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports.register = (req, res) => {
+
+	const clientIp = requestIp.getClientIp(req); 
 
 	const customerData = {
 		username: req.body.emailId,
@@ -21,6 +24,7 @@ module.exports.register = (req, res) => {
 		mobile: req.body.phoneNumber,
 		newsletter: 1,
 		mail_status: 1,
+		ip:clientIp,
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -65,9 +69,14 @@ module.exports.register = (req, res) => {
 }
 
 module.exports.login = (req, res) => {
+	const clientIp = requestIp.getClientIp(req); 
+
+	console.log("client Ip Address-------->>>>>",clientIp);
+
 	const customerData = {
 		email: req.body.emailId,
 		password: req.body.password,
+		Ip:clientIp,
 	}
 	console.log("customer Data", customerData);
 	customerService.login(customerData).then((response) => {

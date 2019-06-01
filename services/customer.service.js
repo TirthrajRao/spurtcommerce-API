@@ -69,7 +69,9 @@ module.exports.login = (body) => {
                                 customer_id: customer._id,
                                 email_id: customer.email,
                                 first_name: customer.first_name,
+                                ip_address:body.Ip,
                             }
+                            console.log("login DAta------>>>",loginData);
                             loginLog.create(loginData, (useerr, userres) => {
                                 if (useerr) {
                                     console.log('usererror: ', useerr);

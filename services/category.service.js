@@ -301,21 +301,35 @@ module.exports.categoryByList = (categoryData) => {
         }
         else {
 
+            var searchText = categoryData.keyword;
 
-            const aggregate = [{
-                $project: {
-                    categoryId: '$_id',
-                    name: '$name',
-                    image: '$image',
-                    imagePath: '$image_path',
-                    parentInt: '$parent_int',
-                    sortOrder: '$sort_order',
-                    metaTagTitle: '$meta_tag_title',
-                    metaTagDescription: '$meta_tag_description',
-                    metaTagKeyword: '$meta_tag_keyword',
-                    children: '$children'
-                }
-            }]
+
+            var query = {
+                $and: [
+                    { 'name': { $regex: new RegExp(searchText, 'i') }, },
+                ]
+            }
+            
+            const aggregate =
+                [
+                    {
+                        $match:query
+                    },
+                    {
+                        $project: {
+                            categoryId: '$_id',
+                            name: '$name',
+                            image: '$image',
+                            imagePath: '$image_path',
+                            parentInt: '$parent_int',
+                            sortOrder: '$sort_order',
+                            metaTagTitle: '$meta_tag_title',
+                            metaTagDescription: '$meta_tag_description',
+                            metaTagKeyword: '$meta_tag_keyword',
+                            children: '$children'
+                        }
+                    }
+                ]
 
             if (categoryData.limit) {
                 aggregate.push({ $limit: categoryData.offset + categoryData.limit });
