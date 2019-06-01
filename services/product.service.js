@@ -377,6 +377,28 @@ module.exports.productDetail = (productId) => {
                         $push: '$Category'
                     },
                 }
+            },
+            {
+                $lookup: {
+                    from: 'product_related',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'relatedProductDetail'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$relatedProductDetail',
+                    preserveNullAndEmptyArrays: true,
+                }
+            },
+            {
+                $lookup: {
+                    from: 'product',
+                    localField: 'relatedProductDetail.product_id',
+                    foreignField: '_id',
+                    as: 'relatedProductDetail'
+                }
             }
             //Group To Generate Single Document Form Multiple Output Document
 
@@ -422,7 +444,7 @@ module.exports.getRelatedProduct = (productId) => {
                 }
             },
             {
-                $unwind:'$product'
+                $unwind: '$product'
             },
             {
                 $project: {
@@ -442,21 +464,21 @@ module.exports.getRelatedProduct = (productId) => {
                 }
             },
             {
-                $unwind:'$productImage'
+                $unwind: '$productImage'
             },
             {
                 $project: {
-                    productId:1,
-                    name:1,
-                    description:1,
-                    price:1,
+                    productId: 1,
+                    name: 1,
+                    description: 1,
+                    price: 1,
                     productImage: {
                         _id: '$productImage._id',
                         image: '$productImage.image',
                         containerName: '$productImage.container_name',
                         defaultImage: '$productImage.default_image',
                     },
-                  
+
                 }
             },
             {
@@ -517,7 +539,7 @@ module.exports.topSellingProduct = (productData) => {
                 }
             },
             {
-                $unwind:'$productImage'
+                $unwind: '$productImage'
             },
             {
                 $project: {
@@ -532,14 +554,14 @@ module.exports.topSellingProduct = (productData) => {
 
             },
         ])
-        .limit(4)
-        .exec(function (error, topSelling) {
-            if (error) {
-                return reject(error);
-            } else {
-                return resolve({ status: 200, message: 'Successfully get product list', data: topSelling });
-            }
-        })
+            .limit(4)
+            .exec(function (error, topSelling) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully get product list', data: topSelling });
+                }
+            })
 
     })
 }
@@ -698,17 +720,17 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'sku': { $regex: new RegExp(sku, 'i') } });
             }
 
-            console.log("product status======>>>>",productData.status);
+            console.log("product status======>>>>", productData.status);
 
             if (productData.status == 1) {
-                query['$and'].push({ 'isActive':1 });
+                query['$and'].push({ 'isActive': 1 });
             }
 
             if (productData.status == 0) {
-                query['$and'].push({ 'isActive':0 });
+                query['$and'].push({ 'isActive': 0 });
             }
 
-            console.log("Query------>>>>",query);
+            console.log("Query------>>>>", query);
 
 
             product.aggregate([
@@ -945,6 +967,38 @@ module.exports.productList = (productData) => {
     })
 
 }
+
+
+module.exports.addrelatedProduct = (productId, relatedProduct) => {
+    let productData;
+
+    return new Promise((resolve, reject) => {
+
+        _.forEach(relatedProduct, (singleProductId) => {
+
+            productData = {
+                product_id: productId,
+                related_id:singleProductId,
+                default_image: 1,
+            }
+            
+            productRelated.create(productData, (productError, savedProduct) => {
+                if (productError) {
+                    console.log('usererror: ', productError);
+                } else {
+                    console.log('related product', savedProduct);
+                }
+            });
+        })
+
+        resolve({ status: 200, message: 'Successfully updated product.' });
+    })
+}
+
+
+
+
+
 
 
 

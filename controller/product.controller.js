@@ -24,9 +24,9 @@ module.exports.productList = (req, res) => {
 		priceTo: req.query.priceTo,
 		condition: req.query.condition,
 		sku: req.query.sku,
-		status:parseInt(req.query.status),
+		status: parseInt(req.query.status),
 	}
-	
+
 	productService.productList(productData).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -74,9 +74,9 @@ module.exports.addProduct = (req, res) => {
 		_.forEach(req.body.categoryId, (category) => {
 
 			categoryArr.push(category.categoryId);
-	
+
 		})
-	
+
 		productData = {
 			name: req.body.productName,
 			description: req.body.productDescription,
@@ -84,7 +84,7 @@ module.exports.addProduct = (req, res) => {
 			upc: req.body.upc,
 			Images: response.data,
 			metaTagTitle: req.body.metaTagTitle,
-			Category:categoryArr,
+			Category: categoryArr,
 			relatedProductId: req.body.relatedProductId,
 			manufacturerId: req.body.model,
 			manufacturer_id: req.body.model,
@@ -98,12 +98,12 @@ module.exports.addProduct = (req, res) => {
 			requiredShipping: req.body.requiredShipping,
 			dateAvailable: req.body.dateAvailable,
 			condition: req.body.condition,
-			is_active:"1",
-			isActive:"1",
+			is_active: 1,
+			isActive: 1,
 			sortOrder: req.body.sortOrder,
 		}
-		
-		console.log("product data in conbtroller----->>>",productData);
+
+		console.log("product data in conbtroller----->>>", productData);
 
 		productService.addProduct(productData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message, data: response.data });
@@ -139,7 +139,18 @@ module.exports.updateProduct = (req, res) => {
 
 	})
 
+	if (req.body.relatedProductId) {
+		productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
+			console.log("Related product added succesfully");
+		}).catch((error) => {
+			console.log('error: ', error);
+		});
+	}
+
 	productService.addImageToArray(productId, req.body.image).then((response) => {
+
+
+		productService.addrelatedproudct
 
 		productData = {
 			name: req.body.productName,
@@ -158,7 +169,7 @@ module.exports.updateProduct = (req, res) => {
 			requiredShipping: req.body.requiredShipping,
 			dateAvailable: req.body.dateAvailable,
 			condition: req.body.condition,
-			status: req.body.status,
+			isActive: parseInt(req.body.status),
 			sortOrder: req.body.sortOrder,
 			productSpecial: req.body.productSpecial,
 			productDiscount: req.body.productDiscount,
@@ -177,6 +188,7 @@ module.exports.updateProduct = (req, res) => {
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
 }
+
 
 
 module.exports.deleteProduct = (req, res) => {
@@ -198,8 +210,6 @@ module.exports.updateFeatureProduct = (req, res) => {
 
 	productId = req.params.id;
 
-	console.log("productID------------>>>>>>>>>>", productId);
-
 	const productData = {
 		is_featured: parseInt(req.body.isFeature),
 		isFeatured: parseInt(req.body.isFeature)
@@ -219,8 +229,8 @@ module.exports.getRelatedProduct = (req, res) => {
 
 	productId = req.query.productId;
 
-	console.log("productid->>>>>>>>>>",productId);
-	
+	console.log("productid->>>>>>>>>>", productId);
+
 	productService.getRelatedProduct(productId).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {

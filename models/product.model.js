@@ -86,7 +86,7 @@ var product = new mongoose.Schema({
         type:String
     },
     is_active :{
-        type:String
+        type:Number
     },
     Images : [
     { type: mongoose.Schema.Types.ObjectId, 
@@ -107,7 +107,7 @@ var product = new mongoose.Schema({
         type:Number
     },
     isActive:{
-        type:String
+        type:Number
     },
     manufacturerId:{
         type:mongoose.Schema.Types.ObjectId,
