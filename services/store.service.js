@@ -28,7 +28,7 @@ module.exports.getProductList = (productData) => {
             var searchText = productData.keyword;
             
             var query = {
-                $and: [{ 'is_active':'1' } ]
+                $and: [{ 'isActive':1} ]
             }
 
             if (productData.keyword) {

@@ -522,10 +522,13 @@ module.exports.recentSellingProduct = () => {
 module.exports.todayOrderCount = () => {
 
     return new Promise((resolve, reject) => {
-
+``
         var datetime = new Date();
-        const todayDate = datetime.toISOString().slice(0, 10);
-        console.log(datetime.toISOString().slice(0, 10));
+        var todayDate = datetime.toISOString().slice(0, 10);
+        
+            todayDate = todayDate+"T00:00:00.000Z";
+        console.log("today date------>>>",todayDate);
+
         order.find({ created_date: todayDate }).count().exec((error, response) => {
             if (error) {
                 return reject(error);
@@ -547,22 +550,27 @@ module.exports.todayOrderAmount = () => {
     return new Promise((resolve, reject) => {
 
         var datetime = new Date();
-        const todayDate = datetime.toISOString().slice(0, 10);
-        console.log(datetime.toISOString().slice(0, 10));
+        var todayDate = datetime.toISOString().slice(0, 10);
+        
+            todayDate = todayDate+"T00:00:00.000Z";
+
+        console.log("today date------>>>",todayDate);
+
         order.aggregate([
             {
                 $match: { 'created_date': todayDate }
-
             },
             {
                 $group: {
                     _id: null,
-                    count: { $sum: 1 }
+                    total: {
+                        $sum: '$total'
+                    }
                 }
             }
 
         ]).exec(function (error, orderDetail) {
-            console.log('orderdetail', orderDetail);
+            console.log(JSON.stringify(orderDetail));
             if (error) {
                 return reject(error);
             } else {
@@ -570,23 +578,6 @@ module.exports.todayOrderAmount = () => {
                 return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
             }
         })
-    })
-}
-
-
-module.exports.todayOrderAmount = (orderId) => {
-    return new Promise((resolve, reject) => {
-
-        var currentDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-
-        order.find({ created_date: currentDate }).exec((error, response) => {
-            if (error) {
-                return reject(error);
-            } else {
-                console.log("Today's Order==========>>>>>>>>>>>>", response);
-                return resolve({ status: 200, message: 'Successfully get Today order count', data: order });
-            }
-        });
     })
 }
 
@@ -599,8 +590,6 @@ module.exports.changeOrderStatus = (orderData) => {
         modified_date: currentDate,
         order_status_id: orderData.orderStatusId
     }
-
-
 
     return new Promise((resolve, reject) => {
         order.findByIdAndUpdate({ _id: orderData.orderId }, orderDetail, { upsert: true }, (orderError, orderResponse) => {
@@ -615,7 +604,6 @@ module.exports.changeOrderStatus = (orderData) => {
 }
 
 module.exports.salesList = () => {
-
     return new Promise((resolve, reject) => {
         order.find((orderError, orderResponse) => {
             if (orderError) {

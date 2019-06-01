@@ -190,7 +190,7 @@ app.post('/api/media/upload-file',mediaController.FileUpload);
 app.post('/api/media/create-folder',mediaController.createFolder);
 
 
-
+app.get('/api/pages/pagelist',pageController.pageList);
 
 
 

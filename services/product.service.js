@@ -662,6 +662,7 @@ module.exports.AddImage = (productImage) => {
 
         _.forEach(productImage, (singleImageItem, index) => {
             if (!singleImageItem.productImageId) {
+                
                 imageData = {
                     image: singleImageItem.image,
                     container_name: singleImageItem.containerName,
@@ -704,23 +705,15 @@ module.exports.productList = (productData) => {
         }
         else {
 
-            var searchText = productData.keyword;
-            var sku = productData.sku;
-
-            shopFilters = { $and: [] };
-
-
             var query = {
                 $and: [
-                    { 'name': { $regex: new RegExp(searchText, 'i') }, },
+                    { 'name': { $regex: new RegExp(productData.keyword, 'i') }, },
                 ]
             }
-
+            
             if (productData.sku) {
-                query['$and'].push({ 'sku': { $regex: new RegExp(sku, 'i') } });
+                query['$and'].push({ 'sku': { $regex: new RegExp(productData.sku, 'i') } });
             }
-
-            console.log("product status======>>>>", productData.status);
 
             if (productData.status == 1) {
                 query['$and'].push({ 'isActive': 1 });
@@ -729,10 +722,7 @@ module.exports.productList = (productData) => {
             if (productData.status == 0) {
                 query['$and'].push({ 'isActive': 0 });
             }
-
-            console.log("Query------>>>>", query);
-
-
+            
             product.aggregate([
                 {
                     $match: query
@@ -965,7 +955,6 @@ module.exports.productList = (productData) => {
             })
         }
     })
-
 }
 
 
@@ -981,7 +970,7 @@ module.exports.addrelatedProduct = (productId, relatedProduct) => {
                 related_id:singleProductId,
                 default_image: 1,
             }
-            
+
             productRelated.create(productData, (productError, savedProduct) => {
                 if (productError) {
                     console.log('usererror: ', productError);
