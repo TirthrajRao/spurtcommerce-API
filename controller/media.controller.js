@@ -51,7 +51,7 @@ module.exports.FileUpload = (req, res) => {
 module.exports.getBucketList = (req, res) => {
 
 	const limit = req.body.limit;
-	
+
 	if (req.query.folderName) {
 		console.log("In if condtion");
 		const folderName = req.query.folderName;
@@ -75,6 +75,21 @@ module.exports.getBucketList = (req, res) => {
 			});
 	}
 }
+
+
+module.exports.createFolder = (req, res) => {
+	
+	const folderName = req.body.folderName;
+
+	imageService.createFolder(folderName).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+
+}
+
 
 
 

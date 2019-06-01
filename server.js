@@ -187,7 +187,7 @@ app.delete('/api/page/delete-page/:id',pageController.deletePage);
 app.get('/api/media/image-resize',mediaController.imageResize);
 app.get('/api/product-store/productdetail/:id',productController.productDetail);
 app.post('/api/media/upload-file',mediaController.FileUpload);
-
+app.post('/api/media/create-folder',mediaController.createFolder);
 
 
 

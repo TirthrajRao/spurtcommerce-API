@@ -60,6 +60,8 @@ module.exports.updateBanner = (req, res) => {
 		});
 	}
 	else {
+		const bannerid = req.params.id;
+
 		const bannerData = {
 			title: req.body.title,
 			content: req.body.content,
@@ -115,7 +117,7 @@ module.exports.addBanner = (req, res) => {
 			link: req.body.link,
 			position: req.body.position,
 		}
-
+		
 		bannerService.addBanner(bannerData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message });
 		}).catch((error) => {

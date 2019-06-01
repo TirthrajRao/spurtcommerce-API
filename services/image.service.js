@@ -41,6 +41,26 @@ module.exports.imageUpload = (folderName, base64Image) => {
     });
 }
 
+
+module.exports.createFolder = (folderName)=>{
+    // Create the parameters for calling createBucket
+
+    console.log("folderName------->>>>",folderName);
+    const directoryPath = path.join(process.cwd(), 'uploads' + '/' + folderName);
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(directoryPath)) {
+            resolve({ETAG: new Date()});
+        }
+        fs.mkdir(directoryPath, { recursive: true }, (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve({ETAG: new Date()});
+        });
+    });
+}
+
+
 module.exports.listFolders = (limit, folderName) => {
 
     return new Promise((resolve, reject) => {
