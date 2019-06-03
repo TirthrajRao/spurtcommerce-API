@@ -138,7 +138,6 @@ app.delete('/api/customer/delete-customer/:id',customerController.deleteCustomer
 app.post('/api/customer/add-customer',customerController.addCustomer);
 app.get('/api/auth/userlist',authController.userList);
 app.get('/api/role/rolelist',authController.roleList);
-app.get('/api/language/languagelist',languageController.languageList);
 app.get('/api/customer/customer-details/:id',customerController.customerDetails);
 app.get('/api/customer/login-log-list',customerController.loginLogList);
 app.post('/api/address/add-address',customerController.addAddress);
@@ -214,6 +213,20 @@ app.delete('/api/order-status/delete-order-status/:id',orderStatusController.del
 
 app.get('/api/email-template/email-templatelist',emailTempController.emailTemplateList);
 app.put('/api/email-template/update-email-template/:id',emailTempController.updateEmailTemplate);
+app.delete('/api/email-template/delete-email-template/:id',emailTempController.deleteEmailTemplate);
+
+//Routes for Language API
+
+app.get('/api/language/languagelist',languageController.languageList);
+app.post('/api/language/add-language',languageController.addLanguage);
+app.delete('/api/language/delete-language/:id',languageController.deleteLanguage);
+app.put('/api/language/update-language/:id',languageController.updateLanguage);
+
+
+
+
+
+
 
 
 

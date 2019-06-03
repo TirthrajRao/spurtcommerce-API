@@ -7,10 +7,16 @@ var country = new Schema({
 	iso_code_2:String,
 	iso_code_3:String,
 	address_format:String,
-	postcode_required:String,
-	is_active:String,
-	created_date:Date,
-    modified_date:Date,
+	postcode_required:Number,
+	is_active:Number,
+	created_date:{
+		type:Date,
+		default:Date.now()
+	},
+    modified_date:{
+		type:Date,
+		default:Date.now()
+	},
     created_by:String,
     modified_by:String,
 });

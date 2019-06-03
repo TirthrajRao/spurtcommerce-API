@@ -13,7 +13,7 @@ var email_template = new Schema({
 		type:String,
 	},
 	is_active:{
-		type:String,
+		type:Number,
 	},
 	created_date : {
 		type: Date,
