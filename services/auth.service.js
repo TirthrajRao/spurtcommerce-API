@@ -157,8 +157,9 @@ module.exports.roleList = (userData) => {
             usergroup.aggregate([
                 {
                     $project: {
-                        group_id: '$_id',
+                        groupId: '$_id',
                         name: '$name',
+                        isActive:'$is_active',
                     }
                 },
             ]).exec(function (Error, Response) {
@@ -238,6 +239,50 @@ module.exports.changePassword = (userId, userData) => {
         });
     });
 }
+
+module.exports.createRole = (roleData)=> {
+	console.log("roleData in country===>",roleData);
+    return new Promise((resolve, reject) => {
+        usergroup.create(roleData, (useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully created new Role.', data: userres });
+            }
+        });
+    })
+}
+
+module.exports.updateRole = (roleId,roleData)=> {
+	console.log("roleData in country===>",roleData);
+    return new Promise((resolve, reject) => {
+        usergroup.findByIdAndUpdate({_id:roleId},roleData,{upsert:true}, (useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully updated Role.', data: userres });
+            }
+        });
+    })
+}
+
+module.exports.createUser = (userData)=> {
+	console.log("userData in country===>",userData);
+    return new Promise((resolve, reject) => {
+        user.create(userData, (useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully created new User.', data: userres });
+            }
+        });
+    })
+}
+
+
 
 
 

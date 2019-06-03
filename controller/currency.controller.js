@@ -26,7 +26,6 @@ module.exports.addCurrency = (req, res) => {
 		symbol_right : req.body.symbolRight,
 		value : req.body.value,
 		is_active : req.body.status
-
 	}
 	currencyService.addCurrency(currencyData).then((response) => {
 		return res.status(200).json({status:1, message: response.message});
@@ -56,8 +55,8 @@ module.exports.updateCurrency = (req, res) => {
 		symbol_left : req.body.symbolLeft,
 		symbol_right : req.body.symbolRight,
 		value : req.body.value,
-		is_active : req.body.status
-
+		is_active : req.body.status,
+		modified_date:new Date(),
 	}
 	currencyService.updateCurrency(currencyId,currencyData).then((response) => {
 		return res.status(200).json({status:1, message: response.message});

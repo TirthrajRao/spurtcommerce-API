@@ -89,7 +89,7 @@ module.exports.addProduct = (req, res) => {
 			manufacturerId: req.body.model,
 			manufacturer_id: req.body.model,
 			location: req.body.location,
-			price: req.body.price,
+			price: parseInt(req.body.price),
 			minimumQuantity: req.body.minimumQuantity,
 			quantity: req.body.quantity,
 			subtractStock: req.body.subtractStock,
@@ -98,8 +98,8 @@ module.exports.addProduct = (req, res) => {
 			requiredShipping: req.body.requiredShipping,
 			dateAvailable: req.body.dateAvailable,
 			condition: req.body.condition,
-			is_active: 1,
-			isActive: 1,
+			is_active: parseInt(req.body.status),
+			isActive: parseInt(req.body.status),
 			sortOrder: req.body.sortOrder,
 		}
 

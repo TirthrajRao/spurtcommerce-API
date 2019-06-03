@@ -662,7 +662,7 @@ module.exports.AddImage = (productImage) => {
 
         _.forEach(productImage, (singleImageItem, index) => {
             if (!singleImageItem.productImageId) {
-                
+
                 imageData = {
                     image: singleImageItem.image,
                     container_name: singleImageItem.containerName,
@@ -710,7 +710,7 @@ module.exports.productList = (productData) => {
                     { 'name': { $regex: new RegExp(productData.keyword, 'i') }, },
                 ]
             }
-            
+
             if (productData.sku) {
                 query['$and'].push({ 'sku': { $regex: new RegExp(productData.sku, 'i') } });
             }
@@ -722,8 +722,10 @@ module.exports.productList = (productData) => {
             if (productData.status == 0) {
                 query['$and'].push({ 'isActive': 0 });
             }
-            
-            product.aggregate([
+
+           
+
+            const aggregate = [
                 {
                     $match: query
                 },
@@ -946,7 +948,14 @@ module.exports.productList = (productData) => {
                 }
                 //Group To Generate Single Document Form Multiple Output Document
 
-            ]).exec(function (error, productDetail) {
+            ]
+
+            if (productData.limit) {
+                aggregate.push({ $limit: productData.offset + productData.limit });
+                aggregate.push({ $skip: productData.offset });
+            }
+
+            product.aggregate(aggregate).exec(function (error, productDetail) {
                 if (error) {
                     return reject(error);
                 } else {
@@ -967,7 +976,7 @@ module.exports.addrelatedProduct = (productId, relatedProduct) => {
 
             productData = {
                 product_id: productId,
-                related_id:singleProductId,
+                related_id: singleProductId,
                 default_image: 1,
             }
 

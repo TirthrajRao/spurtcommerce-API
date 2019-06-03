@@ -20,6 +20,7 @@ var authController = require('./controller/auth.controller');
 var storeController = require('./controller/store.controller');
 var languageController = require('./controller/language.controller');
 var wishListController = require('./controller/customerwishlist.controller');
+var stockStatusController = require('./controller/stockStatus.controller');
 
 var cors = require('cors');
 
@@ -77,6 +78,7 @@ app.post('/api/list/contact-us',contactController.addResponse);
 app.get('/api/currency/currencylist',currencyController.currencyList);
 app.post('/api/currency/add-currency',currencyController.addCurrency);
 app.put('/api/currency/update-currency/:id',currencyController.updateCurrency);
+app.delete('/api/currency/delete-currency/:id',currencyController.deleteCurrency);
 
 
 //Routes for Settings API
@@ -189,8 +191,24 @@ app.get('/api/product-store/productdetail/:id',productController.productDetail);
 app.post('/api/media/upload-file',mediaController.FileUpload);
 app.post('/api/media/create-folder',mediaController.createFolder);
 
+app.get('/api/pages/pagelist',pageController.pageList); 
 
-app.get('/api/pages/pagelist',pageController.pageList);
+app.post('/api/role/create-role',authController.createRole);
+app.put('/api/role/update-role/:id',authController.updateRole);
+app.post('/api/auth/create-user',authController.createUser);
+
+
+
+//Routes for Stock Status API
+
+app.get('/api/stock-status/stock-status-list',stockStatusController.stockList);
+app.put('/api/stock-status/update-stock-status/:id',stockStatusController.updateStockStatus);
+app.post('/api/stock-status/create-stock-status',stockStatusController.addStockStatus);
+app.delete('/api/stock-status/delete-stock-status/:id',stockStatusController.deleteStockStatus);
+
+
+
+
 
 
 

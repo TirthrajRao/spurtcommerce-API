@@ -38,6 +38,71 @@ module.exports.userList = (req, res) => {
 	});
 }
 
+
+module.exports.changePassword = (req, res) => {
+
+	const authorization = req.header('authorization');
+	authService.getProfile(authorization).then((response) => {
+
+
+
+		const userData = {
+			newPassword: req.body.newPassword,
+			oldPassword: req.body.oldPassword,
+		}
+
+		let userId = response.data._id;
+
+		authService.changePassword(userId, userData).then((response) => {
+			return res.status(200).json({ message: response.message, status: 1 });
+		}).catch((error) => {
+			console.log('error: ', error);
+			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		});
+
+
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+
+}
+
+module.exports.createRole = (req, res) => {
+
+	const roleData = {
+		name: req.body.name,
+		is_active: parseInt(req.body.status)
+	}
+
+	authService.createRole(roleData).then((response) => {
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
+module.exports.updateRole = (req, res) => {
+
+	const roleId = req.params.id;
+
+
+	const roleData = {
+		name: req.body.name,
+		is_active: parseInt(req.body.status)
+	}
+
+	authService.updateRole(roleId, roleData).then((response) => {
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
 module.exports.roleList = (req, res) => {
 
 	const userData = {
@@ -55,35 +120,52 @@ module.exports.roleList = (req, res) => {
 	});
 }
 
+module.exports.createUser = (req, res) => {
 
-module.exports.changePassword = (req, res) => {
+	const userData = {
 
-	const authorization = req.header('authorization');
-	authService.getProfile(authorization).then((response) => {
+		email: req.body.email,
+		first_name: req.body.firstName,
+		last_name: req.body.lastName,
+		password: req.body.password,
+		user_group_id: req.body.userGroupId,
+		username: req.body.username
+	}
 
-	
 
-		const userData = {
-			newPassword: req.body.newPassword,
-			oldPassword: req.body.oldPassword,
+	user.findOne({ email: req.body.email }, (error, customer) => {
+
+		if (customer == null) {
+
+			authService.createUser(userData).then((response) => {
+				return res.status(200).json({ message: response.message, data: response.data, status: 1 });
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
+		}
+		else if (error) {
+			const successResponse = {
+				status: 1,
+				message: 'Internal server Error',
+			};
+			return res.status(500).send(successResponse);
+		}
+		else {
+			const successResponse = {
+				status: 1,
+				message: 'user already registered.',
+			};
+			return res.status(400).send(successResponse);
+
 		}
 
-		let userId = response.data._id;
+	})
 
-		authService.changePassword(userId,userData).then((response) => {
-			return res.status(200).json({ message: response.message, status: 1 });
-		}).catch((error) => {
-			console.log('error: ', error);
-			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-		});
-
-
-	}).catch((error) => {
-		console.log('error: ', error);
-		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-	});
-	
 }
+
+
+
 
 
 

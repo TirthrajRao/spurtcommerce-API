@@ -29,6 +29,10 @@ var user = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'country'
 	},
+	user_group_id:{
+		type:mongoose.Schema.Types.ObjectId,
+		ref:'user_group'
+	},
 	city: {
 		type: String
 	},

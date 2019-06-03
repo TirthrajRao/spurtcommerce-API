@@ -112,7 +112,7 @@ module.exports.updateCustomer = (req, res) => {
 		username: req.body.username,
 		first_name: req.body.username,
 		email: req.body.email,
-		mobileNumber: req.body.mobileNumber,
+		mobile: req.body.mobileNumber,
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		avatar: req.body.avatar,

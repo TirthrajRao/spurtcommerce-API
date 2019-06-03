@@ -5,6 +5,7 @@ const Url = require('url');
 const multer = require('multer');
 var fs = require('fs');
 var _ = require('lodash');
+var async = require("async");
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -42,20 +43,18 @@ module.exports.imageUpload = (folderName, base64Image) => {
 }
 
 
-module.exports.createFolder = (folderName)=>{
+module.exports.createFolder = (folderName) => {
     // Create the parameters for calling createBucket
-
-    
     const directoryPath = path.join(process.cwd(), 'uploads' + '/' + folderName);
     return new Promise((resolve, reject) => {
         if (fs.existsSync(directoryPath)) {
-            resolve({ETAG: new Date()});
+            resolve({ ETAG: new Date() });
         }
         fs.mkdir(directoryPath, { recursive: true }, (err) => {
             if (err) {
                 reject(err);
             }
-            resolve({ETAG: new Date()});
+            resolve({ ETAG: new Date() });
         });
     });
 }
@@ -114,7 +113,7 @@ module.exports.listFolders = (limit, folderName) => {
 
 function isDirCheck(pathfile) {
     console.log("function calling is dir check------>");
-    return new Promise((subresolve, subreject) => {
+    return new Promise((subresolve, reject) => {
         fs.stat(pathfile, (error, stat) => {
             if (stat && stat.isDirectory()) {
                 console.log("in if");
@@ -123,7 +122,6 @@ function isDirCheck(pathfile) {
             } else {
                 console.log("in");
                 subresolve(false);
-
             }
         });
     })

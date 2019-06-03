@@ -11,22 +11,37 @@ const ObjectId = require('mongodb').ObjectId;
 
 // Services
 
-module.exports.currencyList = ()=> {
+module.exports.currencyList = () => {
     return new Promise((resolve, reject) => {
-        currency.find((useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+
+
+        currency.aggregate([
+            {
+                $project: {
+                    currencyId: '$_id',
+                    name: '$name',
+                    isActive: '$is_active',
+                    symbolLeft: '$symbol_left',
+                    symbolRight: '$symbol_right',
+                    code: '$code',
+                    value: '$value',
+                    modifiedDate: '$modified_date',
+                    title:'$title',
+                }
+            },
+        ]).exec(function (Error, Response) {
+            if (Error) {
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully get currency list	', data: userres });
+                resolve({ status: 200, message: 'Successfully get currency list', data: Response });
             }
-        });
+        })
+
     })
 }
 
-
-module.exports.addCurrency = (currencyData)=> {
-	console.log("currencyData in country===>",currencyData);
+module.exports.addCurrency = (currencyData) => {
+    console.log("currencyData in country===>", currencyData);
     return new Promise((resolve, reject) => {
         currency.create(currencyData, (useerr, userres) => {
             if (useerr) {
@@ -39,10 +54,10 @@ module.exports.addCurrency = (currencyData)=> {
     })
 }
 
-module.exports.deleteCurrency = (currencyId)=> {
-	console.log("body in country===>",currencyId);
+module.exports.deleteCurrency = (currencyId) => {
+    console.log("body in country===>", currencyId);
     return new Promise((resolve, reject) => {
-        currency.findOneAndRemove({_id:currencyId}, (useerr, userres) => {
+        currency.findOneAndRemove({ _id: currencyId }, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -53,11 +68,11 @@ module.exports.deleteCurrency = (currencyId)=> {
     })
 }
 
-module.exports.updateCurrency = (currencyId,countryData)=> {
-	console.log("body in country===>",currencyId);
-	console.log("country Data in service=====>",countryData);
+module.exports.updateCurrency = (currencyId, countryData) => {
+    console.log("body in country===>", currencyId);
+    console.log("country Data in service=====>", countryData);
     return new Promise((resolve, reject) => {
-        currency.findOneAndUpdate({_id:currencyId},countryData,{upsert:true},(useerr, userres) => {
+        currency.findOneAndUpdate({ _id: currencyId }, countryData, { upsert: true }, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });
