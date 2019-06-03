@@ -51,7 +51,6 @@ app.delete('/api/country/delete-country/:id',countryController.deleteCountry);
 //Routes for Store API
 
 app.post('/api/customer/register',customerController.register);
-// app.get('/api/list/productlist',productController.productList);
 
 
 //Routes for Banner API
@@ -93,12 +92,6 @@ app.delete('/api/zone/delete-zone/:id',zoneController.deleteZone);
 app.get('/api/zone/zone-list',zoneController.zoneList);
 app.get('/api/list/zone-list',zoneController.zoneList);
 
-//Routes for EmailTemplate API
-
-app.get('/api/email-template/email-templatelist',emailTempController.emailTemplateList);
-app.get('/api/order/order-status',orderStatusController.orderStatusList);
-app.get('/api/order/order-status/:id',orderStatusController.orderStatusById);
-
 //Routes for Product API
 
 app.post('/api/product/add-product',productController.addProduct);
@@ -114,10 +107,9 @@ app.get('/api/order/total-order-amount',orderController.totalAmount);
 //Routes for AdminSide API
 app.post('/api/auth/login',authController.login);
 
-app.get('/api/manufacturer/manufacturerlist',manufactureController.getManufacture);
+
 app.get('/api/customer/customerlist',customerController.customerList);
 app.get('/api/product/product-detail/:id',productController.productDetail);
-app.get('/api/order-status/order-status-list',orderStatusController.orderStatusList);
 app.get('/api/product/top-selling-productlist',productController.topSellingProduct);
 app.get('/api/customer/get-profile',customerController.getProfile);
 app.post('/api/orders/customer-checkout',orderController.orderCheckout);
@@ -127,11 +119,14 @@ app.post('/api/product/update-product/:id',productController.updateProduct);
 app.get('/api/product-store/featureproduct-list',productController.getfeatureproduct);
 
 //Routes for Manufacturer API
+
+app.get('/api/manufacturer/manufacturerlist',manufactureController.getManufacture);
 app.get('/api/manufacturers/manufacturerlist',manufactureController.getManufacture);
 app.put('/api/manufacturer/update-manufacturer/:id',manufactureController.updateManufacturer);
 app.post('/api/manufacturer/create-manufacturer',manufactureController.addManufacturer);
 app.delete('/api/manufacturer/delete-manufacturer/:id',manufactureController.deleteManufacturer);
-app.get('/api/media/bucket-object-list',mediaController.getBucketList);
+
+
 app.put('/api/CustomerAddress/update-address/:id',customerController.updateAddress);
 app.put('/api/customer/update-customer/:id',customerController.updateCustomer);	
 app.put('/api/product-store/update-featureproduct/:id',productController.updateFeatureProduct);
@@ -172,7 +167,6 @@ app.post('/api/auth/change-password',authController.changePassword);
 
 // app.post('/api/settings/create-settings/',settingController.createSetting);
 
-
 app.get('/api/categorylist',categoryController.categoryByList);
 app.get('/api/list/category-list',categoryController.categoryList);
 app.get('/api/list/related-product-list',productController.getRelatedProduct);
@@ -183,6 +177,7 @@ app.get('/api/page/pagelist',pageController.pageList);
 app.put('/api/page/update-page/:id',pageController.updatePageDetail);
 app.post('/api/page/add-page',pageController.addNewPage);
 app.delete('/api/page/delete-page/:id',pageController.deletePage);
+app.get('/api/pages/pagelist',pageController.pageList); 
 
 //Routes for Media API
 
@@ -190,14 +185,14 @@ app.get('/api/media/image-resize',mediaController.imageResize);
 app.get('/api/product-store/productdetail/:id',productController.productDetail);
 app.post('/api/media/upload-file',mediaController.FileUpload);
 app.post('/api/media/create-folder',mediaController.createFolder);
+app.get('/api/media/bucket-object-list',mediaController.getBucketList);
 
-app.get('/api/pages/pagelist',pageController.pageList); 
+
+//Routes for Role API
 
 app.post('/api/role/create-role',authController.createRole);
 app.put('/api/role/update-role/:id',authController.updateRole);
 app.post('/api/auth/create-user',authController.createUser);
-
-
 
 //Routes for Stock Status API
 
@@ -205,6 +200,23 @@ app.get('/api/stock-status/stock-status-list',stockStatusController.stockList);
 app.put('/api/stock-status/update-stock-status/:id',stockStatusController.updateStockStatus);
 app.post('/api/stock-status/create-stock-status',stockStatusController.addStockStatus);
 app.delete('/api/stock-status/delete-stock-status/:id',stockStatusController.deleteStockStatus);
+
+//Routes for Order Status API
+
+app.post('/api/order-status/create-order-status',orderStatusController.addOrderStatus);
+app.get('/api/order/order-status',orderStatusController.orderStatusList);
+app.get('/api/order/order-status/:id',orderStatusController.orderStatusById);
+app.get('/api/order-status/order-status-list',orderStatusController.orderStatusList);
+app.put('/api/order-status/update-order-status/:id',orderStatusController.updateOrderStatus);
+app.delete('/api/order-status/delete-order-status/:id',orderStatusController.deleteOrderStatus);
+
+//Routes for EmailTemplate API
+
+app.get('/api/email-template/email-templatelist',emailTempController.emailTemplateList);
+app.put('/api/email-template/update-email-template/:id',emailTempController.updateEmailTemplate);
+
+
+
 
 
 
