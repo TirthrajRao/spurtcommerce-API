@@ -39,7 +39,7 @@ module.exports.updateManufacturer = (req, res) => {
 
 			const brandData = {
 				name: req.body.name,
-				sort_order: req.body.sortOrder,
+				sort_order: parseInt(req.body.sortOrder),
 				is_active: req.body.status,
 				image_path: path,
 				image: name,
@@ -89,7 +89,7 @@ module.exports.addManufacturer = (req, res) => {
 
 			const brandData = {
 				name: req.body.name,
-				sort_order: req.body.sortOrder,
+				sort_order: parseInt(req.body.sortOrder),
 				is_active: req.body.status,
 				image_path: path,
 				image: name

@@ -31,7 +31,8 @@ module.exports.manufactureList = (brandData) => {
                     isActive: '$is_active',
                     image: '$image',
                     imagePath: '$image_path',
-                    name: '$name'
+                    name: '$name',
+                    sortOrder:'$sort_order',
                 }
             }]
             if (brandData.limit) {

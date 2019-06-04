@@ -12,10 +12,10 @@ var manufacturer = new mongoose.Schema({
     	type:String
     },
     sort_order :{
-    	type:String
+    	type:Number
     },
     is_active :{
-    	type:String
+    	type:Number
     },
     created_by :{
     	type:String,
