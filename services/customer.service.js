@@ -97,11 +97,6 @@ module.exports.login = (body) => {
 module.exports.changePassword = (customerId, userData) => {
     return new Promise((resolve, reject) => {
 
-        console.log("CHANGE PASSWORD calling------>>>");
-
-        console.log("Userdata--------->>>>", userData);
-        console.log("customer ID----------->>", customerId);
-
         customer.findOne({ _id: customerId }).exec((err, customer) => {
             if (err) {
                 reject({ status: 500, message: 'Internal Server Error' });
@@ -168,8 +163,7 @@ module.exports.customerList = (customerData) => {
             });
         }
         else {
-
-
+            
             var email = customerData.email;
             var name = customerData.name;
             var date = customerData.date;
@@ -209,9 +203,9 @@ module.exports.customerList = (customerData) => {
                         mobileNumber: '$mobile',
                     }
                 },
-            ]).exec(function (error, customerList) {
-                if (error) {
-                    return reject(error);
+            ]).exec(function (customerError, customerList) {
+                if (customerError) {
+                    return reject(customerError);
                 } else {
                     return resolve({ status: 200, message: 'Successfully got Customer list.', data: customerList });
                 }
@@ -266,12 +260,12 @@ module.exports.getProfile = (authorization) => {
 
 module.exports.deleteCustomer = (customerId) => {
     return new Promise((resolve, reject) => {
-        customer.findByIdAndRemove({ _id: customerId }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        customer.findByIdAndRemove({ _id: customerId }, (customerError, deletedCustomer) => {
+            if (customerError) {
+                console.log('customerError: ', customerError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully deleted customer.', data: userres });
+                resolve({ status: 200, message: 'Successfully deleted customer.', data: deletedCustomer });
             }
         });
     })
@@ -281,12 +275,12 @@ module.exports.deleteCustomer = (customerId) => {
 module.exports.addCustomer = (customerData) => {
     console.log('addEmployeeToTheCompany customerData: ', customerData);
     return new Promise((resolve, reject) => {
-        customer.create(customerData, (error, response) => {
-            if (error) {
-                console.log('usererror: ', error);
+        customer.create(customerData, (customerError, customerResponse) => {
+            if (customerError) {
+                console.log('customerError: ', customerError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Customer Created successfully', data: response });
+                resolve({ status: 200, message: 'Customer Created successfully', data: customerResponse });
             }
         });
     })
@@ -314,9 +308,9 @@ module.exports.customerDetails = (customerId) => {
                     productList: []
                 }
             },
-        ]).exec(function (error, customerList) {
-            if (error) {
-                return reject(error);
+        ]).exec(function (customerError, customerList) {
+            if (customerError) {
+                return reject(customerError);
             } else {
                 return resolve({ status: 200, message: 'Successfully get settings', data: customerList[0] });
             }
@@ -328,12 +322,12 @@ module.exports.customerDetails = (customerId) => {
 module.exports.addAddress = (addressData) => {
     console.log('addEmployeeToTheCompany addressData: ', addressData);
     return new Promise((resolve, reject) => {
-        address.create(addressData, (error, response) => {
-            if (error) {
-                console.log('usererror: ', error);
+        address.create(addressData, (addressError, addressResponse) => {
+            if (addressError) {
+                console.log('addressError: ', addressError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'New Address is created successfully', data: response });
+                resolve({ status: 200, message: 'New Address is created successfully', data: addressResponse });
             }
         });
     })
@@ -451,8 +445,6 @@ module.exports.loginLogList = () => {
 
 
 module.exports.checkForExists = (emailId) => {
-
-    console.log("email id-------->>>", emailId);
 
     return new Promise((resolve, reject) => {
         customer.findOne({ email: emailId }, (error, customer) => {

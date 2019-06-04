@@ -70,9 +70,7 @@ module.exports.register = (req, res) => {
 
 module.exports.login = (req, res) => {
 	const clientIp = requestIp.getClientIp(req);
-
-	console.log("client Ip Address-------->>>>>", clientIp);
-
+	
 	const customerData = {
 		email: req.body.emailId,
 		password: req.body.password,
@@ -123,7 +121,7 @@ module.exports.updateCustomer = (req, res) => {
 
 	console.log("customer Data", customerData);
 	customerService.updateCustomer(customerId, customerData).then((response) => {
-		return res.status(200).json({ message: response.message, data: response.data });
+		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
@@ -141,7 +139,7 @@ module.exports.customerList = (req, res) => {
 		count: req.query.count,
 		status: req.query.status,
 	}
-	
+
 	customerService.customerList(customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });
 	}).catch((error) => {
@@ -165,7 +163,7 @@ module.exports.deleteCustomer = (req, res) => {
 	const customerId = req.params.id;
 	customerService.deleteCustomer(customerId)
 		.then((response) => {
-			return res.status(200).json({ message: response.message, data: response.data });
+			return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 		})
 		.catch((error) => {
 			console.log('error: ', error);
@@ -178,13 +176,14 @@ module.exports.addCustomer = (req, res) => {
 	const customerData = {
 		username: req.body.username,
 		email: req.body.email,
-		mobileNumber: req.body.mobileNumber,
+		mobile: req.body.mobileNumber,
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		avatar: req.body.avatar,
 		newsletter: parseInt(req.body.newsletter),
 		mail_status: parseInt(req.body.mailStatus),
 		isActive: parseInt(req.body.status),
+		first_name: req.body.username,
 	}
 
 	if (req.body.password === req.body.confirmPassword) {
@@ -194,7 +193,7 @@ module.exports.addCustomer = (req, res) => {
 			if (customer == null) {
 
 				customerService.addCustomer(customerData).then((response) => {
-					return res.status(200).json({ message: response.message, data: response.data });
+					return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 				}).catch((error) => {
 					console.log('error: ', error);
 					return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
