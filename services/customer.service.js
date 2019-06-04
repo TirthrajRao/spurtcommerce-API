@@ -69,9 +69,9 @@ module.exports.login = (body) => {
                                 customer_id: customer._id,
                                 email_id: customer.email,
                                 first_name: customer.first_name,
-                                ip_address:body.Ip,
+                                ip_address: body.Ip,
                             }
-                            console.log("login DAta------>>>",loginData);
+                            console.log("login DAta------>>>", loginData);
                             loginLog.create(loginData, (useerr, userres) => {
                                 if (useerr) {
                                     console.log('usererror: ', useerr);
@@ -177,7 +177,7 @@ module.exports.customerList = (customerData) => {
             var query = {
                 $and: [{ 'email': { $regex: new RegExp(email, 'i') } }]
             }
-            
+
             if (customerData.name) {
                 query['$and'].push({ 'first_name': { $regex: new RegExp(name, 'i') } });
             }
@@ -205,8 +205,8 @@ module.exports.customerList = (customerData) => {
                         ip: '$ip',
                         isActive: 1,
                         avatar: '$avatar',
-                        createdDate: '$created_date'
-
+                        createdDate: '$created_date',
+                        mobileNumber: '$mobile',
                     }
                 },
             ]).exec(function (error, customerList) {
@@ -452,7 +452,7 @@ module.exports.loginLogList = () => {
 
 module.exports.checkForExists = (emailId) => {
 
-    console.log("email id-------->>>",emailId);
+    console.log("email id-------->>>", emailId);
 
     return new Promise((resolve, reject) => {
         customer.findOne({ email: emailId }, (error, customer) => {

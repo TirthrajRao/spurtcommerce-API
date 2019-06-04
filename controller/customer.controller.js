@@ -141,7 +141,7 @@ module.exports.customerList = (req, res) => {
 		count: req.query.count,
 		status: req.query.status,
 	}
-	console.log("customer Data", customerData);
+	
 	customerService.customerList(customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });
 	}).catch((error) => {

@@ -38,8 +38,8 @@ module.exports.updateCustomer = (req, res, next) => {
         username: Joi.string().required(),
         email: Joi.string().required(),
         mobileNumber: Joi.number().required(),
-        password: Joi.string(),
-        confirmPassword: Joi.string(),
+        password: Joi.any(),
+        confirmPassword: Joi.any(),
         status: Joi.number().required(),
         mailStatus: Joi.number().required(),
         newsletter: Joi.number().required(),
@@ -107,8 +107,6 @@ module.exports.editProfile = (req, res, next) => {
         emailId: Joi.string().required(),
         phoneNumber: Joi.number().required(),
         address: Joi.string().required(),
-
-
     });
 
     Joi.validate(
