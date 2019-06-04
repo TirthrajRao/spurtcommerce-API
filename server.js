@@ -55,7 +55,7 @@ app.delete('/api/country/delete-country/:id', countryController.deleteCountry);
 
 //Routes for Store API
 
-app.post('/api/customer/register', customerController.register);
+
 
 
 //Routes for Banner API
@@ -149,7 +149,7 @@ app.post('/api/address/add-address', customerController.addAddress);
 app.get('/api/address/get-address-list/:id', customerController.addressList);
 app.put('/api/address/update-address/:id', customerController.updateAddressById);
 app.delete('/api/address/delete-address/:id', customerController.deleteAddress);
-app.post('/api/customer/edit-profile', customerController.editProfile);
+
 
 
 //Routes for WishList API
@@ -242,6 +242,13 @@ app.route('/api/customer/add-customer')
 
 app.route('/api/customer/update-customer/:id')
     .put([customerValidation.updateCustomer], customerController.updateCustomer);
+
+app.route('/api/customer/register')
+    .post([customerValidation.register], customerController.register);
+    
+app.route('/api/customer/edit-profile')
+    .post([customerValidation.editProfile], customerController.editProfile);
+
 
 
 
