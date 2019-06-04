@@ -106,7 +106,23 @@ module.exports.addProduct = (req, res) => {
 		console.log("product data in conbtroller----->>>", productData);
 
 		productService.addProduct(productData).then((response) => {
-			return res.status(200).json({ status: 1, message: response.message, data: response.data });
+
+			console.log("response------>>>",response.data);
+
+			let ProductId = response.data._id;
+			
+			if (req.body.relatedProductId) {
+				productService.addrelatedProduct(ProductId, req.body.relatedProductId).then((response) => {
+					console.log("Related product added succesfully");
+					return res.status(200).json({ status: 1, message: response.message, data: response.data });
+				}).catch((error) => {
+					console.log('error: ', error);
+				});
+			}
+			else{
+				return res.status(200).json({ status: 1, message: response.message, data: response.data });
+			}
+			
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });

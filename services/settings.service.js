@@ -17,6 +17,7 @@ module.exports.settingsList = () => {
         settings.aggregate([
             {
                 $project: {
+                    settingsId:'$_id',
                     facebook: '$facebook',
                     google: '$google',
                     twitter: '$twitter',
@@ -33,7 +34,10 @@ module.exports.settingsList = () => {
                     storeTelephone: '$store_telephone',
                     categoryProductCount: 1,
                     storeLanguageName:'$store_language_name',
-                    itemsPerPage:'$items_per_page'
+                    itemsPerPage:'$items_per_page',
+                    countryId:'$country_id',
+                    storeCurrencyId:'$store_currency_id',
+                    zoneId:'$zone_id',
                 }
             },
         ]).exec(function (error, settingsList) {
@@ -46,3 +50,21 @@ module.exports.settingsList = () => {
 
     })
 }
+
+
+module.exports.createSetting = (settingData) => {
+
+    console.log("setting Data--------->>>>>>>",settingData);
+
+    return new Promise((resolve, reject) => {
+        settings.findByIdAndUpdate({ _id:'5cbd89c640b5afcf7d459997'}, settingData, { upsert: true }, (useerr, userres) => {
+            if (useerr) {
+                console.log('usererror: ', useerr);
+                reject({ status: 500, message: 'Internal Server Error' });
+            } else {
+                resolve({ status: 200, message: 'Successfully updated Setting', data: userres });
+            }
+        });
+    })
+}
+

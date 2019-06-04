@@ -32,7 +32,7 @@ module.exports.getfeatureproduct = (productData) => {
 
             product.aggregate([
                 {
-                    $match: { is_featured: '1' }
+                    $match: { isFeatured:1 }
 
                 },
                 {
@@ -523,7 +523,7 @@ module.exports.topSellingProduct = (productData) => {
             },
             {
                 $project: {
-                    'product._id': '$product_id',
+                    'product.productId': '$_id',
                     'product.name': '$name',
                     'product.description': '$description',
                     'product.price': '$price',

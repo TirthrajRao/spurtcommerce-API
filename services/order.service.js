@@ -611,9 +611,9 @@ module.exports.salesList = () => {
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
                 sales = {
-                    month: 5,
-                    monthYear: "May-2019",
-                    ordercount: "34",
+                    month: 6,
+                    monthYear: "Jun-2019",
+                    ordercount: "5",
                     year: 2019,
                 }
                 const salesArray = [sales]

@@ -49,11 +49,11 @@ module.exports.zoneList = () => {
                 }
             },
 
-        ]).exec(function (error, languageList) {
-            if (error) {
-                return reject(error);
+        ]).exec(function (zoneError, zoneList) {
+            if (zoneError) {
+                return reject(zoneError);
             } else {
-                return resolve({ status: 200, message: 'Successfully get settings', data: languageList });
+                return resolve({ status: 200, message: 'Successfully get settings', data: zoneList });
             }
         })
 

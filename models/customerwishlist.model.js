@@ -12,15 +12,15 @@ var customerwishlist = new Schema({
         ref: 'product'
     },
     is_active: {
-        type: String
+        type:Number
     },
     created_date: {
         type: Date,
-        Default: Date.now()
+        Default:new Date()
     },
     modified_date: {
         type: Date,
-        Default: Date.now()
+        Default:new Date()
     },
     created_by: {
         type: String,

@@ -164,7 +164,6 @@ app.get('/api/order/saleslist',orderController.salesList);
 app.post('/api/customer/change-password',customerController.changePassword);
 app.post('/api/auth/change-password',authController.changePassword);
 
-// app.post('/api/settings/create-settings/',settingController.createSetting);
 
 app.get('/api/categorylist',categoryController.categoryByList);
 app.get('/api/list/category-list',categoryController.categoryList);
@@ -221,6 +220,10 @@ app.get('/api/language/languagelist',languageController.languageList);
 app.post('/api/language/add-language',languageController.addLanguage);
 app.delete('/api/language/delete-language/:id',languageController.deleteLanguage);
 app.put('/api/language/update-language/:id',languageController.updateLanguage);
+
+//Routes for Seeting API
+
+app.post('/api/settings/create-settings/',settingController.createSetting);
 
 
 

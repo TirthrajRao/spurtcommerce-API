@@ -2,9 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var settings = new Schema({
-    settings_id:{
-        type:String
-    },
     url:{
         type:String
     },
@@ -27,10 +24,12 @@ var settings = new Schema({
         type:String
     },
     country_id:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+		ref:'country'
     },
     zone_id:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+		ref:'zone'
     },
     store_email:{
         type:String
@@ -55,7 +54,8 @@ var settings = new Schema({
         type:String
     },
     store_currency_id:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+		ref:'currency'
     },
     store_image:{
         type:String
@@ -76,7 +76,8 @@ var settings = new Schema({
         type:String
     },
     order_status:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+		ref:'order_status'
     },
     invoice_prefix:{
         type:String
@@ -88,7 +89,7 @@ var settings = new Schema({
         type:String
     },
     is_active :{
-        type:String,
+        type:Number,
     },
     created_by :{
         type:String,

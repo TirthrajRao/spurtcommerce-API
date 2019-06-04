@@ -44,7 +44,7 @@ module.exports.imageUpload = (folderName, base64Image) => {
 
 
 module.exports.createFolder = (folderName) => {
-    // Create the parameters for calling createBucket
+
     const directoryPath = path.join(process.cwd(), 'uploads' + '/' + folderName);
     return new Promise((resolve, reject) => {
         if (fs.existsSync(directoryPath)) {
@@ -68,61 +68,41 @@ module.exports.listFolders = (limit, folderName) => {
 
             const contents = [];
             const commonPrefix = [];
-            for (const file of files) {
-                console.log("file--------in for>", file);
+
+            async.eachSeries(files, (file, callback) => {
                 const pathfile = path.resolve(directoryPath, file);
-                console.log("pathfile------>>>>>>>", pathfile);
-                const isDir = isDirCheck(pathfile);
+                fs.stat(pathfile, (error, stat) => {
+                    if (stat && stat.isDirectory()) {
+                        commonPrefix.push({
+                            Prefix: folderName ? folderName + file + '/' : file + '/',
+                        });
+                        callback();
 
-                console.log("isDir-------->>>>>", isDir);
-
-                if (true) {
-
-                    commonPrefix.push({
-                        Prefix: folderName ? folderName + file + '/' : file + '/',
-                    });
-
-                }
-                contents.push({
-                    Key: folderName ? folderName + file : file,
+                    } else {
+                        contents.push({
+                            Key: folderName ? folderName + file : file,
+                        });
+                        callback();
+                    }
                 });
-            }
-
-            // passsing directoryPath and callback function
-
-            const outputResponse = {};
-            outputResponse.Name = 'uploads';
-            outputResponse.Prefix = folderName;
-            outputResponse.Delimiter = 100;
-            outputResponse.IsTruncated = 'uploads';
-            outputResponse.Marker = '';
-            outputResponse.Contents = contents;
-            outputResponse.CommonPrefixes = commonPrefix;
-
-            console.log("output repsonse---------->>>", outputResponse);
-
-            resolve({ status: 200, message: 'Successfully get bucket object list', data: outputResponse });
-
+            }, (callbackError, callbackResponse) => {
+                if (callbackError) {
+                    console.log('callbackError: ', callbackError);
+                } else {
+                    const outputResponse = {};
+                    outputResponse.Name = 'uploads';
+                    outputResponse.Prefix = folderName;
+                    outputResponse.Delimiter = 100;
+                    outputResponse.IsTruncated = 'uploads';
+                    outputResponse.Marker = '';
+                    outputResponse.Contents = contents;
+                    outputResponse.CommonPrefixes = commonPrefix;
+                    resolve({ status: 200, message: 'Successfully get bucket object list', data: outputResponse });
+                }
+            })
 
         }).catch((error) => {
-            console.log('error:----------->>>>>>>>>>> ', error);
-        });
-    })
-}
-
-
-function isDirCheck(pathfile) {
-    console.log("function calling is dir check------>");
-    return new Promise((subresolve, reject) => {
-        fs.stat(pathfile, (error, stat) => {
-            if (stat && stat.isDirectory()) {
-                console.log("in if");
-                subresolve(true);
-
-            } else {
-                console.log("in");
-                subresolve(false);
-            }
+            console.log('error:', error);
         });
     })
 }
@@ -132,10 +112,10 @@ function readDir(pathfile) {
     return new Promise((resolve, reject) => {
         fs.readdir(pathfile, (error, files) => {
             if (error) {
-                console.log("Error-------->>>");
+                console.log("Error-------->>>",error);
                 reject(error);
             }
-            console.log('files-------->>>>123', files);
+            console.log('files-------->>>>', files);
             resolve(files);
         });
     })
