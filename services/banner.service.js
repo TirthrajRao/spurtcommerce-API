@@ -38,15 +38,14 @@ module.exports.bannerList = () => {
     })
 }
 
-
 module.exports.addBanner = (bannerData) => {
     return new Promise((resolve, reject) => {
-        banner.create(bannerData, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        banner.create(bannerData, (bannerError, bannerResponse) => {
+            if (bannerError) {
+                console.log('bannerError: ', bannerError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'New banner is created successfully', data: userres });
+                resolve({ status: 200, message: 'New banner is created successfully', data: bannerResponse });
             }
         });
     })
@@ -55,12 +54,12 @@ module.exports.addBanner = (bannerData) => {
 module.exports.deleteBanner = (bannerid) => {
     console.log("body in banner===>", bannerid);
     return new Promise((resolve, reject) => {
-        banner.findOneAndRemove({ _id: bannerid }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        banner.findOneAndRemove({ _id: bannerid }, (bannerError, deletedBanner) => {
+            if (bannerError) {
+                console.log('bannerError: ', bannerError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully deleted Banner.', data: userres });
+                resolve({ status: 200, message: 'Successfully deleted Banner.', data: deletedBanner });
             }
         });
     })
@@ -69,13 +68,14 @@ module.exports.deleteBanner = (bannerid) => {
 module.exports.updateBanner = (bannerid, bannerData) => {
 
     console.log("banner Data in service=====>", bannerData);
+
     return new Promise((resolve, reject) => {
-        banner.findOneAndUpdate({ _id: bannerid }, bannerData, { upsert: true }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        banner.findOneAndUpdate({ _id: bannerid }, bannerData, { upsert: true }, (bannerError, updatedBanner) => {
+            if (bannerError) {
+                console.log('bannerError: ', bannerError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully updated banner.', data: userres });
+                resolve({ status: 200, message: 'Successfully updated banner.', data: updatedBanner });
             }
         });
     })

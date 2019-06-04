@@ -26,26 +26,25 @@ module.exports.pageList = (productData) => {
                 }
             },
         ])
-        .exec(function (error, topSelling) {
-            if (error) {
-                return reject(error);
+        .exec(function (pageError, pageList) {
+            if (pageError) {
+                return reject(pageError);
             } else {
-                return resolve({ status: 200, message: 'Successfully get product list', data: topSelling });
+                return resolve({ status: 200, message: 'Successfully get page list', data: pageList });
             }
         })
-
     })
 }
 
 module.exports.updatePageDetail = (pageId, pageData) => {
 
     return new Promise((resolve, reject) => {
-        page.findOneAndUpdate({ _id: pageId }, pageData, { upsert: true }, (zoneErr, updatePageDetail) => {
-            if (zoneErr) {
-                console.log('zoneError: ', zoneErr);
+        page.findOneAndUpdate({ _id: pageId }, pageData, { upsert: true }, (pageError, updatedPageDetail) => {
+            if (pageError) {
+                console.log('pageError: ', pageError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully updated page.', data: updatePageDetail });
+                resolve({ status: 200, message: 'Successfully updated page.', data: updatedPageDetail });
             }
         });
     })
@@ -54,12 +53,12 @@ module.exports.updatePageDetail = (pageId, pageData) => {
 module.exports.addNewPage = (pageData) => {
 
     return new Promise((resolve, reject) => {
-        page.create(pageData,(zoneErr, updatePageDetail) => {
-            if (zoneErr) {
-                console.log('zoneError: ', zoneErr);
+        page.create(pageData,(pageError, pageResponse) => {
+            if (pageError) {
+                console.log('pageError: ', pageError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully Added page.', data: updatePageDetail });
+                resolve({ status: 200, message: 'Successfully Added page.', data: pageResponse });
             }
         });
     })
@@ -68,12 +67,12 @@ module.exports.addNewPage = (pageData) => {
 module.exports.deletePage = (pageId) => {
 
     return new Promise((resolve, reject) => {
-        page.findByIdAndRemove({_id:pageId},(zoneErr, updatePageDetail) => {
-            if (zoneErr) {
-                console.log('zoneError: ', zoneErr);
+        page.findByIdAndRemove({_id:pageId},(pageError, deletedPage) => {
+            if (pageError) {
+                console.log('pageError: ', pageError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully Deleted page.', data: updatePageDetail });
+                resolve({ status: 200, message: 'Successfully Deleted page.', data: deletedPage });
             }
         });
     })

@@ -40,12 +40,12 @@ module.exports.emailTemplateList = (emailTempData) => {
 module.exports.updateEmailTemplate = (emailTempId, emailTempData) => {
 
     return new Promise((resolve, reject) => {
-        emailTemp.findByIdAndUpdate({ _id: emailTempId }, emailTempData, { upsert: true }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        emailTemp.findByIdAndUpdate({ _id: emailTempId }, emailTempData, { upsert: true }, (emailTempError, updatedEmailTemplate) => {
+            if (emailTempError) {
+                console.log('emailTempError: ', emailTempError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully updated Email Template', data: userres });
+                resolve({ status: 200, message: 'Successfully updated Email Template', data: updatedEmailTemplate });
             }
         });
     })
@@ -56,12 +56,12 @@ module.exports.updateEmailTemplate = (emailTempId, emailTempData) => {
 module.exports.deleteEmailTemplate = (emailTempId) => {
 
     return new Promise((resolve, reject) => {
-        orderStatus.findByIdAndRemove({ _id: emailTempId }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        orderStatus.findByIdAndRemove({ _id: emailTempId }, (emailTempError, deletedEmailTemplate) => {
+            if (emailTempError) {
+                console.log('emailTempError: ', emailTempError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully deleted Email Template.', data: userres });
+                resolve({ status: 200, message: 'Successfully deleted Email Template.', data: deletedEmailTemplate });
             }
         });
     })

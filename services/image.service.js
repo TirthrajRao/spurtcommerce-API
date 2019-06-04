@@ -108,14 +108,14 @@ module.exports.listFolders = (limit, folderName) => {
 }
 
 function readDir(pathfile) {
-    console.log("function calling------>");
+
     return new Promise((resolve, reject) => {
-        fs.readdir(pathfile, (error, files) => {
-            if (error) {
-                console.log("Error-------->>>",error);
-                reject(error);
+        fs.readdir(pathfile, (filesError, files) => {
+            if (filesError) {
+                console.log("filesError:", filesError);
+                reject(filesError);
             }
-            console.log('files-------->>>>', files);
+            console.log('filesList:', files);
             resolve(files);
         });
     })

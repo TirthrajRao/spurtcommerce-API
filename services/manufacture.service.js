@@ -14,12 +14,12 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports.manufactureList = (brandData) => {
     return new Promise((resolve, reject) => {
         if (brandData.count == 'true' || brandData.count == 1) {
-            manufacture.count((useerr, userres) => {
-                if (useerr) {
-                    console.log('usererror: ', useerr);
+            manufacture.count((manufactureError, manufactureList) => {
+                if (manufactureError) {
+                    console.log('manufactureError: ', manufactureError);
                     reject({ status: 500, message: 'Internal Server Error' });
                 } else {
-                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: userres });
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: manufactureList });
                 }
             });
 
@@ -39,42 +39,41 @@ module.exports.manufactureList = (brandData) => {
                 aggregate.push({ $skip: brandData.offset });
             }
             console.log('agreaget: ', aggregate);
-            manufacture.aggregate(aggregate).exec(function (Error, Response) {
-                if (Error) {
-                    console.log("Error---------->>>>>", Error);
+            manufacture.aggregate(aggregate).exec(function (manufactureError, manufactureList) {
+                if (manufactureError) {
+                    console.log('manufactureError:', manufactureError);
                     reject({ status: 500, message: 'Internal Server Error' });
                 } else {
-                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: manufactureList });
                 }
             })
         }
-
     })
 }
 
 module.exports.updateManufacturer = (brandData) => {
-    console.log("banner Data in service=====>", brandData);
+
     return new Promise((resolve, reject) => {
-        manufacture.findByIdAndUpdate({ _id: brandData.manufacturer_id }, brandData, { upsert: true }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        manufacture.findByIdAndUpdate({ _id: brandData.manufacturer_id }, brandData, { upsert: true }, (manufactureError, updatedManufacture) => {
+            if (manufactureError) {
+                console.log('manufactureError: ', manufactureError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully updated Manufacturer.', data: userres });
+                resolve({ status: 200, message: 'Successfully updated Manufacturer.', data: updatedManufacture });
             }
         });
     })
 }
 
 module.exports.addManufacturer = (brandData) => {
-    console.log("banner Data in service=====>", brandData);
+
     return new Promise((resolve, reject) => {
-        manufacture.create(brandData, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        manufacture.create(brandData, (manufactureError, manufactureData) => {
+            if (manufactureError) {
+                console.log('manufactureError: ', manufactureError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully created new Manufacturer.', data: userres });
+                resolve({ status: 200, message: 'Successfully created new Manufacturer.', data: manufactureData });
             }
         });
     })
@@ -83,12 +82,12 @@ module.exports.addManufacturer = (brandData) => {
 module.exports.deleteManufacturer = (manufacturerId) => {
 
     return new Promise((resolve, reject) => {
-        manufacture.findOneAndRemove({ _id: manufacturerId }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        manufacture.findOneAndRemove({ _id: manufacturerId }, (manufactureError, deletedManufacturer) => {
+            if (manufactureError) {
+                console.log('manufactureError: ', manufactureError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully deleted Manufacturer.', data: userres });
+                resolve({ status: 200, message: 'Successfully deleted Manufacturer.', data: deletedManufacturer });
             }
         });
     })

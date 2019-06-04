@@ -57,12 +57,12 @@ module.exports.createSetting = (settingData) => {
     console.log("setting Data--------->>>>>>>",settingData);
 
     return new Promise((resolve, reject) => {
-        settings.findByIdAndUpdate({ _id:'5cbd89c640b5afcf7d459997'}, settingData, { upsert: true }, (useerr, userres) => {
-            if (useerr) {
-                console.log('usererror: ', useerr);
+        settings.findByIdAndUpdate({ _id:'5cbd89c640b5afcf7d459997'}, settingData, { upsert: true }, (settingError, settingResponse) => {
+            if (settingError) {
+                console.log('settingError: ', settingError);
                 reject({ status: 500, message: 'Internal Server Error' });
             } else {
-                resolve({ status: 200, message: 'Successfully updated Setting', data: userres });
+                resolve({ status: 200, message: 'Successfully updated Setting', data: settingResponse });
             }
         });
     })
