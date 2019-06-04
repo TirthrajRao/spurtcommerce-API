@@ -207,7 +207,8 @@ module.exports.productDetail = (productId) => {
                     metaTagTitle: 1,
                     condition: 1,
                     isActive: 1,
-                    location: 1
+                    location: 1,
+                    upc:1
                 }
             },
             // // //Reduce To Limited Data Using Project
@@ -270,6 +271,9 @@ module.exports.productDetail = (productId) => {
                     },
                     isActive: {
                         $first: '$isActive'
+                    },
+                    upc:{
+                        $first:'$upc'
                     }
                 }
             },
@@ -313,7 +317,8 @@ module.exports.productDetail = (productId) => {
                     metaTagTitle: 1,
                     condition: 1,
                     isActive: 1,
-                    location: 1
+                    location: 1,
+                    upc:1,
 
                 }
             },
@@ -376,6 +381,9 @@ module.exports.productDetail = (productId) => {
                     Category: {
                         $push: '$Category'
                     },
+                    upc:{
+                        $first:'$upc'
+                    }
                 }
             },
             {

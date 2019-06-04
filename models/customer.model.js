@@ -42,7 +42,7 @@ var customer = new mongoose.Schema({
 		type: String
 	},
 	mail_status: {
-		type: String
+		type:Number
 	},
 	delete_flag: {
 		type: String
@@ -51,7 +51,7 @@ var customer = new mongoose.Schema({
 		type:Date
 	},
 	newsletter:{
-		type:String
+		type:Number
 	},
 	safe:{
 		type:String
@@ -63,8 +63,8 @@ var customer = new mongoose.Schema({
 		type:mongoose.Schema.Types.ObjectId,
 		ref:'zone'
 	},
-	is_active:{
-		type:String
+	isActive:{
+		type:Number
 	},
 	created_by:{
 		type:String,

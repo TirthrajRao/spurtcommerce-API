@@ -1,9 +1,6 @@
 var mongoose = require('mongoose');
 
 var product = new mongoose.Schema({
-    product_id:{
-        type:String
-    },
     sku:{
         type:String
     },
@@ -11,10 +8,10 @@ var product = new mongoose.Schema({
         type:String
     },
     quantity:{
-        type:String
+        type:Number
     },
     stock_status_id:{
-        type:String
+        type:Number
     },
     image :{
         type:String

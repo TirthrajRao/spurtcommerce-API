@@ -13,7 +13,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.register = (req, res) => {
 
-	const clientIp = requestIp.getClientIp(req); 
+	const clientIp = requestIp.getClientIp(req);
 
 	const customerData = {
 		username: req.body.emailId,
@@ -24,7 +24,7 @@ module.exports.register = (req, res) => {
 		mobile: req.body.phoneNumber,
 		newsletter: 1,
 		mail_status: 1,
-		ip:clientIp,
+		ip: clientIp,
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -69,14 +69,14 @@ module.exports.register = (req, res) => {
 }
 
 module.exports.login = (req, res) => {
-	const clientIp = requestIp.getClientIp(req); 
+	const clientIp = requestIp.getClientIp(req);
 
-	console.log("client Ip Address-------->>>>>",clientIp);
+	console.log("client Ip Address-------->>>>>", clientIp);
 
 	const customerData = {
 		email: req.body.emailId,
 		password: req.body.password,
-		Ip:clientIp,
+		Ip: clientIp,
 	}
 	console.log("customer Data", customerData);
 	customerService.login(customerData).then((response) => {
@@ -116,11 +116,11 @@ module.exports.updateCustomer = (req, res) => {
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		avatar: req.body.avatar,
-		newsletter: req.body.newsletter,
-		mailStatus: req.body.mailStatus,
-		status: req.body.state
+		newsletter: parseInt(req.body.newsletter),
+		mailStatus: parseInt(req.body.mailStatus),
+		isActive: parseInt(req.body.status)
 	}
-	
+
 	console.log("customer Data", customerData);
 	customerService.updateCustomer(customerId, customerData).then((response) => {
 		return res.status(200).json({ message: response.message, data: response.data });
@@ -182,9 +182,9 @@ module.exports.addCustomer = (req, res) => {
 		password: req.body.password,
 		confirmPassword: req.body.confirmPassword,
 		avatar: req.body.avatar,
-		newsletter: req.body.newsletter,
-		mail_status: req.body.mailStatus,
-		status: req.body.status,
+		newsletter: parseInt(req.body.newsletter),
+		mail_status: parseInt(req.body.mailStatus),
+		isActive: parseInt(req.body.status),
 	}
 
 	if (req.body.password === req.body.confirmPassword) {

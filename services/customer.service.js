@@ -175,13 +175,9 @@ module.exports.customerList = (customerData) => {
             var date = customerData.date;
 
             var query = {
-                $and: [{ 'isActive': 1 }]
+                $and: [{ 'email': { $regex: new RegExp(email, 'i') } }]
             }
-
-            if (customerData.email) {
-                query['$and'].push({ 'email': { $regex: new RegExp(email, 'i') } });
-            }
-
+            
             if (customerData.name) {
                 query['$and'].push({ 'first_name': { $regex: new RegExp(name, 'i') } });
             }
