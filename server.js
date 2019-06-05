@@ -1,6 +1,10 @@
 var exp = require('express');
 var path = require('path');
 var mongoose = require('mongoose');
+
+
+//Define Controllers Here
+
 var customerController = require('./controller/customer.controller');
 var countryController = require('./controller/country.controller');
 var manufactureController = require('./controller/manufacture.controller');
@@ -23,9 +27,14 @@ var wishListController = require('./controller/customerwishlist.controller');
 var stockStatusController = require('./controller/stockStatus.controller');
 
 
+
+//Define Validation Here
+
 var productValidation = require('./validation/product.validation');
 var customerValidation = require('./validation/customer.validation');
+var orderValidation = require('./validation/order.validation');
 
+// Mongodb Connection Here
 
 var cors = require('cors');
 
@@ -42,6 +51,7 @@ mongoose.connect('mongodb://localhost:27017/spurtcommerce', { useNewUrlParser: t
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 
 
 app.get('/api/list/productlist', storeController.getProductList);
@@ -117,7 +127,7 @@ app.get('/api/customer/customerlist', customerController.customerList);
 app.get('/api/product/product-detail/:id', productController.productDetail);
 app.get('/api/product/top-selling-productlist', productController.topSellingProduct);
 app.get('/api/customer/get-profile', customerController.getProfile);
-app.post('/api/orders/customer-checkout', orderController.orderCheckout);
+
 app.get('/api/orders/order-list', orderController.myOrderList);
 app.get('/api/orders/order-detail', orderController.orderDetail);
 
@@ -245,9 +255,14 @@ app.route('/api/customer/update-customer/:id')
 
 app.route('/api/customer/register')
     .post([customerValidation.register], customerController.register);
-    
+
 app.route('/api/customer/edit-profile')
     .post([customerValidation.editProfile], customerController.editProfile);
+
+app.route('/api/orders/customer-checkout')
+    .post([orderValidation.orderCheckout], orderController.orderCheckout);
+
+app.get('/api/pages/get_pagedetails/:id',pageController.pageDetail);
 
 
 

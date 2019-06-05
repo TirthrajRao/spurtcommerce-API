@@ -79,4 +79,34 @@ module.exports.deletePage = (pageId) => {
 }
 
 
+module.exports.pageDetail = (pageId) => {
+    return new Promise((resolve, reject) => {
+        page.aggregate([
+            {
+                $match: { '_id': ObjectId(pageId) }
+            },
+            {
+                $project: {
+                    'pageId': '$_id',
+                    'metaTagContent': '$meta_tag_description',
+                    'metaTagKeyword': '$meta_tag_keywords',
+                    'metaTagTitle': '$meta_tag_title',
+                    'title': '$title',
+                    'isActive':'$is_active',
+                    'content':'$full_text',
+                }
+            },
+        ])
+        .exec(function (pageError, pageDetail) {
+            if (pageError) {
+                return reject(pageError);
+            } else {
+                return resolve({ status: 200, message: 'Successfully get page list', data: pageDetail[0] });
+            }
+        })
+    })
+}
+
+
+
 

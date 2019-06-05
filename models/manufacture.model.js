@@ -27,11 +27,11 @@ var manufacturer = new mongoose.Schema({
     },
     created_date :{
     	type:Date,
-    	default:Date.now()
+    	default:new Date()
     },
     modified_date :{
     	type:Date,
-    	default:Date.now()
+    	default:new Date()
     }
 });
 

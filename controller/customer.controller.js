@@ -70,7 +70,7 @@ module.exports.register = (req, res) => {
 
 module.exports.login = (req, res) => {
 	const clientIp = requestIp.getClientIp(req);
-	
+
 	const customerData = {
 		email: req.body.emailId,
 		password: req.body.password,
@@ -81,7 +81,7 @@ module.exports.login = (req, res) => {
 		return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 	}).catch((error) => {
 		console.log('error: ', error);
-		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error', status: 0 });
 	});
 }
 

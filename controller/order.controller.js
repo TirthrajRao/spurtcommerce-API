@@ -1,16 +1,19 @@
 var order = require('../models/order.model');
+
+//services
 var orderService = require('../services/order.service');
 var customerService = require('../services/customer.service');
 var emailService = require('../services/email.service');
 var productService = require('../services/product.service');
-var _ = require('lodash');
 var orderProduct = require('../models/order_product.model');
-var moment = require('moment');
+
 
 // npm import
 const path = require('path');
 const mongoose = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
+var moment = require('moment');
+var _ = require('lodash');
 
 
 module.exports.orderList = (req, res) => {
@@ -57,7 +60,7 @@ module.exports.totalAmount = (req, res) => {
 module.exports.orderCheckout = (req, res) => {
 
 	let productDetailData = [];
-	
+
 	_.forEach(req.body.productDetails, (product) => {
 		let productInformatiomData = {
 			productInformatiomData: {
@@ -163,7 +166,6 @@ module.exports.myOrderList = (req, res) => {
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
 }
-
 
 module.exports.recentSellingProduct = (req, res) => {
 

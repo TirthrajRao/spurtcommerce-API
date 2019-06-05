@@ -10,13 +10,13 @@ var product_image = new Schema({
 		type:String,
 	},
 	default_image:{
-		type:String,
+		type:Number,
 	},
 	sort_order:{
 		type:String,
 	},
 	is_active:{
-		type:String,
+		type:Number,
 	},
 	created_by:{
 		type:String,

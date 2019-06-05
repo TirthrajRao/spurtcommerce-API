@@ -522,12 +522,12 @@ module.exports.recentSellingProduct = () => {
 module.exports.todayOrderCount = () => {
 
     return new Promise((resolve, reject) => {
-``
+        ``
         var datetime = new Date();
         var todayDate = datetime.toISOString().slice(0, 10);
-        
-            todayDate = todayDate+"T00:00:00.000Z";
-        console.log("today date------>>>",todayDate);
+
+        todayDate = todayDate + "T00:00:00.000Z";
+        console.log("today date------>>>", todayDate);
 
         order.find({ created_date: todayDate }).count().exec((error, response) => {
             if (error) {
@@ -551,10 +551,10 @@ module.exports.todayOrderAmount = () => {
 
         var datetime = new Date();
         var todayDate = datetime.toISOString().slice(0, 10);
-        
-            todayDate = todayDate+"T00:00:00.000Z";
 
-        console.log("today date------>>>",todayDate);
+        todayDate = todayDate + "T00:00:00.000Z";
+
+        console.log("today date------>>>", todayDate);
 
         order.aggregate([
             {

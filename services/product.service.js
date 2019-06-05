@@ -32,7 +32,7 @@ module.exports.getfeatureproduct = (productData) => {
 
             product.aggregate([
                 {
-                    $match: { isFeatured:1 }
+                    $match: { isFeatured: 1 }
 
                 },
                 {
@@ -50,7 +50,10 @@ module.exports.getfeatureproduct = (productData) => {
                     }
                 },
                 {
-                    $unwind: '$Images'
+                    $unwind: {
+                        path: '$Images',
+                        preserveNullAndEmptyArrays: true
+                    }
 
                 },
                 {
@@ -168,7 +171,10 @@ module.exports.productDetail = (productId) => {
             },
             //Using Match Find By Id
             {
-                $unwind: '$Images',
+                $unwind: {
+                    path: '$Images',
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $lookup: {
@@ -180,7 +186,10 @@ module.exports.productDetail = (productId) => {
             },
             //Lookup of Product Image
             {
-                $unwind: '$productImage'
+                $unwind: {
+                    path: '$productImage',
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $project: {
@@ -208,7 +217,7 @@ module.exports.productDetail = (productId) => {
                     condition: 1,
                     isActive: 1,
                     location: 1,
-                    upc:1
+                    upc: 1
                 }
             },
             // // //Reduce To Limited Data Using Project
@@ -272,15 +281,17 @@ module.exports.productDetail = (productId) => {
                     isActive: {
                         $first: '$isActive'
                     },
-                    upc:{
-                        $first:'$upc'
+                    upc: {
+                        $first: '$upc'
                     }
                 }
             },
             // //Group To Generate Single Document to Multiple
-
             {
-                $unwind: '$Category',
+                $unwind: {
+                    path: '$Category',
+                    preserveNullAndEmptyArrays: true
+                }
             },
             // //Unwind Category To Create Single Object From Array
             {
@@ -293,7 +304,10 @@ module.exports.productDetail = (productId) => {
             },
             // //Lookup Of Product Category
             {
-                $unwind: '$Category'
+                $unwind: {
+                    path: '$Category',
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $project: {
@@ -318,7 +332,7 @@ module.exports.productDetail = (productId) => {
                     condition: 1,
                     isActive: 1,
                     location: 1,
-                    upc:1,
+                    upc: 1,
 
                 }
             },
@@ -381,8 +395,8 @@ module.exports.productDetail = (productId) => {
                     Category: {
                         $push: '$Category'
                     },
-                    upc:{
-                        $first:'$upc'
+                    upc: {
+                        $first: '$upc'
                     }
                 }
             },
@@ -452,11 +466,14 @@ module.exports.getRelatedProduct = (productId) => {
                 }
             },
             {
-                $unwind: '$product'
+                $unwind: {
+                    path: '$product',
+                    preserveNullAndEmptyArrays: true,
+                }
             },
             {
                 $project: {
-                    'productId': '$product_id',
+                    'productId': '$product._id',
                     'name': '$product.name',
                     'description': '$product.description',
                     'price': '$product.price',
@@ -472,7 +489,10 @@ module.exports.getRelatedProduct = (productId) => {
                 }
             },
             {
-                $unwind: '$productImage'
+                $unwind: {
+                    path: '$productImage',
+                    preserveNullAndEmptyArrays: true,
+                }
             },
             {
                 $project: {
@@ -547,7 +567,10 @@ module.exports.topSellingProduct = (productData) => {
                 }
             },
             {
-                $unwind: '$productImage'
+                $unwind: {
+                    path: '$productImage',
+                    preserveNullAndEmptyArrays: true,
+                }
             },
             {
                 $project: {
@@ -674,7 +697,7 @@ module.exports.AddImage = (productImage) => {
                 imageData = {
                     image: singleImageItem.image,
                     container_name: singleImageItem.containerName,
-                    default_image: 1,
+                    default_image: singleImageItem.defaultImage,
                 }
 
                 product_Image.create(imageData, (productError, savedImage) => {
@@ -731,7 +754,7 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'isActive': 0 });
             }
 
-           
+
 
             const aggregate = [
                 {

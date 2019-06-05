@@ -69,3 +69,14 @@ module.exports.deletePage = (req, res) => {
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 	});
 }
+
+module.exports.pageDetail = (req, res) => {
+	const pageId = req.params.id;
+
+	pageService.pageDetail(pageId).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}

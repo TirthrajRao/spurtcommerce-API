@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-
 module.exports.addProduct = (req, res, next) => {
     const schema = Joi.object().keys({
 
@@ -18,14 +17,14 @@ module.exports.addProduct = (req, res, next) => {
         relatedProductId: Joi.array().required(),
         requiredShipping: Joi.string(),
         location: Joi.string(),
-        upc: Joi.string(),
+        upc: Joi.string().required(),
         image: Joi.array().required(),
-        metaTagTitle: Joi.string(),
+        metaTagTitle: Joi.string().required(),
         subtractStock: Joi.number().required(),
         dateAvailable: Joi.date(),
         sortOrder: Joi.string(),
     });
-    
+
     Joi.validate(
         req.body,
         schema,
@@ -42,10 +41,10 @@ module.exports.addProduct = (req, res, next) => {
     );
 };
 
-
 module.exports.updateProduct = (req, res, next) => {
+
     const schema = Joi.object().keys({
-        productId:Joi.required(),
+        productId: Joi.required(),
         price: Joi.number().required(),
         productName: Joi.string().required(),
         sku: Joi.string().required(),

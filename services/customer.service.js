@@ -57,7 +57,7 @@ module.exports.login = (body) => {
                     console.log("customer", customer);
                     customer.comparePassword(body.password, customer.password, (error, isMatch) => {
                         if (error) {
-                            reject({ status: 403, message: 'user not found' });
+                            reject({ status: 400, message: 'Invalid EmailId' });
                         } else if (isMatch) {
                             const payload = { customer };
                             var token = jwt.sign(payload, 'pmt');
@@ -81,7 +81,7 @@ module.exports.login = (body) => {
                             });
                             resolve({ status: 200, message: 'Successfully login', data: tokendata })
                         } else {
-                            reject({ status: 403, message: 'Incorrect Password' });
+                            reject({ status: 400, message: 'Invalid Password' });
                         }
                     });
                 } else {

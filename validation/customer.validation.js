@@ -71,7 +71,6 @@ module.exports.register = (req, res, next) => {
 
         name: Joi.string().required(),
         emailId: Joi.string().required(),
-        mobileNumber: Joi.number().required(),
         password: Joi.string().required(),
         confirmPassword: Joi.string().required(),
         phoneNumber: Joi.number().required(),
