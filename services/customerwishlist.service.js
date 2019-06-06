@@ -12,7 +12,7 @@ const ObjectId = require('mongodb').ObjectId;
 // Services
 
 module.exports.addProductToWishList = (productData) => {
-    console.log('addEmployeeToTheCompany productData: ', productData);
+   
     return new Promise((resolve, reject) => {
         wishlist.create(productData, (useerr, userres) => {
             if (useerr) {
@@ -28,9 +28,8 @@ module.exports.addProductToWishList = (productData) => {
 
 
 module.exports.getWishList = (wishList) => {
-
-
-    return new Promise((resolve, reject) => {
+    
+    return new Promise((resolve, reject) => {   
 
         if (wishList.count == 'true' || wishList.count == 1) {
             wishlist.count({ 'customer_id': wishList.customer_id }, (productError, newProduct) => {
@@ -65,13 +64,16 @@ module.exports.getWishList = (wishList) => {
                     }
                 },
                 {
-                    $unwind: '$product'
+                    $unwind:{
+                        path:'$product',
+                        preserveNullAndEmptyArrays:true
+                    } 
                 },
                 {
                     $lookup: {
                         from: 'product_image',
-                        localField: 'product.Images',
-                        foreignField: '_id',
+                        localField: 'product._id',
+                        foreignField: 'product_id',
                         as: 'productImage'
                     }
                 },
@@ -124,7 +126,7 @@ module.exports.getWishList = (wishList) => {
 }
 
 module.exports.removeProductFromWishList = (wishListId) => {
-    console.log('addEmployeeToTheCompany productData: ', wishListId);
+    
     return new Promise((resolve, reject) => {
         wishlist.findByIdAndRemove(wishListId, (useerr, userres) => {
             if (useerr) {

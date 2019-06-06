@@ -7,6 +7,8 @@ var emailService = require('../services/email.service');
 const path = require('path');
 const mongoose = require('mongoose');
 const requestIp = require('request-ip');
+const moment = require('moment');
+
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -25,6 +27,7 @@ module.exports.register = (req, res) => {
 		newsletter: 1,
 		mail_status: 1,
 		ip: clientIp,
+		created_date:moment().format('YYYY-MM-DD')
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -184,6 +187,7 @@ module.exports.addCustomer = (req, res) => {
 		mail_status: parseInt(req.body.mailStatus),
 		isActive: parseInt(req.body.status),
 		first_name: req.body.username,
+		created_date:moment().format('YYYY-MM-DD')
 	}
 
 	if (req.body.password === req.body.confirmPassword) {

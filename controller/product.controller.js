@@ -67,66 +67,61 @@ module.exports.addProduct = (req, res) => {
 
 	let categoryArr = [];
 
-	productService.AddImage(req.body.image).then((response) => {
+	_.forEach(req.body.categoryId, (category) => {
 
-		console.log("response:", response);
+		categoryArr.push(category.categoryId);
 
-		_.forEach(req.body.categoryId, (category) => {
+	})
 
-			categoryArr.push(category.categoryId);
+	productData = {
+		name: req.body.productName,
+		description: req.body.productDescription,
+		sku: req.body.sku,
+		upc: req.body.upc,
+		metaTagTitle: req.body.metaTagTitle,
+		Category: categoryArr,
+		relatedProductId: req.body.relatedProductId,
+		manufacturerId: req.body.model,
+		manufacturer_id: req.body.model,
+		location: req.body.location,
+		price: parseInt(req.body.price),
+		minimumQuantity: req.body.minimumQuantity,
+		quantity: req.body.quantity,
+		subtractStock: req.body.subtractStock,
+		stock_status_id: req.body.subtractStock,
+		stockStatusId: req.body.outOfStockStatus,
+		requiredShipping: req.body.requiredShipping,
+		dateAvailable: req.body.dateAvailable,
+		condition: req.body.condition,
+		is_active: parseInt(req.body.status),
+		isActive: parseInt(req.body.status),
+		sortOrder: req.body.sortOrder,
+	}
 
-		})
+	console.log("product data in conbtroller:", productData);
 
-		productData = {
-			name: req.body.productName,
-			description: req.body.productDescription,
-			sku: req.body.sku,
-			upc: req.body.upc,
-			Images: response.data,
-			metaTagTitle: req.body.metaTagTitle,
-			Category: categoryArr,
-			relatedProductId: req.body.relatedProductId,
-			manufacturerId: req.body.model,
-			manufacturer_id: req.body.model,
-			location: req.body.location,
-			price: parseInt(req.body.price),
-			minimumQuantity: req.body.minimumQuantity,
-			quantity: req.body.quantity,
-			subtractStock: req.body.subtractStock,
-			stock_status_id: req.body.subtractStock,
-			stockStatusId: req.body.outOfStockStatus,
-			requiredShipping: req.body.requiredShipping,
-			dateAvailable: req.body.dateAvailable,
-			condition: req.body.condition,
-			is_active: parseInt(req.body.status),
-			isActive: parseInt(req.body.status),
-			sortOrder: req.body.sortOrder,
-		}
+	productService.addProduct(productData).then((response) => {
 
-		console.log("product data in conbtroller:", productData);
+		console.log("response:", response.data);
+		let ProductId = response.data._id;
 
-		productService.addProduct(productData).then((response) => {
+		productService.addProductImage(ProductId, req.body.image).then((response) => {
 
-			console.log("response:", response.data);
+			productService.addrelatedProduct(productId,req.body.relatedProductId).then((response) => {
 
-			let ProductId = response.data._id;
-
-			if (req.body.relatedProductId) {
-				productService.addrelatedProduct(ProductId, req.body.relatedProductId).then((response) => {
-					console.log("Related product added succesfully");
-					return res.status(200).json({ status: 1, message: response.message, data: response.data });
-				}).catch((error) => {
-					console.log('error: ', error);
-				});
-			}
-			else {
 				return res.status(200).json({ status: 1, message: response.message, data: response.data });
-			}
+
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			})
 
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		});
+
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 
 	}).catch((error) => {
 		console.log('error: ', error);
@@ -155,13 +150,13 @@ module.exports.updateProduct = (req, res) => {
 
 	})
 
-	if (req.body.relatedProductId) {
-		productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
-			console.log("Related product added succesfully");
-		}).catch((error) => {
-			console.log('error: ', error);
-		});
-	}
+	// if (req.body.relatedProductId) {
+	// 	productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
+	// 		console.log("Related product added succesfully");
+	// 	}).catch((error) => {
+	// 		console.log('error: ', error);
+	// 	});
+	// }
 
 	productService.addImageToArray(productId, req.body.image).then((response) => {
 
@@ -177,7 +172,7 @@ module.exports.updateProduct = (req, res) => {
 			Category: categoryArr,
 			relatedProductId: req.body.relatedProductId,
 			location: req.body.location,
-			price: req.body.price,
+			price: parseInt(req.body.price),
 			minimumQuantity: req.body.minimumQuantity,
 			quantity: req.body.quantity,
 			subtractStock: req.body.subtractStock,

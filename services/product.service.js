@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const Url = require('url');
 var _ = require('lodash');
-
+var async = require("async");
 
 // Database models
 var product = require('../models/product.model');
@@ -39,13 +39,10 @@ module.exports.getfeatureproduct = (productData) => {
                     $limit: productData.limit
                 },
                 {
-                    $unwind: '$Images'
-                },
-                {
                     $lookup: {
                         from: 'product_image',
-                        localField: 'Images',
-                        foreignField: '_id',
+                        localField: '_id',
+                        foreignField: 'product_id',
                         as: 'Images'
                     }
                 },
@@ -55,6 +52,9 @@ module.exports.getfeatureproduct = (productData) => {
                         preserveNullAndEmptyArrays: true
                     }
 
+                },
+                {
+                    $match: { 'Images.default_image': 1 }
                 },
                 {
                     $project: {
@@ -164,23 +164,16 @@ module.exports.getfeatureproduct = (productData) => {
 
 module.exports.productDetail = (productId) => {
     return new Promise((resolve, reject) => {
-        console.log('productId: ', productId)
+
         product.aggregate([
             {
                 $match: { '_id': ObjectId(productId) }
             },
-            //Using Match Find By Id
-            {
-                $unwind: {
-                    path: '$Images',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
             {
                 $lookup: {
                     from: 'product_image',
-                    localField: 'Images',
-                    foreignField: '_id',
+                    localField: '_id',
+                    foreignField: 'product_id',
                     as: 'productImage'
                 }
             },
@@ -193,13 +186,13 @@ module.exports.productDetail = (productId) => {
             },
             {
                 $project: {
+                    productId:'$_id',
                     product_image: {
                         productImageId: '$productImage._id',
                         image: '$productImage.image',
                         containerName: '$productImage.container_name',
                         defaultImage: '$productImage.default_image',
                     },
-                    product_id: 1,
                     Category: 1,
                     sku: 1,
                     quantity: 1,
@@ -224,8 +217,8 @@ module.exports.productDetail = (productId) => {
             {
                 $group: {
                     _id: '$_id',
-                    product_id: {
-                        $first: '$product_id',
+                    productId: {
+                        $first: '$productId',
                     },
                     sku: {
                         $first: '$sku',
@@ -316,6 +309,7 @@ module.exports.productDetail = (productId) => {
                         categoryName: '$Category.name',
                     },
                     productImage: 1,
+                    productId:1,
                     sku: 1,
                     quantity: 1,
                     description: 1,
@@ -340,6 +334,9 @@ module.exports.productDetail = (productId) => {
             {
                 $group: {
                     _id: '$_id',
+                    productId: {
+                        $first: '$productId',
+                    },
                     sku: {
                         $first: '$sku',
                     },
@@ -403,7 +400,7 @@ module.exports.productDetail = (productId) => {
             {
                 $lookup: {
                     from: 'product_related',
-                    localField: '_id',
+                    localField: 'productId',
                     foreignField: 'product_id',
                     as: 'relatedProductDetail'
                 }
@@ -415,13 +412,13 @@ module.exports.productDetail = (productId) => {
                 }
             },
             {
-                $lookup: {
+                $lookup:{
                     from: 'product',
-                    localField: 'relatedProductDetail.product_id',
+                    localField: 'relatedProductDetail.related_id',
                     foreignField: '_id',
                     as: 'relatedProductDetail'
                 }
-            }
+            },
             //Group To Generate Single Document Form Multiple Output Document
 
         ]).exec(function (error, productDetail) {
@@ -645,81 +642,178 @@ module.exports.updateFeatureProduct = (productId, productData) => {
 
 module.exports.addImageToArray = (productId, productImage) => {
     let imageData;
+    let existingImageArray = [];
+    let productImgArray = [];
+    let resultArray = [];
+
+
     return new Promise((resolve, reject) => {
 
-        _.forEach(productImage, (singleImageItem) => {
 
-            if (!singleImageItem.productImageId) {
+        findImageArray(productId).then((response) => {
 
-                imageData = {
-                    image: singleImageItem.image,
-                    container_name: singleImageItem.containerName,
-                    default_image: 1,
-                }
+            console.log("In Model Image Array---------->>>>>>>:", response);
 
-                product_Image.create(imageData, (productError, savedImage) => {
-                    if (productError) {
-                        console.log('usererror: ', productError);
-                    } else {
-                        product.find({ _id: productId }, (productError, foundproduct) => {
-                            if (productError) {
-                                reject({ status: 500, message: 'Internal Server Error' });
-                            } else {
-                                foundproduct[0].Images.push(savedImage._id);
-                                foundproduct = foundproduct[0];
-                                product.findOneAndUpdate({ _id: productId }, { $set: foundproduct }, { upsert: true, new: true }, (err, updatedProduct) => {
-                                    if (err) {
-                                        console.log('usererror: ', err);
-                                    }
-                                });
+            console.log("Something--------->>>>>");
+
+
+            if (response) {
+
+                _.forEach(response, (singleImageArray) => {
+
+                    console.log("In for each", singleImageArray);
+
+                    async.eachSeries(productImage, (singleImageItem, callback2) => {
+
+                        if (singleImageArray == singleImageItem.productImageId) {
+                            
+                            console.log("----------------In Update Image Section-------------------")
+                            imageData = {
+                                product_id: productId,
+                                image: singleImageItem.image,
+                                container_name: singleImageItem.containerName,
+                                default_image: singleImageItem.defaultImage,
                             }
-                        });
-                    }
-                });
+                            product_Image.findOneAndUpdate({ _id: singleImageItem.productImageId }, imageData, { upsert: true }, (productError, updatedImage) => {
+                                if (productError) {
+                                    console.log('usererror: ', productError);
+                                } else {
+                                    console.log('Existing Image Updated Succesfully', updatedImage);
+                                    callback2();
+                                }
+                            });
 
+                        }
+                        else if (!singleImageItem.productImageId) {
+
+                            console.log("----------------In New Image Section-------------------")
+
+                            let Data = {
+                                product_id: productId,
+                                image: singleImageItem.image,
+                                container_name: singleImageItem.containerName,
+                                default_image: singleImageItem.defaultImage,
+                            }
+
+                            console.log("Image data", Data);
+
+                            product_Image.create(Data, (productError, savedImage) => {
+                                if (productError) {
+                                    console.log('usererror: ', productError);
+                                } else {
+                                    console.log('New Image added succesfully', savedImage);
+                                    callback2();
+                                }
+                            });
+
+                        }
+                        else {
+                            console.log("----------------In Delete Image Section-------------------")
+
+                            product_Image.findOneAndRemove({ _id: singleImageItem.productImageId }, (error, deleteImage) => {
+                                if (error) {
+                                    console.log("Error:", error);
+                                }
+                                else {
+                                    console.log("Image Deleted Successfully", deleteImage);
+                                    callback2();
+                                }
+                            })
+
+                        }
+                    }, (callbackError, callbackResponse) => {
+                        if (callbackError) {
+                            console.log('callbackError: ', callbackError);
+                        } else {
+
+                            console.log("Final callback");
+                            resolve({ status: 200, message: 'Successfully updated product.' });
+                        }
+                    })
+
+                })
             }
-        })
+            else {
+                console.log("In final else-------->>>");
 
-        resolve({ status: 200, message: 'Successfully updated product.' });
+                _.forEach(productImage, (singleImageItem) => {
+                    let Data = {
+                        product_id: productId,
+                        image: singleImageItem.image,
+                        container_name: singleImageItem.containerName,
+                        default_image: singleImageItem.defaultImage,
+                    }
+
+                    console.log("Image data", Data);
+
+                    product_Image.create(Data, (productError, savedImage) => {
+                        if (productError) {
+                            console.log('usererror: ', productError);
+                        } else {
+                            console.log('New Image added succesfully', savedImage);
+                            callback2();
+                        }
+                    });
+                })
+            }
+
+        }).catch((error) => {
+            console.log('error: ', error);
+        });
     })
 }
 
 
+const findImageArray = (productId) => {
+    let existingImageArray = [];
+    return new Promise((resolve, reject) => {
+        product_Image.find({ product_id: productId }, (error, response) => {
+            if (error) {
+                reject(error);
+            } else {
+                _.forEach(response, (singleImage) => {
+                    existingImageArray.push(singleImage._id);
+                })
+                console.log("In function------->>>>", existingImageArray);
+                resolve(existingImageArray);
+            }
+        });
 
-module.exports.AddImage = (productImage) => {
+    })
+}
+
+module.exports.addProductImage = (productId, productImage) => {
     let imageData;
-    let savedImageArray = [];
     return new Promise((resolve, reject) => {
 
-        _.forEach(productImage, (singleImageItem, index) => {
-            if (!singleImageItem.productImageId) {
+        async.eachSeries(productImage, (singleImageItem, callback) => {
 
-                imageData = {
-                    image: singleImageItem.image,
-                    container_name: singleImageItem.containerName,
-                    default_image: singleImageItem.defaultImage,
+            imageData = {
+                product_id: productId,
+                image: singleImageItem.image,
+                container_name: singleImageItem.containerName,
+                default_image: singleImageItem.defaultImage,
+            }
+
+            product_Image.create(imageData, (productError, savedImage) => {
+                if (productError) {
+                    console.log('usererror: ', productError);
+                } else {
+                    console.log("SAved Images------>>>", savedImage);
+                    callback();
                 }
+            });
 
-                product_Image.create(imageData, (productError, savedImage) => {
-                    if (productError) {
-                        console.log('usererror: ', productError);
-                    } else {
-                        console.log("SAved Images------>>>", savedImage);
-                        savedImageArray.push(savedImage._id);
-                        console.log("SAved Images------>>>", savedImageArray);
-                        if (index + 1 === productImage.length) {
-                            resolve({ status: 200, message: 'Successfully updated product.', data: savedImageArray });
-                        }
-                    }
-                });
+        }, (callbackError, callbackResponse) => {
+            if (callbackError) {
+                console.log('callbackError: ', callbackError);
             } else {
-                if (index + 1 === productImage.length) {
-                    resolve({ status: 200, message: 'Successfully updated product.', data: savedImageArray });
-                }
+                resolve({ status: 200, message: 'Successfully updated product.' });
             }
         })
     })
 }
+
 
 module.exports.productList = (productData) => {
     return new Promise((resolve, reject) => {
@@ -754,26 +848,24 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'isActive': 0 });
             }
 
-
-
             const aggregate = [
                 {
                     $match: query
                 },
                 {
-                    $unwind: '$Images',
-                },
-                {
                     $lookup: {
                         from: 'product_image',
-                        localField: 'Images',
-                        foreignField: '_id',
+                        localField: '_id',
+                        foreignField: 'product_id',
                         as: 'productImage'
                     }
                 },
                 //Lookup of Product Image
                 {
-                    $unwind: '$productImage'
+                    $unwind: {
+                        path: '$productImage',
+                        preserveNullAndEmptyArrays: true
+                    }
                 },
                 {
                     $project: {
@@ -871,7 +963,10 @@ module.exports.productList = (productData) => {
                 },
                 //Group To Generate Single Document to Multiple
                 {
-                    $unwind: '$Category',
+                    $unwind: {
+                        path: '$Categoty',
+                        preserveNullAndEmptyArrays: true
+                    }
                 },
                 //Unwind Category To Create Single Object From Array
                 {
@@ -884,7 +979,10 @@ module.exports.productList = (productData) => {
                 },
                 //Lookup Of Product Category
                 {
-                    $unwind: '$Category'
+                    $unwind: {
+                        path: '$Category',
+                        preserveNullAndEmptyArrays: true
+                    }
                 },
                 {
                     $project: {
@@ -1008,7 +1106,6 @@ module.exports.addrelatedProduct = (productId, relatedProduct) => {
             productData = {
                 product_id: productId,
                 related_id: singleProductId,
-                default_image: 1,
             }
 
             productRelated.create(productData, (productError, savedProduct) => {

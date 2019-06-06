@@ -1,153 +1,147 @@
 var mongoose = require('mongoose');
 
 var product = new mongoose.Schema({
-    sku:{
-        type:String
+    sku: {
+        type: String
     },
-    upc:{
-        type:String
+    upc: {
+        type: String
     },
-    quantity:{
-        type:Number
+    quantity: {
+        type: Number
     },
-    stock_status_id:{
-        type:Number
+    stock_status_id: {
+        type: Number
     },
-    image :{
-        type:String
+    image: {
+        type: String
     },
-    image_path :{
-        type:String
+    image_path: {
+        type: String
     },
-    manufacturer_id :{
-        type:String
+    manufacturer_id: {
+        type: String
     },
-    shipping :{
-        type:String
+    shipping: {
+        type: String
     },
-    price :{
-        type:Number
+    price: {
+        type: Number
     },
-    date_available :{
-        type:String
+    date_available: {
+        type: String
     },
-    sort_order :{
-        type:String
+    sort_order: {
+        type: String
     },
-    name :{
-        type:String
+    name: {
+        type: String
     },
-    description :{
-        type:String
+    description: {
+        type: String
     },
-    amount :{
-        type:String
+    amount: {
+        type: String
     },
-    meta_tag_title :{
-        type:String
+    meta_tag_title: {
+        type: String
     },
-    meta_tag_description :{
-        type:String
+    meta_tag_description: {
+        type: String
     },
-    meta_tag_keyword :{
-        type:String
+    meta_tag_keyword: {
+        type: String
     },
-    discount :{
-        type:String
+    discount: {
+        type: String
     },
-    subtract_stock :{
-        type:String
+    subtract_stock: {
+        type: String
     },
-    minimum_quantity :{
-        type:String
+    minimum_quantity: {
+        type: String
     },
-    location :{
-        type:String
+    location: {
+        type: String
     },
-    wishlist_status :{
-        type:String
+    wishlist_status: {
+        type: String
     },
-    delete_flag :{
-        type:String
+    delete_flag: {
+        type: String
     },
-    is_featured:{
-        type:Number
+    is_featured: {
+        type: Number
     },
-    isFeatured:{
-        type:Number
+    isFeatured: {
+        type: Number
     },
-    rating :{   
-        type:String
+    rating: {
+        type: String
     },
-    condition :{ 
-        type:String
+    condition: {
+        type: String
     },
-    is_active :{
-        type:Number
+    is_active: {
+        type: Number
     },
-    Images : [
-    { type: mongoose.Schema.Types.ObjectId, 
-        ref: 'product_image'
-    }],
-     Category : [
-    { type: mongoose.Schema.Types.ObjectId, 
-        ref: 'categoty'
-    }],
-    createdDate :{
-        type:Date,
-        default:Date.now()
+    Images: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'product_image'
+        }],
+    Category: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categoty'
+        }],
+    dateAvailable: {
+        type: String
     },
-    dateAvailable :{
-        type:String
+    deleteFlag: {
+        type: Number
     },
-    deleteFlag:{
-        type:Number
+    isActive: {
+        type: Number
     },
-    isActive:{
-        type:Number
+    manufacturerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'manufacturer'
     },
-    manufacturerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'manufacturer'
+    metaTagTitle: {
+        type: String
     },
-    metaTagTitle:{
-        type:String
+    minimumQuantity: {
+        type: String
     },
-    minimumQuantity :{
-        type:String
+    sortOrder: {
+        type: String
     },
-    modifiedDate :{
-        type:Date,
-        default:Date.now()
+    stockStatusId: {
+        type: String
     },
-    sortOrder :{
-        type:String
+    subtractStock: {
+        type: Number
     },
-    stockStatusId:{
-        type:String
+    wishListStatus: {
+        type: Number
     },
-    subtractStock:{
-        type:Number
+    created_by: {
+        type: String,
+        default: null
     },
-    wishListStatus :{
-        type:Number
+    modified_by: {
+        type: String,
+        default: null
     },
-    created_by :{
-        type:String,
-        default:null
+    created_date: {
+        type: Date,
+        default: Date.now()
     },
-    modified_by :{
-        type:String,
-        default:null
-    },
-    created_date :{
-        type:Date,
-        default:Date.now()
-    },
-    modified_date :{
-        type:Date,
-        default:Date.now()
+    modified_date: {
+        type: Date,
+        default: Date.now()
     }
 });
 
-module.exports = mongoose.model('product', product,'product');
+module.exports = mongoose.model('product', product, 'product');

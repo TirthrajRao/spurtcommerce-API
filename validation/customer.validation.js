@@ -97,7 +97,7 @@ module.exports.register = (req, res, next) => {
 module.exports.editProfile = (req, res, next) => {
     const schema = Joi.object().keys({
 
-        image: Joi.string(),
+        image: Joi.any(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
         zoneId: Joi.string().required(),

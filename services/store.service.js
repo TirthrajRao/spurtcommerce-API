@@ -26,9 +26,9 @@ module.exports.getProductList = (productData) => {
         else {
 
             var searchText = productData.keyword;
-            
+
             var query = {
-                $and: [{ 'isActive':1} ]
+                $and: [{ 'isActive': 1 }]
             }
 
             if (productData.keyword) {
@@ -45,7 +45,9 @@ module.exports.getProductList = (productData) => {
             }
 
             if (productData.manufacturerId) {
-                query['$and'].push({ 'manufacturer_id': ObjectId(productData.manufacturerId) });
+
+                console.log("manufacturerId", productData.manufacturerId);
+                query['$and'].push({ 'manufacturer_id': productData.manufacturerId });
 
             }
 
@@ -54,34 +56,34 @@ module.exports.getProductList = (productData) => {
             }
 
             if (productData.priceTo) {
-                query['$and'].push({ 'price': { '$lte': parseInt(productData.priceTo) } });
+                query['$and'].push({ 'price': { '$lt': parseInt(productData.priceTo) } });
             }
 
             if (productData.priceFrom) {
-                query['$and'].push({ 'price': { '$gte': parseInt(productData.priceFrom) } });
+                query['$and'].push({ 'price': { '$gt': parseInt(productData.priceFrom) } });
             }
 
-            console.log("shopFilters", JSON.stringify(query));
-
-
             product.aggregate([
+
                 {
                     $match: query
                 },
                 {
-                    $unwind: '$Images',
-                },
-                {
                     $lookup: {
                         from: 'product_image',
-                        localField: 'Images',
-                        foreignField: '_id',
+                        localField: '_id',
+                        foreignField: 'product_id',
                         as: 'Images'
                     }
                 },
-                //Lookup of Product Image
                 {
-                    $unwind: '$Images'
+                    $unwind: {
+                        path: '$Images',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $match: { 'Images.default_image': 1 }
                 },
                 {
                     $project: {
@@ -171,10 +173,8 @@ module.exports.getProductList = (productData) => {
                         }
                     }
                 },
-            ])
-            .skip(productData.offset)
-            .limit(productData.limit)   
-            .exec(function (error, productList) {
+
+            ]).exec(function (error, productList) {
                 if (error) {
                     console.log("Error:", error);
                     return reject(error);

@@ -12,8 +12,9 @@ var product_image = new Schema({
 	default_image:{
 		type:Number,
 	},
-	sort_order:{
-		type:String,
+	product_id:{
+		type:mongoose.Schema.Types.ObjectId,
+		ref:'product'
 	},
 	is_active:{
 		type:Number,

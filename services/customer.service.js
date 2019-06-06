@@ -181,6 +181,7 @@ module.exports.customerList = (customerData) => {
             }
 
 
+
             console.log("shopFilters", JSON.stringify(query));
 
             customer.aggregate([

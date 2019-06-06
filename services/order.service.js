@@ -27,7 +27,7 @@ module.exports.orderList = (orderData) => {
         else {
 
             var query = {
-                $and: [{ 'is_active': '1' }]
+                $and: [{ 'is_active': 1 }]
             }
 
             if (orderData.orderId) {
@@ -40,6 +40,10 @@ module.exports.orderList = (orderData) => {
 
             if (orderData.customerName) {
                 query['$and'].push({ 'shipping_firstname': { $regex: new RegExp(orderData.customerName, 'i') } });
+            }
+
+            if (orderData.dateAdded) {
+                query['$and'].push({ 'created_date': orderData.dateAdded });
             }
 
             console.log("shopFilters", JSON.stringify(query));
@@ -168,12 +172,15 @@ module.exports.orderListById = (orderId) => {
                 }
             },
             {
-                $unwind: '$customerDetail'
+                $unwind: {
+                    path: '$customerDetail',
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $lookup: {
                     from: 'order_product',
-                    localField: '_id',
+                    localField: 'orderId',
                     foreignField: 'order_id',
                     as: 'productList'
                 }
@@ -336,7 +343,6 @@ module.exports.totalAmount = (orderId) => {
             if (error) {
                 return reject(error);
             } else {
-                console.log('productDetail: ', productDetail[0].total);
                 return resolve({ status: 200, message: 'Successfully get total order Amount', data: productDetail[0].total });
             }
         })
@@ -442,7 +448,6 @@ module.exports.recentSellingProduct = () => {
                     orderId: 1,
                     Total: 1,
                     productId: '$product._id',
-                    Images: '$product.Images',
                     ProductName: '$product.name',
                 }
 
@@ -450,8 +455,8 @@ module.exports.recentSellingProduct = () => {
             {
                 $lookup: {
                     from: 'product_image',
-                    localField: 'Images',
-                    foreignField: '_id',
+                    localField: 'productId',
+                    foreignField: 'product_id',
                     as: 'productImage'
                 }
             },
@@ -522,18 +527,14 @@ module.exports.recentSellingProduct = () => {
 module.exports.todayOrderCount = () => {
 
     return new Promise((resolve, reject) => {
-        ``
-        var datetime = new Date();
-        var todayDate = datetime.toISOString().slice(0, 10);
 
-        todayDate = todayDate + "T00:00:00.000Z";
-        console.log("today date------>>>", todayDate);
+        presentDate = moment().format('YYYY-MM-DD');
 
-        order.find({ created_date: todayDate }).count().exec((error, response) => {
+        order.find({ created_date: presentDate }).count().exec((error, response) => {
             if (error) {
                 return reject(error);
             } else {
-                console.log("order count object", response);
+                console.log("order count", response[0]);
                 const order = {
                     orderCount: response,
                 }
@@ -549,16 +550,11 @@ module.exports.todayOrderAmount = () => {
 
     return new Promise((resolve, reject) => {
 
-        var datetime = new Date();
-        var todayDate = datetime.toISOString().slice(0, 10);
-
-        todayDate = todayDate + "T00:00:00.000Z";
-
-        console.log("today date------>>>", todayDate);
+        presentDate = moment().format('YYYY-MM-DD');
 
         order.aggregate([
             {
-                $match: { 'created_date': todayDate }
+                $match: { 'created_date': presentDate }
             },
             {
                 $group: {
@@ -575,7 +571,7 @@ module.exports.todayOrderAmount = () => {
                 return reject(error);
             } else {
                 console.log("order count object", orderDetail);
-                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
+                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail[0].total });
             }
         })
     })

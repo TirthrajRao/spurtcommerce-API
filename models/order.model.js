@@ -7,8 +7,8 @@ var order = new Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'customer'
 	},
-	orderId:{
-		type:String
+	orderId: {
+		type: String
 	},
 	currency_id: {
 		type: String
@@ -68,7 +68,8 @@ var order = new Schema({
 		type: String
 	},
 	shipping_country: {
-		type: String
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'country'
 	},
 	shipping_zone: {
 		type: String
@@ -147,17 +148,14 @@ var order = new Schema({
 		type: String
 	},
 	is_active: {
-		Default:'1',
-		type: String
+		type: Number
 	},
 	created_date: {
-        type: Date,
-        default: new Date()
-    },
-    modified_date: {
-        type: Date,
-        Default: new Date()
-    },
+		type: String,
+	},
+	modified_date: {
+		type: String,
+	},
 	created_by: {
 		type: String,
 		Default: null

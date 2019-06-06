@@ -75,8 +75,7 @@ var customer = new mongoose.Schema({
 		default:null
 	},
 	created_date:{
-		type:Date,
-		default:Date.now()
+		type:String
 	},
 	modified_date:{
 		type:Date,

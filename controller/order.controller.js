@@ -107,6 +107,7 @@ module.exports.orderCheckout = (req, res) => {
 			order_status_id: '5cbd891240b5afcf7d459820',
 			total: totalAmount,
 			is_active: "1",
+			created_date:moment().format('YYYY-MM-DD')
 		}
 
 		let message = "Dear " + req.body.shippingFirstName + " " + req.body.shippingLastName + ",        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#078e05;font-weight:400;text-align:left;font-size:16px;line-height:1.5rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> Order successfully placed.        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#000;font-weight:300;text-align:left;font-size:12px;line-height:1.2rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> You have successfully placed an order for customization services. Kindly find the following details on the placed order.    </tr></tbody></table></td></tr>\r\n";
