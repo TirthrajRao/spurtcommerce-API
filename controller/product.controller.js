@@ -72,11 +72,7 @@ module.exports.addProduct = (req, res) => {
 		categoryArr.push(category.categoryId);
 
 	})
-
-	if (req.body.relatedProductId) {
-
-	}
-
+	
 	productData = {
 		name: req.body.productName,
 		description: req.body.productDescription,

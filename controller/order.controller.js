@@ -47,6 +47,19 @@ module.exports.orderDetail = (req, res) => {
 	});
 }
 
+module.exports.myOrderDetail = (req, res) => {
+
+	const orderId = req.query.orderId;
+
+	orderService.myOrderDetail(orderId).then((response) => {
+		return res.status(200).json({ status: 1, message: response.message, data: response.data });
+	}).catch((error) => {
+		console.log('error: ', error);
+		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+	});
+}
+
+
 module.exports.totalAmount = (req, res) => {
 
 	orderService.totalAmount().then((response) => {

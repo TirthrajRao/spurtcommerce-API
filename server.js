@@ -116,7 +116,7 @@ app.delete('/api/product/delete-product/:id', productController.deleteProduct);
 //Routes for Order API
 
 app.get('/api/order/orderlist', orderController.orderList);
-app.get('/api/order/order-detail', orderController.orderDetail);
+
 app.get('/api/order/total-order-amount', orderController.totalAmount);
 
 //Routes for AdminSide API
@@ -129,7 +129,7 @@ app.get('/api/product/top-selling-productlist', productController.topSellingProd
 app.get('/api/customer/get-profile', customerController.getProfile);
 
 app.get('/api/orders/order-list', orderController.myOrderList);
-app.get('/api/orders/order-detail', orderController.orderDetail);
+
 
 app.get('/api/product-store/featureproduct-list', productController.getfeatureproduct);
 
@@ -170,8 +170,8 @@ app.delete('/api/customer/wishlist-product-delete/:id', wishListController.remov
 app.get('/api/customer/recent-customerlist', customerController.customerList);
 
 app.get('/api/product/recent-selling-product', orderController.recentSellingProduct);
-// app.get('/api/order/today-order-count', orderController.todayOrderCount);
-// app.get('/api/order/today-order-amount', orderController.todayOrderAmount);
+app.get('/api/order/today-order-count', orderController.todayOrderCount);
+app.get('/api/order/today-order-amount', orderController.todayOrderAmount);
 
 
 app.post('/api/order/order-change-status', orderController.changeOrderStatus);
@@ -263,6 +263,11 @@ app.route('/api/orders/customer-checkout')
     .post([orderValidation.orderCheckout], orderController.orderCheckout);
 
 app.get('/api/pages/get_pagedetails/:id',pageController.pageDetail);
+
+
+app.get('/api/order/order-detail', orderController.orderDetail);//valid Output
+
+app.get('/api/orders/order-detail', orderController.myOrderDetail);
 
 
 

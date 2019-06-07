@@ -196,6 +196,28 @@ module.exports.categoryList = (categoryData) => {
                     }
                 },
                 {
+                    $project: {
+                        _id: 1,
+                        categoryId: 1,
+                        name: 1,
+                        image: 1,
+                        imagePath: 1,
+                        parentInt: 1,
+                        sortOrder: 1,
+                        metaTagTitle: 1,
+                        metaTagDescription: 1,
+                        metaTagKeyword: 1,
+                        children: {
+                            $filter: {
+                                input: '$children.children',
+                                as: 'child',
+                                cond: {$ne: ['$$child', {}]}
+                            }
+                        }
+
+                    }
+                },
+                {
                     $group: {
                         _id: '$categoryId',
                         children: {

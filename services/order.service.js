@@ -75,7 +75,6 @@ module.exports.orderList = (orderData) => {
                         orderPrefixId: '$orderPrefixId',
                         modifiedDate: '$modified_date',
                     }
-
                 },
                 {
                     $lookup: {
@@ -534,7 +533,6 @@ module.exports.todayOrderCount = () => {
             if (error) {
                 return reject(error);
             } else {
-                console.log("order count", response[0]);
                 const order = {
                     orderCount: response,
                 }
@@ -571,7 +569,11 @@ module.exports.todayOrderAmount = () => {
                 return reject(error);
             } else {
                 console.log("order count object", orderDetail);
-                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail[0].total });
+                if (orderDetail) {
+                    return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail[0].total });
+                }
+                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: 0 });
+
             }
         })
     })
@@ -616,5 +618,213 @@ module.exports.salesList = () => {
                 resolve({ status: 200, message: 'Successfully updated Order Status', data: salesArray });
             }
         });
+    })
+}
+
+
+
+module.exports.myOrderDetail = (orderId) => {
+    return new Promise((resolve, reject) => {
+
+        order.aggregate([
+            {
+                $match: { '_id': ObjectId(orderId) }
+
+            },
+            {
+                $project: {
+                    orderId: '$_id',
+                    paymentAddress1: '$payment_address_1',
+                    createdDate: '$created_date',
+                    modifiedDate: '$modified_date',
+                    customerId: '$customer_id',
+                    currencyCode: '$currency_code',
+                    currencyId: '$currency_id',
+                    email: '$email',
+                    firstname: '$firstname',
+                    invoiceNo: '$invoice_no',
+                    invoicePrefix: '$invoice_prefix',
+                    isActive: '$is_active',
+                    orderStatus: '$order_status_id',
+                    shippingLastname: '$shipping_lastname',
+                    invoiceNo: '$invoiceNo',
+                    total: '$total',
+                    shippingFirstname: '$shipping_firstname',
+                    shippingLastname: '$shipping_lastname',
+                    paymentFirstname: '$payment_firstname',
+                    shippingAddress1: '$shipping_address_1',
+                    shippingAddress2: '$shipping_address_2',
+                    orderPrefixId: '$orderPrefixId',
+                    orderStatusId: '$order_status_id',
+                    telephone: '$telephone',
+                }
+            },
+            {
+                $lookup: {
+                    from: 'customer',
+                    localField: 'customerId',
+                    foreignField: '_id',
+                    as: 'customerDetail'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$customerDetail',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'order_product',
+                    localField: 'orderId',
+                    foreignField: 'order_id',
+                    as: 'productList'
+                }
+            },
+            {
+                $unwind: '$productList'
+            },
+            {
+                $project: {
+                    paymentAddress1: 1,
+                    createdDate: 1,
+                    customerDetail: 1,
+                    customerId: 1,
+                    currencyCode: 1,
+                    currencyId: 1,
+                    email: 1,
+                    firstname: 1,
+                    invoiceNo: 1,
+                    invoicePrefix: 1,
+                    isActive: 1,
+                    orderStatus: 1,
+                    shippingLastname: 1,
+                    invoiceNo: 1,
+                    total: 1,
+                    shippingFirstname: 1,
+                    shippingLastname: 1,
+                    paymentFirstname: 1,
+                    shippingAddress1: 1,
+                    shippingAddress2: 1,
+                    orderPrefixId: 1,
+                    orderStatusId: 1,
+                    orderId: 1,
+                    modifiedDate: 1,
+                    telephone: 1,
+                    productList: {
+                        orderProductId: '$productList._id',
+                        orderId: '$productList.order_id',
+                        productId: '$productList.product_id',
+                        model: '$productList.model',
+                        quantity: '$productList.quantity',
+                        name: '$productList.name',
+                        total: '$productList.total'
+                    },
+
+                },
+
+            },
+            {
+                $lookup: {
+                    from: 'product',
+                    localField: 'productList.productId',
+                    foreignField: '_id',
+                    as: 'productList.productDetail'
+                }
+            },
+            {
+                $unwind: '$productList.productDetail'
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    paymentAddress1: {
+                        $first: '$paymentAddress1',
+                    },
+                    productPrice: {
+                        $first: '$productList.productDetail.price'
+                    },
+                    productId: {
+                        $first: '$productList.productDetail.productId'
+                    },
+                    customerDetail: {
+                        $first: '$customerDetail'
+                    },
+                    customerId: {
+                        $first: '$customerId'
+                    },
+                    currencyCode: {
+                        $first: '$currencyCode'
+                    },
+                    currencyId: {
+                        $first: '$currencyId'
+                    },
+                    email: {
+                        $first: '$email'
+                    },
+                    firstname: {
+                        $first: '$firstname'
+                    },
+                    invoiceNo: {
+                        $first: '$invoiceNo'
+                    },
+                    total: {
+                        $first: '$total'
+                    },
+                    price: {
+                        $first: '$price'
+                    },
+                    shippingFirstname: {
+                        $first: '$shippingFirstname'
+                    },
+                    shippingLastname: {
+                        $first: '$shippingLastname'
+                    },
+                    paymentFirstname: {
+                        $first: '$paymentFirstname'
+                    },
+                    shippingAddress1: {
+                        $first: '$shippingAddress1'
+                    },
+                    shippingAddress2: {
+                        $first: '$shippingAddress2'
+                    },
+                    isActive: {
+                        $first: '$isActive'
+                    },
+                    productList: {
+                        $push: '$productList',
+                    },
+                    orderPrefixId: {
+                        $first: '$orderPrefixId',
+                    },
+                    orderStatusId: {
+                        $first: '$orderStatusId',
+                    },
+                    createdDate: {
+                        $first: '$createdDate'
+                    },
+                    orderId: {
+                        $first: '$orderId'
+                    },
+                    invoicePrefix: {
+                        $first: '$invoicePrefix'
+                    },
+                    modifiedDate: {
+                        $first: '$modifiedDate'
+                    },
+                    telephone: {
+                        $first: '$telephone'
+                    }
+                }
+            }
+        ])
+            .exec(function (error, productDetail) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully get order list', data: productDetail });
+                }
+            })
     })
 }

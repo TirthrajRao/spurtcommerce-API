@@ -9,6 +9,7 @@ var async = require("async");
 var product = require('../models/product.model');
 var product_Image = require('../models/product_image.model');
 var productRelated = require('../models/productrelated.model');
+var orderProduct = require('../models/order_product.model');
 
 // Static variables
 const ObjectId = require('mongodb').ObjectId;
@@ -644,24 +645,38 @@ module.exports.getRelatedProduct = (productId) => {
 
 module.exports.topSellingProduct = (productData) => {
     return new Promise((resolve, reject) => {
-        product.aggregate([
+        orderProduct.aggregate([
             {
-                $limit: 4
+                $lookup: {
+                    from: 'product',
+                    localField: 'product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind:{
+                    path:'$product',
+                    preserveNullAndEmptyArrays:true
+                }
             },
             {
                 $project: {
-                    'product.productId': '$_id',
-                    'product.name': '$name',
-                    'product.description': '$description',
-                    'product.price': '$price',
-                    'product.Images': '$Images',
+                    product: {
+                        'productId': '$product._id',
+                        'name': '$product.name',
+                        'description': '$product.description',
+                        'price': '$product.price',
+
+                    }
+
                 }
             },
             {
                 $lookup: {
                     from: 'product_image',
-                    localField: 'product.Images',
-                    foreignField: '_id',
+                    localField: 'product.productId',
+                    foreignField: 'product_id',
                     as: 'productImage'
                 }
             },
@@ -681,8 +696,19 @@ module.exports.topSellingProduct = (productData) => {
                     },
                     product: 1,
                 }
-
             },
+            {
+                $group:{
+                    _id:'$product,productId',
+
+                    product:{
+                        $first:'$product'
+                    },
+                    productImage:{
+                        $push:'$productImage'
+                    }
+                }
+            }
         ])
             .limit(4)
             .exec(function (error, topSelling) {
@@ -915,7 +941,7 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'isActive': 0 });
             }
 
-           
+
 
             const aggregate = [
                 {
@@ -1075,12 +1101,12 @@ module.exports.productList = (productData) => {
 
             if (productData.price == 1) {
 
-                aggregate.push( { $sort : { price : 1} });
+                aggregate.push({ $sort: { price: 1 } });
             }
 
             if (productData.price == 2) {
 
-                aggregate.push( { $sort : { price : -1} });
+                aggregate.push({ $sort: { price: -1 } });
             }
 
             product.aggregate(aggregate).exec(function (error, productDetail) {
@@ -1093,11 +1119,3 @@ module.exports.productList = (productData) => {
         }
     })
 }
-
-
-
-
-
-
-
-
