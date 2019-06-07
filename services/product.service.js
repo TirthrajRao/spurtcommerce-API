@@ -186,7 +186,7 @@ module.exports.productDetail = (productId) => {
             },
             {
                 $project: {
-                    productId:'$_id',
+                    productId: '$_id',
                     product_image: {
                         productImageId: '$productImage._id',
                         image: '$productImage.image',
@@ -309,7 +309,7 @@ module.exports.productDetail = (productId) => {
                         categoryName: '$Category.name',
                     },
                     productImage: 1,
-                    productId:1,
+                    productId: 1,
                     sku: 1,
                     quantity: 1,
                     description: 1,
@@ -412,11 +412,115 @@ module.exports.productDetail = (productId) => {
                 }
             },
             {
-                $lookup:{
+                $lookup: {
                     from: 'product',
                     localField: 'relatedProductDetail.related_id',
                     foreignField: '_id',
                     as: 'relatedProductDetail'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$relatedProductDetail',
+                    preserveNullAndEmptyArrays: true,
+                }
+            },
+            {
+                $project: {
+
+                    relatedProductDetail: {
+                        productId: '$relatedProductDetail._id',
+                        name: '$relatedProductDetail.name',
+                    },
+                    productImage: 1,
+                    productId: 1,
+                    sku: 1,
+                    quantity: 1,
+                    description: 1,
+                    minimumQuantity: 1,
+                    subtractStock: 1,
+                    stockStatusId: 1,
+                    manufacturerId: 1,
+                    shipping: 1,
+                    price: 1,
+                    dateAvailable: 1,
+                    sortOrder: 1,
+                    name: 1,
+                    metaTagTitle: 1,
+                    condition: 1,
+                    isActive: 1,
+                    location: 1,
+                    upc: 1,
+                    Category: 1,
+                },
+
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    productId: {
+                        $first: '$productId',
+                    },
+                    sku: {
+                        $first: '$sku',
+                    },
+                    location: {
+                        $first: '$location'
+                    },
+                    quantity: {
+                        $first: '$quantity'
+                    },
+                    description: {
+                        $first: '$description'
+                    },
+                    minimumQuantity: {
+                        $first: '$minimumQuantity'
+                    },
+                    subtractStock: {
+                        $first: '$subtractStock'
+                    },
+                    stockStatusId: {
+                        $first: '$stockStatusId'
+                    },
+                    manufacturerId: {
+                        $first: '$manufacturerId'
+                    },
+                    shipping: {
+                        $first: '$shipping'
+                    },
+                    price: {
+                        $first: '$price'
+                    },
+                    dateAvailable: {
+                        $first: '$dateAvailable'
+                    },
+                    sortOrder: {
+                        $first: '$sortOrder'
+                    },
+                    name: {
+                        $first: '$name'
+                    },
+                    metaTagTitle: {
+                        $first: '$metaTagTitle'
+                    },
+                    condition: {
+                        $first: '$condition'
+                    },
+                    isActive: {
+                        $first: '$isActive'
+                    },
+                    productImage: {
+                        $first: '$productImage'
+                    },
+                    Category: {
+                        $first: '$Category'
+                    },
+                    relatedProductDetail: {
+                        $push: '$relatedProductDetail'
+                    },
+                    upc: {
+                        $first: '$upc'
+                    }
                 }
             },
             //Group To Generate Single Document Form Multiple Output Document
@@ -433,7 +537,6 @@ module.exports.productDetail = (productId) => {
 
 
 module.exports.addProduct = (productData) => {
-    console.log("Product Data in service------->", productData);
     return new Promise((resolve, reject) => {
         product.create(productData, (productError, productRes) => {
             if (productError) {
@@ -445,7 +548,6 @@ module.exports.addProduct = (productData) => {
         });
     })
 }
-
 
 module.exports.getRelatedProduct = (productId) => {
     return new Promise((resolve, reject) => {
@@ -480,8 +582,8 @@ module.exports.getRelatedProduct = (productId) => {
             {
                 $lookup: {
                     from: 'product_image',
-                    localField: 'Images',
-                    foreignField: '_id',
+                    localField: 'productId',
+                    foreignField: 'product_id',
                     as: 'productImage'
                 }
             },
@@ -596,7 +698,6 @@ module.exports.topSellingProduct = (productData) => {
 
 
 module.exports.updateProduct = (productId, productData) => {
-    console.log("Product Data in service------->", productData);
     return new Promise((resolve, reject) => {
         product.findByIdAndUpdate({ _id: productId }, productData, { upsert: true }, (productError, updateProduct) => {
             if (productError) {
@@ -642,145 +743,76 @@ module.exports.updateFeatureProduct = (productId, productData) => {
 
 module.exports.addImageToArray = (productId, productImage) => {
     let imageData;
-    let existingImageArray = [];
-    let productImgArray = [];
-    let resultArray = [];
 
 
     return new Promise((resolve, reject) => {
 
+        async.eachSeries(productImage, (singleImageItem, callback2) => {
 
-        findImageArray(productId).then((response) => {
-
-            console.log("In Model Image Array---------->>>>>>>:", response);
-
-            console.log("Something--------->>>>>");
-
-
-            if (response) {
-
-                _.forEach(response, (singleImageArray) => {
-
-                    console.log("In for each", singleImageArray);
-
-                    async.eachSeries(productImage, (singleImageItem, callback2) => {
-
-                        if (singleImageArray == singleImageItem.productImageId) {
-                            
-                            console.log("----------------In Update Image Section-------------------")
-                            imageData = {
-                                product_id: productId,
-                                image: singleImageItem.image,
-                                container_name: singleImageItem.containerName,
-                                default_image: singleImageItem.defaultImage,
-                            }
-                            product_Image.findOneAndUpdate({ _id: singleImageItem.productImageId }, imageData, { upsert: true }, (productError, updatedImage) => {
-                                if (productError) {
-                                    console.log('usererror: ', productError);
-                                } else {
-                                    console.log('Existing Image Updated Succesfully', updatedImage);
-                                    callback2();
-                                }
-                            });
-
-                        }
-                        else if (!singleImageItem.productImageId) {
-
-                            console.log("----------------In New Image Section-------------------")
-
-                            let Data = {
-                                product_id: productId,
-                                image: singleImageItem.image,
-                                container_name: singleImageItem.containerName,
-                                default_image: singleImageItem.defaultImage,
-                            }
-
-                            console.log("Image data", Data);
-
-                            product_Image.create(Data, (productError, savedImage) => {
-                                if (productError) {
-                                    console.log('usererror: ', productError);
-                                } else {
-                                    console.log('New Image added succesfully', savedImage);
-                                    callback2();
-                                }
-                            });
-
-                        }
-                        else {
-                            console.log("----------------In Delete Image Section-------------------")
-
-                            product_Image.findOneAndRemove({ _id: singleImageItem.productImageId }, (error, deleteImage) => {
-                                if (error) {
-                                    console.log("Error:", error);
-                                }
-                                else {
-                                    console.log("Image Deleted Successfully", deleteImage);
-                                    callback2();
-                                }
-                            })
-
-                        }
-                    }, (callbackError, callbackResponse) => {
-                        if (callbackError) {
-                            console.log('callbackError: ', callbackError);
-                        } else {
-
-                            console.log("Final callback");
-                            resolve({ status: 200, message: 'Successfully updated product.' });
-                        }
-                    })
-
-                })
-            }
-            else {
-                console.log("In final else-------->>>");
-
-                _.forEach(productImage, (singleImageItem) => {
-                    let Data = {
-                        product_id: productId,
-                        image: singleImageItem.image,
-                        container_name: singleImageItem.containerName,
-                        default_image: singleImageItem.defaultImage,
-                    }
-
-                    console.log("Image data", Data);
-
-                    product_Image.create(Data, (productError, savedImage) => {
-                        if (productError) {
-                            console.log('usererror: ', productError);
-                        } else {
-                            console.log('New Image added succesfully', savedImage);
-                            callback2();
-                        }
-                    });
-                })
+            let Data = {
+                product_id: productId,
+                image: singleImageItem.image,
+                container_name: singleImageItem.containerName,
+                default_image: singleImageItem.defaultImage,
             }
 
-        }).catch((error) => {
-            console.log('error: ', error);
-        });
-    })
-}
+            console.log("Image data", Data);
 
+            product_Image.create(Data, (productError, savedImage) => {
+                if (productError) {
+                    console.log('usererror: ', productError);
+                } else {
+                    console.log('New Image added succesfully', savedImage);
+                    callback2();
+                }
+            });
 
-const findImageArray = (productId) => {
-    let existingImageArray = [];
-    return new Promise((resolve, reject) => {
-        product_Image.find({ product_id: productId }, (error, response) => {
-            if (error) {
-                reject(error);
+        }, (callbackError, callbackResponse) => {
+            if (callbackError) {
+                console.log('callbackError: ', callbackError);
             } else {
-                _.forEach(response, (singleImage) => {
-                    existingImageArray.push(singleImage._id);
-                })
-                console.log("In function------->>>>", existingImageArray);
-                resolve(existingImageArray);
+
+                console.log("Final callback");
+                resolve({ status: 200, message: 'Successfully updated product.' });
             }
-        });
+        })
 
     })
 }
+
+
+module.exports.removeExistingImage = (productId) => {
+
+    return new Promise((resolve, reject) => {
+
+        product_Image.deleteMany({ product_id: productId }, (productError, deletedImage) => {
+            if (productError) {
+                console.log('usererror: ', productError);
+                reject(productError);
+            } else {
+                console.log('Existing Image Deleted', deletedImage);
+                resolve(deletedImage);
+            }
+        });
+    })
+}
+
+module.exports.removeExistingRelatedProduct = (productId) => {
+
+    return new Promise((resolve, reject) => {
+
+        productRelated.deleteMany({ product_id: productId }, (productError, deleteProduct) => {
+            if (productError) {
+                console.log('usererror: ', productError);
+                reject(productError);
+            } else {
+                console.log('Existing Related Product Deleted', deleteProduct);
+                resolve(deleteProduct);
+            }
+        });
+    })
+}
+
 
 module.exports.addProductImage = (productId, productImage) => {
     let imageData;
@@ -813,6 +845,41 @@ module.exports.addProductImage = (productId, productImage) => {
         })
     })
 }
+
+
+
+module.exports.addrelatedProduct = (productId, relatedProduct) => {
+    let productData;
+
+    return new Promise((resolve, reject) => {
+
+        async.eachSeries(relatedProduct, (singleProductId, callback2) => {
+
+            productData = {
+                product_id: productId,
+                related_id: singleProductId,
+            }
+
+            productRelated.create(productData, (productError, savedProduct) => {
+                if (productError) {
+                    console.log('usererror: ', productError);
+                } else {
+                    console.log('related product', savedProduct);
+                    callback2();
+                }
+            });
+        }, (callbackError, callbackResponse) => {
+            if (callbackError) {
+                console.log('callbackError: ', callbackError);
+            } else {
+                resolve({ status: 200, message: 'Successfully updated product.' });
+            }
+        })
+    })
+}
+
+
+
 
 
 module.exports.productList = (productData) => {
@@ -848,9 +915,22 @@ module.exports.productList = (productData) => {
                 query['$and'].push({ 'isActive': 0 });
             }
 
+           
+
             const aggregate = [
                 {
                     $match: query
+                },
+                {
+                    $project: {
+                        productId: '$_id',
+                        price: '$price',
+                        Category: '$Category',
+                        isActive: '$is_active',
+                        isFeatured: '$is_featured',
+                        name: '$name',
+                        quantity: '$quantity'
+                    }
                 },
                 {
                     $lookup: {
@@ -860,7 +940,7 @@ module.exports.productList = (productData) => {
                         as: 'productImage'
                     }
                 },
-                //Lookup of Product Image
+                // //Lookup of Product Image
                 {
                     $unwind: {
                         path: '$productImage',
@@ -875,23 +955,12 @@ module.exports.productList = (productData) => {
                             containerName: '$productImage.container_name',
                             defaultImage: '$productImage.default_image',
                         },
+                        productId: 1,
                         Category: 1,
-                        sku: 1,
                         quantity: 1,
-                        description: 1,
-                        minimumQuantity: 1,
-                        subtractStock: 1,
-                        stockStatusId: 1,
-                        manufacturerId: 1,
-                        shipping: 1,
                         price: 1,
-                        dateAvailable: 1,
-                        sortOrder: 1,
                         name: 1,
-                        metaTagTitle: 1,
-                        condition: 1,
                         isActive: 1,
-                        location: 1,
                         isFeatured: 1,
                     }
                 },
@@ -899,11 +968,8 @@ module.exports.productList = (productData) => {
                 {
                     $group: {
                         _id: '$_id',
-                        product_id: {
-                            $first: '$product_id',
-                        },
-                        sku: {
-                            $first: '$sku',
+                        productId: {
+                            $first: '$productId',
                         },
                         productImage: {
                             $first: '$product_image',
@@ -911,47 +977,14 @@ module.exports.productList = (productData) => {
                         Category: {
                             $first: '$Category',
                         },
-                        location: {
-                            $first: '$location'
-                        },
                         quantity: {
                             $first: '$quantity'
-                        },
-                        description: {
-                            $first: '$description'
-                        },
-                        minimumQuantity: {
-                            $first: '$minimumQuantity'
-                        },
-                        subtractStock: {
-                            $first: '$subtractStock'
-                        },
-                        stockStatusId: {
-                            $first: '$stockStatusId'
-                        },
-                        manufacturerId: {
-                            $first: '$manufacturerId'
-                        },
-                        shipping: {
-                            $first: '$shipping'
                         },
                         price: {
                             $first: '$price'
                         },
-                        dateAvailable: {
-                            $first: '$dateAvailable'
-                        },
-                        sortOrder: {
-                            $first: '$sortOrder'
-                        },
                         name: {
                             $first: '$name'
-                        },
-                        metaTagTitle: {
-                            $first: '$metaTagTitle'
-                        },
-                        condition: {
-                            $first: '$condition'
                         },
                         isActive: {
                             $first: '$isActive'
@@ -987,22 +1020,11 @@ module.exports.productList = (productData) => {
                 {
                     $project: {
                         productImage: 1,
-                        sku: 1,
+                        productId: 1,
                         quantity: 1,
-                        description: 1,
-                        minimumQuantity: 1,
-                        subtractStock: 1,
-                        stockStatusId: 1,
-                        manufacturerId: 1,
-                        shipping: 1,
                         price: 1,
-                        dateAvailable: 1,
-                        sortOrder: 1,
                         name: 1,
-                        metaTagTitle: 1,
-                        condition: 1,
                         isActive: 1,
-                        location: 1,
                         isFeatured: 1,
                         Category: {
                             categoryId: '$Category._id',
@@ -1015,50 +1037,17 @@ module.exports.productList = (productData) => {
                 {
                     $group: {
                         _id: '$_id',
-                        sku: {
-                            $first: '$sku',
-                        },
-                        location: {
-                            $first: '$location'
+                        productId: {
+                            $first: '$productId'
                         },
                         quantity: {
                             $first: '$quantity'
                         },
-                        description: {
-                            $first: '$description'
-                        },
-                        minimumQuantity: {
-                            $first: '$minimumQuantity'
-                        },
-                        subtractStock: {
-                            $first: '$subtractStock'
-                        },
-                        stockStatusId: {
-                            $first: '$stockStatusId'
-                        },
-                        manufacturerId: {
-                            $first: '$manufacturerId'
-                        },
-                        shipping: {
-                            $first: '$shipping'
-                        },
                         price: {
                             $first: '$price'
                         },
-                        dateAvailable: {
-                            $first: '$dateAvailable'
-                        },
-                        sortOrder: {
-                            $first: '$sortOrder'
-                        },
                         name: {
                             $first: '$name'
-                        },
-                        metaTagTitle: {
-                            $first: '$metaTagTitle'
-                        },
-                        condition: {
-                            $first: '$condition'
                         },
                         isActive: {
                             $first: '$isActive'
@@ -1084,6 +1073,16 @@ module.exports.productList = (productData) => {
                 aggregate.push({ $skip: productData.offset });
             }
 
+            if (productData.price == 1) {
+
+                aggregate.push( { $sort : { price : 1} });
+            }
+
+            if (productData.price == 2) {
+
+                aggregate.push( { $sort : { price : -1} });
+            }
+
             product.aggregate(aggregate).exec(function (error, productDetail) {
                 if (error) {
                     return reject(error);
@@ -1094,33 +1093,6 @@ module.exports.productList = (productData) => {
         }
     })
 }
-
-
-module.exports.addrelatedProduct = (productId, relatedProduct) => {
-    let productData;
-
-    return new Promise((resolve, reject) => {
-
-        _.forEach(relatedProduct, (singleProductId) => {
-
-            productData = {
-                product_id: productId,
-                related_id: singleProductId,
-            }
-
-            productRelated.create(productData, (productError, savedProduct) => {
-                if (productError) {
-                    console.log('usererror: ', productError);
-                } else {
-                    console.log('related product', savedProduct);
-                }
-            });
-        })
-
-        resolve({ status: 200, message: 'Successfully updated product.' });
-    })
-}
-
 
 
 

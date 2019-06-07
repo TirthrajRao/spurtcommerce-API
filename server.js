@@ -170,8 +170,8 @@ app.delete('/api/customer/wishlist-product-delete/:id', wishListController.remov
 app.get('/api/customer/recent-customerlist', customerController.customerList);
 
 app.get('/api/product/recent-selling-product', orderController.recentSellingProduct);
-app.get('/api/order/today-order-count', orderController.todayOrderCount);
-app.get('/api/order/today-order-amount', orderController.todayOrderAmount);
+// app.get('/api/order/today-order-count', orderController.todayOrderCount);
+// app.get('/api/order/today-order-amount', orderController.todayOrderAmount);
 
 
 app.post('/api/order/order-change-status', orderController.changeOrderStatus);

@@ -73,6 +73,10 @@ module.exports.addProduct = (req, res) => {
 
 	})
 
+	if (req.body.relatedProductId) {
+
+	}
+
 	productData = {
 		name: req.body.productName,
 		description: req.body.productDescription,
@@ -107,7 +111,7 @@ module.exports.addProduct = (req, res) => {
 
 		productService.addProductImage(ProductId, req.body.image).then((response) => {
 
-			productService.addrelatedProduct(productId,req.body.relatedProductId).then((response) => {
+			productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
 
 				return res.status(200).json({ status: 1, message: response.message, data: response.data });
 
@@ -150,50 +154,68 @@ module.exports.updateProduct = (req, res) => {
 
 	})
 
-	// if (req.body.relatedProductId) {
-	// 	productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
-	// 		console.log("Related product added succesfully");
-	// 	}).catch((error) => {
-	// 		console.log('error: ', error);
-	// 	});
-	// }
+	if (req.body.relatedProductId) {
+		console.log("--------------------IN RELATED PRODUCT--------------------");
 
-	productService.addImageToArray(productId, req.body.image).then((response) => {
+		productService.removeExistingRelatedProduct(productId).then((response) => {
+
+			productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
+				console.log("Related product added ", response);
+
+			}).catch((error) => {
+				console.log("Related product Error:", error);
+
+			})
+
+		}).catch((error) => {
+			console.log("Related product Error:", error);
+		})
+	}
+
+	productService.removeExistingImage(productId).then((response) => {
+
+		console.log("--------------------IN IMAGE PRODUCT--------------------");
 
 
-		productService.addrelatedproudct
+		productService.addImageToArray(productId, req.body.image).then((response) => {
 
-		productData = {
-			name: req.body.productName,
-			description: req.body.productDescription,
-			sku: req.body.sku,
-			upc: req.body.upc,
-			metaTagTitle: req.body.metaTagTitle,
-			Category: categoryArr,
-			relatedProductId: req.body.relatedProductId,
-			location: req.body.location,
-			price: parseInt(req.body.price),
-			minimumQuantity: req.body.minimumQuantity,
-			quantity: req.body.quantity,
-			subtractStock: req.body.subtractStock,
-			outOfStockStatus: req.body.outOfStockStatus,
-			requiredShipping: req.body.requiredShipping,
-			dateAvailable: req.body.dateAvailable,
-			condition: req.body.condition,
-			isActive: parseInt(req.body.status),
-			sortOrder: req.body.sortOrder,
-			productSpecial: req.body.productSpecial,
-			productDiscount: req.body.productDiscount,
-			productOptions: req.body.productOptions
-		}
+			productService.addrelatedproudct
 
-		productService.updateProduct(productId, productData).then((response) => {
-			return res.status(200).json({ status: 1, message: response.message, data: response.data });
+			productData = {
+				name: req.body.productName,
+				description: req.body.productDescription,
+				sku: req.body.sku,
+				upc: req.body.upc,
+				metaTagTitle: req.body.metaTagTitle,
+				Category: categoryArr,
+				location: req.body.location,
+				price: parseInt(req.body.price),
+				minimumQuantity: req.body.minimumQuantity,
+				quantity: req.body.quantity,
+				subtractStock: req.body.subtractStock,
+				outOfStockStatus: req.body.outOfStockStatus,
+				requiredShipping: req.body.requiredShipping,
+				dateAvailable: req.body.dateAvailable,
+				condition: req.body.condition,
+				isActive: parseInt(req.body.status),
+				is_active:parseInt(req.body.status),
+				sortOrder: req.body.sortOrder,
+				productSpecial: req.body.productSpecial,
+				productDiscount: req.body.productDiscount,
+				productOptions: req.body.productOptions
+			}
+
+			productService.updateProduct(productId, productData).then((response) => {
+				return res.status(200).json({ status: 1, message: response.message, data: response.data });
+			}).catch((error) => {
+				console.log('error: ', error);
+				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+			});
+
 		}).catch((error) => {
 			console.log('error: ', error);
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		});
-
 	}).catch((error) => {
 		console.log('error: ', error);
 		return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });

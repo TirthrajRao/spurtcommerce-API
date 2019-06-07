@@ -71,12 +71,12 @@ module.exports.login = (body) => {
                                 first_name: customer.first_name,
                                 ip_address: body.Ip,
                             }
-                            console.log("login DAta------>>>", loginData);
+                            console.log("login Data:", loginData);
                             loginLog.create(loginData, (useerr, userres) => {
                                 if (useerr) {
                                     console.log('usererror: ', useerr);
                                 } else {
-                                    console.log("login log Created------->>>>..", userres);
+                                    console.log("login log Created:", userres);
                                 }
                             });
                             resolve({ status: 200, message: 'Successfully login', data: tokendata })
@@ -458,9 +458,3 @@ module.exports.checkForExists = (emailId) => {
         });
     })
 }
-
-
-
-
-
-
