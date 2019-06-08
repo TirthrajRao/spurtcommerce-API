@@ -364,7 +364,6 @@ module.exports.orderCheckout = (orderData) => {
 
 
 module.exports.myOrderList = (orderData) => {
-
     const customer_id = orderData.customer_id;
 
     return new Promise((resolve, reject) => {
@@ -406,17 +405,21 @@ module.exports.myOrderList = (orderData) => {
                         colorCode: '$orderStatus.color_code',
                         isActive: 1,
                     },
+                    orderStatusName: '$orderStatus.name',
 
                 }
             },
 
-        ]).exec(function (error, orderDetail) {
-            if (error) {
-                return reject(error);
-            } else {
-                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
-            }
-        })
+        ])
+            // .skip(orderData.offset)
+            // .limit(orderData.limit)
+            .exec(function (error, orderDetail) {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
+                }
+            })
     })
 }
 
@@ -519,7 +522,9 @@ module.exports.recentSellingProduct = () => {
                 return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail });
             }
         })
+
     })
+
 }
 
 

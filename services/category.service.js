@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const Url = require('url');
 var _ = require('lodash');
+var arrayToTree = require('array-to-tree');
 
 
 // Database models
@@ -16,7 +17,6 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports.categoryList = (categoryData) => {
     return new Promise((resolve, reject) => {
         if (categoryData.count == 'true' || categoryData.count == 1) {
-
             category.count((useerr, userres) => {
                 if (useerr) {
                     console.log('usererror: ', useerr);
@@ -29,9 +29,6 @@ module.exports.categoryList = (categoryData) => {
         else {
             category.aggregate([
                 {
-                    $match: { parent_int: "0" }
-                },
-                {
                     $project: {
                         categoryId: '$_id',
                         name: '$name',
@@ -39,210 +36,51 @@ module.exports.categoryList = (categoryData) => {
                         imagePath: '$image_path',
                         parentInt: '$parent_int',
                         sortOrder: '$sort_order',
+                        isActive: '$is_active',
                         metaTagTitle: '$meta_tag_title',
                         metaTagDescription: '$meta_tag_description',
                         metaTagKeyword: '$meta_tag_keyword',
-                        children: '$children'
                     }
+                },
 
-                },
-                {
-                    $lookup: {
-                        from: 'category',
-                        localField: 'children',
-                        foreignField: '_id',
-                        as: 'children'
-                    }
-                },
-                {
-                    $unwind: {
-                        path: '$children',
-                        preserveNullAndEmptyArrays: true
-                    }
-                },
-                {
-                    $project: {
-                        categoryId: 1,
-                        name: 1,
-                        image: 1,
-                        imagePath: 1,
-                        parentInt: 1,
-                        sortOrder: 1,
-                        metaTagTitle: 1,
-                        metaTagDescription: 1,
-                        metaTagKeyword: 1,
-                        children: {
-                            categoryId: '$children._id',
-                            name: '$children.name',
-                            image: '$children.image',
-                            imagePath: '$children.image_path',
-                            parentInt: '$children.parent_int',
-                            sortOrder: '$children.sort_order',
-                            metaTagTitle: '$children.meta_tag_title',
-                            metaTagDescription: '$children.meta_tag_description',
-                            metaTagKeyword: '$children.meta_tag_keyword',
-                            children: '$children.children',
-                        },
-                    }
-                },
-                {
-                    $unwind: {
-                        path: '$children.children',
-                        preserveNullAndEmptyArrays: true
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'category',
-                        localField: 'children.children',
-                        foreignField: '_id',
-                        as: 'children.children'
-                    }
-                },
-                {
-                    $unwind: {
-                        path: '$children.children',
-                        preserveNullAndEmptyArrays: true
-                    }
-                },
-                {
-                    $project: {
-                        categoryId: 1,
-                        name: 1,
-                        image: 1,
-                        imagePath: 1,
-                        parentInt: 1,
-                        sortOrder: 1,
-                        metaTagTitle: 1,
-                        metaTagDescription: 1,
-                        metaTagKeyword: 1,
-                        children: {
-                            categoryId: '$children.categoryId',
-                            name: '$children.name',
-                            image: '$children.image',
-                            imagePath: '$children.imagePath',
-                            parentInt: '$children.parentInt',
-                            sortOrder: '$children.sortOrder',
-                            metaTagTitle: '$children.metaTagTitle',
-                            metaTagDescription: '$children.metaTagDescription',
-                            metaTagKeyword: '$children.metaTagKeyword',
-                            children: {
-                                categoryId: '$children.children._id',
-                                name: '$children.children.name',
-                                image: '$children.children.image',
-                                imagePath: '$children.children.image_path',
-                                parentInt: '$children.children.parent_int',
-                                sortOrder: '$children.children.sort_order',
-                                metaTagTitle: '$children.children.meta_tag_title',
-                                metaTagDescription: '$children.children.meta_tag_description',
-                                metaTagKeyword: '$children.children.meta_tag_keyword',
-                            }
-                        },
-                    }
-                },
-                {
-                    $group: {
-                        _id: '$children.categoryId',
-                        categoryId: { $first: '$categoryId' },
-                        name: { $first: '$name' },
-                        image: { $first: '$image', },
-                        imagePath: { $first: '$imagePath', },
-                        parentInt: { $first: '$parentInt' },
-                        sortOrder: { $first: '$sortOrder', },
-                        metaTagTitle: { $first: '$metaTagTitle', },
-                        metaTagDescription: { $first: '$metaTagDescription' },
-                        metaTagKeyword: { $first: '$metaTagKeyword', },
-                        grandchilds: { $push: '$children.children' },
-                        children: {
-                            $first: {
-                                categoryId: '$children.categoryId',
-                                name: '$children.name',
-                                image: '$children.image',
-                                imagePath: '$children.imagePath',
-                                parentInt: '$children.parentInt',
-                                sortOrder: '$children.sortOrder',
-                                metaTagTitle: '$children.metaTagTitle',
-                                metaTagDescription: '$children.metaTagDescription',
-                                metaTagKeyword: '$children.metaTagKeyword',
-                            }
-
-                        }
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        categoryId: 1,
-                        name: 1,
-                        image: 1,
-                        imagePath: 1,
-                        parentInt: 1,
-                        sortOrder: 1,
-                        metaTagTitle: 1,
-                        metaTagDescription: 1,
-                        metaTagKeyword: 1,
-                        children: {
-                            categoryId: '$children.categoryId',
-                            name: '$children.name',
-                            image: '$children.image',
-                            imagePath: '$children.imagePath',
-                            parentInt: '$children.parentInt',
-                            sortOrder: '$children.sortOrder',
-                            metaTagTitle: '$children.metaTagTitle',
-                            metaTagDescription: '$children.metaTagDescription',
-                            metaTagKeyword: '$children.metaTagKeyword',
-                            children: '$grandchilds',
-                        }
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        categoryId: 1,
-                        name: 1,
-                        image: 1,
-                        imagePath: 1,
-                        parentInt: 1,
-                        sortOrder: 1,
-                        metaTagTitle: 1,
-                        metaTagDescription: 1,
-                        metaTagKeyword: 1,
-                        children: {
-                            $filter: {
-                                input: '$children.children',
-                                as: 'child',
-                                cond: {$ne: ['$$child', {}]}
-                            }
-                        }
-
-                    }
-                },
-                {
-                    $group: {
-                        _id: '$categoryId',
-                        children: {
-                            $push: '$children'
-                        },
-                        name: { $first: '$name' },
-                        image: { $first: '$image', },
-                        imagePath: { $first: '$imagePath', },
-                        parentInt: { $first: '$parentInt' },
-                        sortOrder: { $first: '$sortOrder', },
-                        metaTagTitle: { $first: '$metaTagTitle', },
-                        metaTagDescription: { $first: '$metaTagDescription' },
-                        metaTagKeyword: { $first: '$metaTagKeyword', },
-                    }
-                }
-
-            ]).exec(function (Error, Response) {
+            ]).exec(function (Error, categoryData) {
                 if (Error) {
                     console.log('error: ', Error);
                     reject({ status: 500, message: 'Internal Server Error' });
                 } else {
-                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                    console.log('categoryData: ', categoryData);
+
+                    var finalCategory = [];
+
+
+                    _.forEach(categoryData, function (index) {
+                        console.log("single categoty->>>>>>>>>>>>>", index);
+
+                        const Cat = {
+                            categoryId: String(index.categoryId),
+                            name: (index.name),
+                            parentInt: String(index.parentInt),
+                            metaTagTitle: (index.metaTagTitle),
+                            metaTagDescription: (index.metaTagDescription),
+                            metaTagKeyword: (index.metaTagKeyword),
+                        }
+
+                        finalCategory.push(Cat);
+                    });
+
+                    console.log("final category list------->>>", finalCategory);
+
+                    const categoryList = arrayToTree(finalCategory, {
+                        parentProperty: 'parentInt',
+                        customID: 'categoryId'
+                    });
+
+                    console.log("Array to Tree------>>>", categoryList);
+
+
+                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: categoryList });
                 }
             })
-
         }
     })
 }

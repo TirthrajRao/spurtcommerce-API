@@ -107,7 +107,7 @@ module.exports.addProduct = (req, res) => {
 
 		productService.addProductImage(ProductId, req.body.image).then((response) => {
 
-			productService.addrelatedProduct(productId, req.body.relatedProductId).then((response) => {
+			productService.addrelatedProduct(ProductId, req.body.relatedProductId).then((response) => {
 
 				return res.status(200).json({ status: 1, message: response.message, data: response.data });
 

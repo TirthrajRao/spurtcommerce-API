@@ -41,17 +41,15 @@ module.exports.getProductList = (productData) => {
 
             if (productData.condition == '2') {
                 query['$and'].push({ 'condition': '2' });
-
             }
 
             if (productData.manufacturerId) {
-
                 console.log("manufacturerId", productData.manufacturerId);
                 query['$and'].push({ 'manufacturer_id': productData.manufacturerId });
-
             }
 
             if (productData.categoryId) {
+                console.log("categoryId", productData.categoryId);
                 query['$and'].push({ 'Category': ObjectId(productData.categoryId) });
             }
 
@@ -64,7 +62,6 @@ module.exports.getProductList = (productData) => {
             }
 
             product.aggregate([
-
                 {
                     $match: query
                 },

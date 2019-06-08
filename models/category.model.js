@@ -16,7 +16,7 @@ var category = new Schema({
         type: String
     },
     sort_order: {
-        type: String,
+        type:Number,
     },
     meta_tag_title: {
         type: String,
@@ -46,11 +46,6 @@ var category = new Schema({
         type: Date,
         default: Date.now,
     },
-    children: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'categoty'
-        }],
 });
 
 module.exports = mongoose.model('category', category, 'category');

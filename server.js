@@ -267,7 +267,7 @@ app.get('/api/pages/get_pagedetails/:id',pageController.pageDetail);
 
 app.get('/api/order/order-detail', orderController.orderDetail);//valid Output
 
-app.get('/api/orders/order-detail', orderController.myOrderDetail);
+app.get('/api/orders/order-detail', orderController.myOrderDetail);//Valid Output
 
 
 

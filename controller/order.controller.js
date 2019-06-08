@@ -94,12 +94,14 @@ module.exports.orderCheckout = (req, res) => {
 
 	const authorization = req.header('authorization');
 	customerService.getProfile(authorization).then((response) => {
+
 		_.forEach(req.body.productDetails, (product) => {
 			total = product.price * product.quantity;
 			totalAmount = totalAmount + total;
 		})
 
 		let randomNumber = Math.floor(100000000 + Math.random() * 900000000);
+
 		const orderId = 'SPU-' + randomNumber;
 		const orderData = {
 			orderId: orderId,
@@ -120,7 +122,7 @@ module.exports.orderCheckout = (req, res) => {
 			order_status_id: '5cbd891240b5afcf7d459820',
 			total: totalAmount,
 			is_active: "1",
-			created_date:moment().format('YYYY-MM-DD')
+			created_date: moment().format('YYYY-MM-DD')
 		}
 
 		let message = "Dear " + req.body.shippingFirstName + " " + req.body.shippingLastName + ",        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#078e05;font-weight:400;text-align:left;font-size:16px;line-height:1.5rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> Order successfully placed.        </td>    </tr>    <tr>        <td dir='ltr' style='padding:0 0px;color:#000;font-weight:300;text-align:left;font-size:12px;line-height:1.2rem;padding-top:10px;font-family: 'Roboto', sans-serif;' valign='top'> You have successfully placed an order for customization services. Kindly find the following details on the placed order.    </tr></tbody></table></td></tr>\r\n";
@@ -166,9 +168,14 @@ module.exports.orderCheckout = (req, res) => {
 module.exports.myOrderList = (req, res) => {
 	const authorization = req.header('authorization');
 	customerService.getProfile(authorization).then((response) => {
+
 		const orderData = {
 			customer_id: response.data._id,
+			limit: parseInt(req.query.limit),
+			offset: req.query.offset ? parseInt(req.query.offset) : 0,
+			count: req.query.count,
 		}
+
 		orderService.myOrderList(orderData).then((response) => {
 			return res.status(200).json({ status: 1, message: response.message, data: response.data });
 		}).catch((error) => {

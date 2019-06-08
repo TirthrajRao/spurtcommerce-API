@@ -59,26 +59,17 @@ module.exports.addCategory = (req, res) => {
 	const categoryData = {
 		name: req.body.name,
 		image: req.body.image,
-		sortOrder: req.body.sortOrder,
+		sort_order: req.body.sortOrder,
 		meta_tag_title: req.body.metaTagTitle,
 		meta_tag_description: req.body.metaTagDescription,
 		meta_tag_keyword: req.body.metaTagKeyword,
+		parent_int: req.body.parentInt ? req.body.parentInt : 0,
+
 	}
-	let parent = req.body.parentInt;
-	console.log("parent id------------>>>>>>>",parent);
+
 
 	categoryService.addCategory(categoryData).then((response) => {
-		console.log("Response data---------->>>>>", response.data._id);
-		const childrenId = response.data._id;
 
-		categoryService.updateChildren(parent, childrenId)
-			.then((response) => {
-				return res.status(200).json({ status: 1, message: response.message, data: response.data });
-
-			}).catch((error) => {
-				console.log('error: ', error);
-				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
-			});
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 
 	}).catch((error) => {
@@ -94,8 +85,8 @@ module.exports.updateCategory = (req, res) => {
 	const categoryData = {
 		name: req.body.name,
 		image: req.body.image,
-		parentInt: req.body.parentInt,
-		sortOrder: req.body.sortOrder,
+		parent_int: req.body.parentInt,
+		sort_order: req.body.sortOrder,
 		meta_tag_title: req.body.metaTagTitle,
 		meta_tag_description: req.body.metaTagDescription,
 		meta_tag_keyword: req.body.metaTagKeyword,

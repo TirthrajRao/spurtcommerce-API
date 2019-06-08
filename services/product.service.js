@@ -955,6 +955,7 @@ module.exports.productList = (productData) => {
                         isActive: '$is_active',
                         isFeatured: '$is_featured',
                         name: '$name',
+                        sku:'$sku',
                         quantity: '$quantity'
                     }
                 },
@@ -988,6 +989,7 @@ module.exports.productList = (productData) => {
                         name: 1,
                         isActive: 1,
                         isFeatured: 1,
+                        sku:1,
                     }
                 },
                 //Reduce To Limited Data Using Project
@@ -1017,7 +1019,10 @@ module.exports.productList = (productData) => {
                         },
                         isFeatured: {
                             $first: '$isFeatured'
-                        }
+                        },
+                        sku:{
+                            $first:'$sku'
+                        },
                     }
                 },
                 //Group To Generate Single Document to Multiple
@@ -1049,6 +1054,7 @@ module.exports.productList = (productData) => {
                         productId: 1,
                         quantity: 1,
                         price: 1,
+                        sku:1,
                         name: 1,
                         isActive: 1,
                         isFeatured: 1,
@@ -1087,6 +1093,9 @@ module.exports.productList = (productData) => {
                         },
                         isFeatured: {
                             $first: '$isFeatured',
+                        },
+                        sku:{
+                            $first:'$sku'
                         }
                     }
                 }

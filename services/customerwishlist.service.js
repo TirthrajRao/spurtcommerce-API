@@ -25,8 +25,6 @@ module.exports.addProductToWishList = (productData) => {
     })
 }
 
-
-
 module.exports.getWishList = (wishList) => {
     
     return new Promise((resolve, reject) => {   
@@ -90,7 +88,8 @@ module.exports.getWishList = (wishList) => {
                             defaultImage: '$productImage.default_image',
                         },
                         product: 1,
-                        wishlistProductId: 1
+                        wishlistProductId: 1,
+                        productId:1,
                     }
 
                 },
@@ -128,7 +127,7 @@ module.exports.getWishList = (wishList) => {
 module.exports.removeProductFromWishList = (wishListId) => {
     
     return new Promise((resolve, reject) => {
-        wishlist.findByIdAndRemove(wishListId, (useerr, userres) => {
+        wishlist.findByIdAndRemove({_id:wishListId}, (useerr, userres) => {
             if (useerr) {
                 console.log('usererror: ', useerr);
                 reject({ status: 500, message: 'Internal Server Error' });

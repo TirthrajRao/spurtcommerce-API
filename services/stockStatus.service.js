@@ -29,15 +29,14 @@ module.exports.stockList = () => {
                 resolve({ status: 200, message: 'Successfully get currency list', data: Response });
             }
         })
-
     })
 }
 
 module.exports.updateStockStatus = (stockId, stockData) => {
 
-    console.log("Stock data",stockData);
+    console.log("Stock data", stockData);
 
-    console.log("Stock Id",stockId);
+    console.log("Stock Id", stockId);
 
     return new Promise((resolve, reject) => {
         stockStatus.findByIdAndUpdate({ _id: stockId }, stockData, { upsert: true }, (useerr, userres) => {
@@ -67,7 +66,9 @@ module.exports.addStockStatus = (stockData) => {
 }
 
 module.exports.deleteStockStatus = (stockId) => {
-    console.log("body in country===>", stockId);
+
+    console.log("stockId----------->", stockId);
+
     return new Promise((resolve, reject) => {
         stockStatus.findByIdAndRemove({ _id: stockId }, (useerr, userres) => {
             if (useerr) {
