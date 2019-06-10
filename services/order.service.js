@@ -574,11 +574,14 @@ module.exports.todayOrderAmount = () => {
                 return reject(error);
             } else {
                 console.log("order count object", orderDetail);
-                if (orderDetail) {
+                if (orderDetail == "") {
+
+                    return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: 0 });
+                }
+                else{
                     return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: orderDetail[0].total });
                 }
-                return resolve({ status: 200, message: 'Successfully show the Order List..!!', data: 0 });
-
+               
             }
         })
     })

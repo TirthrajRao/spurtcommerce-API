@@ -54,8 +54,6 @@ module.exports.categoryList = (categoryData) => {
 
 
                     _.forEach(categoryData, function (index) {
-                        console.log("single categoty->>>>>>>>>>>>>", index);
-
                         const Cat = {
                             categoryId: String(index.categoryId),
                             name: (index.name),
@@ -68,15 +66,10 @@ module.exports.categoryList = (categoryData) => {
                         finalCategory.push(Cat);
                     });
 
-                    console.log("final category list------->>>", finalCategory);
-
                     const categoryList = arrayToTree(finalCategory, {
                         parentProperty: 'parentInt',
                         customID: 'categoryId'
                     });
-
-                    console.log("Array to Tree------>>>", categoryList);
-
 
                     resolve({ status: 200, message: 'Successfully get manufacturer list', data: categoryList });
                 }
@@ -198,13 +191,26 @@ module.exports.categoryByList = (categoryData) => {
                 aggregate.push({ $skip: categoryData.offset });
             }
 
+           
+            if (categoryData.sortOrder == 1) {
+
+                console.log("Sort Order 1:",categoryData.sortOrder);
+
+                aggregate.push({ $sort: { sort_order: 1 } });
+            }
+
+            if (categoryData.sortOrder == 2) {
+                console.log("Sort Order 2:",categoryData.sortOrder);
+
+                aggregate.push({ $sort: { sort_order: -1 } });
+            }
 
             category.aggregate(aggregate).exec(function (Error, Response) {
                 if (Error) {
                     console.log('error: ', Error);
                     reject({ status: 500, message: 'Internal Server Error' });
                 } else {
-                    resolve({ status: 200, message: 'Successfully get manufacturer list', data: Response });
+                    resolve({ status: 200, message: 'Successfully get Category list', data: Response });
                 }
             })
 

@@ -31,7 +31,8 @@ module.exports.categoryByList = (req, res) => {
 		offset: req.query.offset ? parseInt(req.query.offset) : 0,
 		keyword: req.query.keyword,
 		sku: req.query.sku,
-		count: req.query.count
+		count: req.query.count,
+		sortOrder:req.query.sortOrder,
 	}
 
 	categoryService.categoryByList(categoryData).then((response) => {
