@@ -2,6 +2,10 @@ const Joi = require('joi');
 
 
 module.exports.orderCheckout = (req, res, next) => {
+
+    console.log("req.body",req.body);
+
+
     const schema = Joi.object().keys({
 
         shippingAddress_1: Joi.string().required(),

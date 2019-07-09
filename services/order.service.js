@@ -634,10 +634,11 @@ module.exports.salesList = () => {
 module.exports.myOrderDetail = (orderId) => {
     return new Promise((resolve, reject) => {
 
+        console.log("Order Id------->>",orderId);
+
         order.aggregate([
             {
                 $match: { '_id': ObjectId(orderId) }
-
             },
             {
                 $project: {

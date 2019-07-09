@@ -92,7 +92,44 @@ module.exports.registerMail = (emailContent, email, Subject) => {
                 console.log(err);
             } else {
                 const mailOptions = {
-                    from:'no-reply@spurtcommerce.com',
+                    from: 'no-reply@spurtcommerce.com',
+                    to: email,
+                    subject: Subject,
+                    html: data,
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        reject(error);
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                        resolve(info);
+                    }
+                });
+            }
+        });
+    });
+}
+
+
+module.exports.passwordForgotMail = (emailContent, email, Subject) => {
+    const productDetailData = undefined;
+    return new Promise((resolve, reject) => {
+        const transporter = nodemailer.createTransport(smtpTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'pushpraj4132@gmail.com',
+                pass: 'livinggod13@',
+            },
+        }));
+        ejs.renderFile('./views/emailTemplate.ejs', { emailContent, productDetailData }, (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                const mailOptions = {
+                    from: 'no-reply@spurtcommerce.com',
                     to: email,
                     subject: Subject,
                     html: data,

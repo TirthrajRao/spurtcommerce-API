@@ -27,7 +27,7 @@ module.exports.register = (req, res) => {
 		newsletter: 1,
 		mail_status: 1,
 		ip: clientIp,
-		created_date:moment().format('YYYY-MM-DD')
+		created_date: moment().format('YYYY-MM-DD')
 	}
 	if (req.body.password === req.body.confirmPassword) {
 
@@ -187,7 +187,7 @@ module.exports.addCustomer = (req, res) => {
 		mail_status: parseInt(req.body.mailStatus),
 		isActive: parseInt(req.body.status),
 		first_name: req.body.username,
-		created_date:moment().format('YYYY-MM-DD')
+		created_date: moment().format('YYYY-MM-DD')
 	}
 
 	if (req.body.password === req.body.confirmPassword) {
@@ -320,6 +320,7 @@ module.exports.editProfile = (req, res) => {
 	const image = req.body.image;
 	if (image) {
 		const path = 'customer/';
+		
 		const base64Data = new Buffer(image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
 		const type = image.split(';')[0].split('/')[1];
 		const name = 'Img_' + Date.now() + '.' + type;
@@ -342,6 +343,7 @@ module.exports.editProfile = (req, res) => {
 					avatar_path: path,
 					avatar: name,
 				}
+				
 				customerService.editProfile(customerId, userData).then((response) => {
 					return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 				}).catch((error) => {
@@ -375,6 +377,9 @@ module.exports.editProfile = (req, res) => {
 				pincode: req.body.pincode,
 				zone_id: req.body.zoneId,
 			}
+
+			console.log("UserData in controller", userData);
+
 			customerService.editProfile(customerId, userData).then((response) => {
 				return res.status(200).json({ message: response.message, data: response.data, status: 1 });
 			}).catch((error) => {
@@ -424,6 +429,51 @@ module.exports.changePassword = (req, res) => {
 	});
 
 }
+
+
+
+module.exports.forgotpassword = (req, res) => {
+
+	const emailId = req.body.emailId;
+
+	customer.findOne({ email: emailId })
+		.exec((err, customer) => {
+			if (err) {
+				const errorResponse = {
+					status: 0,
+					message: 'Invalid Email Id',
+				};
+				return res.status(400).send(errorResponse);
+			}
+			else if (customer) {
+
+				console.log("Customer--------->>>>>>>", customer);
+
+				const tempPassword = Math.random().toString().substr(2, 9);
+				console.log("Temp password", tempPassword);
+				customer.password = tempPassword;
+				customer.save();
+				console.log("Customer ------>>>", customer);
+
+
+				const email = customer.email;
+				const subject = "Forgot Password";
+				const message = "<p>Dear " + customer.first_name + ",<br />\n&nbsp;</p>\n\n<p>Your new Password is : " + tempPassword + "</p>\n"
+
+				emailService.passwordForgotMail(message, email, subject).then((response) => {
+					const successResponse = {
+						status: 1,
+						message: 'Your password has been sent to your email inbox.',
+					};
+					return res.status(200).send(successResponse);
+				}).catch((err) => {
+					return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
+				})
+			}
+		})
+
+}
+
 
 
 

@@ -38,13 +38,21 @@ var orderValidation = require('./validation/order.validation');
 
 var cors = require('cors');
 
-var bodyParser = require('body-parser');
+
+
+
+// var bodyParser = require('body-parser');
 var app = exp();
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 var http = require('http');
-const port = 9000;
+const port = 6000;
 var server = app.listen(port);
 
-mongoose.connect('mongodb://localhost:27017/spurtcommerce', { useNewUrlParser: true })
+mongoose.connect('mongodb://127.0.0.1:27017/spurtcommerce', { useNewUrlParser: true })
     .then(() => console.log("CONNECTED"))
     .catch(err => console.log(err));
 
@@ -52,6 +60,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+
+
+app.use(exp.static(path.join(__dirname, 'public')));
 
 
 app.get('/api/list/productlist', storeController.getProductList);
@@ -268,6 +280,9 @@ app.get('/api/pages/get_pagedetails/:id',pageController.pageDetail);
 app.get('/api/order/order-detail', orderController.orderDetail);//valid Output
 
 app.get('/api/orders/order-detail', orderController.myOrderDetail);//Valid Output
+
+app.post('/api/customer/forgot-password',customerController.forgotpassword);
+
 
 
 

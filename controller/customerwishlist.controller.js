@@ -20,6 +20,10 @@ module.exports.addProductToWishList = (req, res) => {
             customer_id: response.data._id,
         }
 
+        console.log("Prodtc req.body",req.body.productId)
+
+        console.log("Product Data---------->>>>",productData);
+
         wishList.findOne({ product_id: req.body.productId, customer_id: response.data._id })
             .exec(function (err, product) {
                 if (err) {
@@ -50,8 +54,6 @@ module.exports.addProductToWishList = (req, res) => {
 
 
 module.exports.getWishList = (req, res) => {
-
-
 
     const authorization = req.header('authorization');
     customerService.getProfile(authorization).then((response) => {

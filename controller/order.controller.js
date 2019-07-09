@@ -51,6 +51,8 @@ module.exports.myOrderDetail = (req, res) => {
 
 	const orderId = req.query.orderId;
 
+	console.log("Order Id in controller",orderId);
+
 	orderService.myOrderDetail(orderId).then((response) => {
 		return res.status(200).json({ status: 1, message: response.message, data: response.data });
 	}).catch((error) => {
@@ -93,6 +95,7 @@ module.exports.orderCheckout = (req, res) => {
 	const today = moment().format('YYYY-MM-DD');
 
 	const authorization = req.header('authorization');
+
 	customerService.getProfile(authorization).then((response) => {
 
 		_.forEach(req.body.productDetails, (product) => {

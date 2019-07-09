@@ -218,11 +218,13 @@ module.exports.customerList = (customerData) => {
 
 
 module.exports.getProfile = (authorization) => {
-
     return new Promise((resolve, reject) => {
 
-        jwt.verify(authorization.split(' ')[1], 'pmt', function (err, decoded) {
+        jwt.verify(authorization, 'pmt', function (err, decoded) {
             if (err) throw err;
+
+            console.log("decode",decoded);
+
             const customerId = decoded.customer._id;
             customer.aggregate([
                 {
