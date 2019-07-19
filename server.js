@@ -51,11 +51,12 @@ app.use(express.static('uploads'));
 
 var http = require('http');
 const port = 6000;
-var server = app.listen(port);
+var server = app.listen(process.env.PORT || port);
 
-mongoose.connect('mongodb://127.0.0.1:27017/spurtcommerce', { useNewUrlParser: true })
-    .then(() => console.log("CONNECTED"))
-    .catch(err => console.log(err));
+mongoose.connect('mongodb://54.185.16.135:27017/spurtCommerce', { useNewUrlParser: true })
+ .then(() => console.log("Connected"))
+ .catch(err => console.log(err));
+
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
