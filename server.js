@@ -47,7 +47,7 @@ var app = exp();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(express.static('uploads'));
+app.use(exp.static('uploads'));
 
 var http = require('http');
 const port = 6000;
