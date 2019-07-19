@@ -53,7 +53,7 @@ var http = require('http');
 const port = 6000;
 var server = app.listen(process.env.PORT || port);
 
-mongoose.connect('mongodb://rao:raoinfotech@54.185.16.135:27017/spurtCommerce', { useNewUrlParser: true })
+mongoose.connect('mongodb://54.185.16.135:27017/spurtCommerce', { useNewUrlParser: true })
  .then(() => console.log("Connected"))
  .catch(err => console.log(err));
 
